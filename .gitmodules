@@ -1,0 +1,6 @@
+[submodule "glfw"]
+	path = glfw
+	url = https://github.com/glfw/glfw
+[submodule "Logarsh"]
+	path = Logarsh
+	url = https://github.com/cewein/Logarsh
