@@ -1,3 +1,4 @@
 Dependencies/
 Debug/
 *.vcxproj*
+dependencies.h
