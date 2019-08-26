@@ -1,0 +1,6 @@
+Noodles ready ? you're here for a time!
+
+<Mon Aug 26 23:36:34 2019> [DEFAULT] [init] start of a long journey
+<Mon Aug 26 23:36:34 2019> [WARNING] [GLFW] Creating a window
+<Mon Aug 26 23:36:35 2019> [WARNING] [GLFW] making context for the window
+<Mon Aug 26 23:36:45 2019> [DEFAULT] [GLFW] Closing window

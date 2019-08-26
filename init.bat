@@ -15,5 +15,3 @@ move glfw-3.3.bin.WIN32\lib-vc2017 .\
 move glfw-3.3.bin.WIN32\LICENSE.md .\
 rename lib-vc2017 lib
 rmdir /s /Q glfw-3.3.bin.WIN32
-cd ../../
-(echo #pragma once && echo.#include "Logarsh/logarsh.h" && echo.#include ^<GLFW/glfw3.h^>) > dependencies.h
