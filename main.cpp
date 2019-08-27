@@ -6,11 +6,12 @@
 int main()
 {
 	logger.info("init", "start of a long journey");
-	screen.create();
+	screen.create("nerv", 640,480, false);
+
 	while (screen.isOpen()) {
-		glfwSwapBuffers(screen.display());
-		glfwPollEvents();
+		screen.update();
 	}
-	screen.end();
+
+	screen.close();
 	return 0;
 }

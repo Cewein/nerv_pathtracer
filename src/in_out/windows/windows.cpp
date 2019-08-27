@@ -1,20 +1,31 @@
 #include "windows.h"
 
-void window::create()
+void window::create(std::string name, int width, int height, bool fullscreen)
 {
 	if (!glfwInit())
 	{
 		logger.crash("GLFW", "Failed to init GLFW");
 		exit(0);
 	}
+
 	logger.warning("GLFW", "Creating a window");
-	this->glfwDisplay = glfwCreateWindow(640, 480, "My Title", NULL, NULL);
+
+	logger.info("GLFW", fullscreen?"window full scren state : yes":"window full scren state : no");
+	GLFWmonitor * monitor = NULL;
+	if (fullscreen) monitor = glfwGetPrimaryMonitor();
+
+	this->glfwDisplay = glfwCreateWindow(width, height, name.c_str(), monitor, NULL);
+
 	if (!this->glfwDisplay)
 	{
 		logger.crash("GLFW", "Failed to create a window");
 		glfwTerminate();
 		exit(0);
 	}
+
+	this->width = width;
+	this->height = height;
+	this->name = name;
 
 	makeContext();
 }
@@ -30,10 +41,16 @@ bool window::isOpen()
 	return !glfwWindowShouldClose(this->glfwDisplay);
 }
 
-void window::end()
+void window::close()
 {
-	logger.info("GLFW", "Closing window");
+	logger.warning("GLFW", "Closing window");
 	glfwTerminate();
+}
+
+void window::update()
+{
+	glfwSwapBuffers(glfwDisplay);
+	glfwPollEvents();
 }
 
 GLFWwindow* window::display()

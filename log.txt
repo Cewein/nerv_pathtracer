@@ -1,6 +1,7 @@
 Noodles ready ? you're here for a time!
 
-<Mon Aug 26 23:36:34 2019> [DEFAULT] [init] start of a long journey
-<Mon Aug 26 23:36:34 2019> [WARNING] [GLFW] Creating a window
-<Mon Aug 26 23:36:35 2019> [WARNING] [GLFW] making context for the window
-<Mon Aug 26 23:36:45 2019> [DEFAULT] [GLFW] Closing window
+<Tue Aug 27 15:42:40 2019> [DEFAULT] [init] start of a long journey
+<Tue Aug 27 15:42:40 2019> [WARNING] [GLFW] Creating a window
+<Tue Aug 27 15:42:40 2019> [DEFAULT] [GLFW] window full scren state : no
+<Tue Aug 27 15:42:41 2019> [WARNING] [GLFW] making context for the window
+<Tue Aug 27 15:42:42 2019> [WARNING] [GLFW] Closing window
