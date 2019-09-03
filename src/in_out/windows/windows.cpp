@@ -1,6 +1,6 @@
 #include "windows.h"
 
-void window::create(std::string name, int width, int height, bool fullscreen)
+void nerv::window::create(std::string name, int width, int height, bool fullscreen)
 {
 	if (!glfwInit())
 	{
@@ -30,30 +30,30 @@ void window::create(std::string name, int width, int height, bool fullscreen)
 	makeContext();
 }
 
-void window::makeContext()
+void nerv::window::makeContext()
 {
 	logger.warning("GLFW", "making context for the window");
 	glfwMakeContextCurrent(this->glfwDisplay);
 }
 
-bool window::isOpen()
+bool nerv::window::isOpen()
 {
 	return !glfwWindowShouldClose(this->glfwDisplay);
 }
 
-void window::close()
+void nerv::window::close()
 {
 	logger.warning("GLFW", "Closing window");
 	glfwTerminate();
 }
 
-void window::update()
+void nerv::window::update()
 {
 	glfwSwapBuffers(glfwDisplay);
 	glfwPollEvents();
 }
 
-GLFWwindow* window::display()
+GLFWwindow* nerv::window::display()
 {
 	return this->glfwDisplay;
 }
