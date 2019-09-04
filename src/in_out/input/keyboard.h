@@ -2,6 +2,8 @@
 #include "../../../dependencies.h"
 #include "../windows/windows.h"
 
+#define keyIsPess(a) glfwGetKey(window, a) == GLFW_PRESS
+
 namespace nerv {
 	namespace keyboard {
 		void init();
