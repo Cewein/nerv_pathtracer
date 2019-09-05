@@ -1,8 +1,6 @@
 #pragma once
 #include "../../../dependencies.h"
 
-#define screen window::get()
-
 namespace nerv
 {
 	class window {

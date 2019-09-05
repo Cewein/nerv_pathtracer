@@ -1,8 +1,14 @@
 Noodles ready ? you're here for a time!
 
-<Thu Sep  5 00:01:45 2019> [DEFAULT] [init] start of a long journey
-<Thu Sep  5 00:01:45 2019> [WARNING] [GLFW] Creating a window
-<Thu Sep  5 00:01:45 2019> [DEFAULT] [GLFW] window full scren state : no
-<Thu Sep  5 00:01:46 2019> [WARNING] [GLFW] making context for the window
-<Thu Sep  5 00:01:46 2019> [DEFAULT] [keyboard] init callback
-<Thu Sep  5 00:01:50 2019> [WARNING] [GLFW] Closing window
+<Fri Sep  6 00:13:26 2019> [DEFAULT] [init] start of a long journey
+<Fri Sep  6 00:13:26 2019> [WARNING] [GLFW] Creating a window
+<Fri Sep  6 00:13:26 2019> [DEFAULT] [GLFW] window full scren state : no
+<Fri Sep  6 00:13:27 2019> [WARNING] [GLFW] making context for the window
+<Fri Sep  6 00:13:27 2019> [DEFAULT] [keyboard] init callback
+<Fri Sep  6 00:13:27 2019> [LOADING] [Config for key] start loading
+<Fri Sep  6 00:13:27 2019> 		  - open config file
+<Fri Sep  6 00:13:27 2019> 		  - file is open
+<Fri Sep  6 00:13:27 2019> 		  - start of the search
+<Fri Sep  6 00:13:27 2019> 		  - end of the search
+<Fri Sep  6 00:13:27 2019> [LOADING] [Config for key] succesfully loaded in 0.001757s
+<Fri Sep  6 00:13:55 2019> [WARNING] [GLFW] Closing window
