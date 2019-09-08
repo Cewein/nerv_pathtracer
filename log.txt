@@ -1,14 +1,14 @@
 Noodles ready ? you're here for a time!
 
-<Fri Sep  6 00:13:26 2019> [DEFAULT] [init] start of a long journey
-<Fri Sep  6 00:13:26 2019> [WARNING] [GLFW] Creating a window
-<Fri Sep  6 00:13:26 2019> [DEFAULT] [GLFW] window full scren state : no
-<Fri Sep  6 00:13:27 2019> [WARNING] [GLFW] making context for the window
-<Fri Sep  6 00:13:27 2019> [DEFAULT] [keyboard] init callback
-<Fri Sep  6 00:13:27 2019> [LOADING] [Config for key] start loading
-<Fri Sep  6 00:13:27 2019> 		  - open config file
-<Fri Sep  6 00:13:27 2019> 		  - file is open
-<Fri Sep  6 00:13:27 2019> 		  - start of the search
-<Fri Sep  6 00:13:27 2019> 		  - end of the search
-<Fri Sep  6 00:13:27 2019> [LOADING] [Config for key] succesfully loaded in 0.001757s
-<Fri Sep  6 00:13:55 2019> [WARNING] [GLFW] Closing window
+<Sun Sep  8 20:32:50 2019> [DEFAULT] [init] start of a long journey
+<Sun Sep  8 20:32:50 2019> [LOADING] [Config for window] start loading
+<Sun Sep  8 20:32:50 2019> 		  - open config file
+<Sun Sep  8 20:32:50 2019> 		  - file is open
+<Sun Sep  8 20:32:50 2019> 		  - start of the search
+<Sun Sep  8 20:32:50 2019> 		  - end of the search
+<Sun Sep  8 20:32:50 2019> [LOADING] [Config for window] succesfully loaded in 0.000362s
+<Sun Sep  8 20:32:50 2019> [WARNING] [GLFW] Creating a window
+<Sun Sep  8 20:32:50 2019> [DEFAULT] [GLFW] window full scren state : no
+<Sun Sep  8 20:32:51 2019> [WARNING] [GLFW] making context for the window
+<Sun Sep  8 20:32:51 2019> [DEFAULT] [keyboard] init callback
+<Sun Sep  8 20:32:55 2019> [WARNING] [GLFW] Closing window

@@ -1,4 +1,7 @@
 #pragma once
+#include <iostream>
+#include <string>
+
 #include "../../../dependencies.h"
 
 namespace nerv
