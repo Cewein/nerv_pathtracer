@@ -1,3 +1,5 @@
+#pragma once
+#include <glad/glad.h>
 #include "windows.h"
 
 void nerv::window::create(std::string name, int width, int height, bool fullscreen)
@@ -10,7 +12,12 @@ void nerv::window::create(std::string name, int width, int height, bool fullscre
 
 	logger.warning("GLFW", "Creating a window");
 
-	logger.info("GLFW", fullscreen?"window full scren state : yes":"window full scren state : no");
+	//TODO make this link with the config file for openGL
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+	logger.info("GLFW", fullscreen?"window full scren state : TRUE":"window full scren state : FALSE");
 	GLFWmonitor * monitor = NULL;
 	if (fullscreen) monitor = glfwGetPrimaryMonitor();
 
@@ -23,17 +30,32 @@ void nerv::window::create(std::string name, int width, int height, bool fullscre
 		exit(0);
 	}
 
+	logger.warning("GLFW", "making context for the window");
+	glfwMakeContextCurrent(this->glfwDisplay);
+
+	logger.warning("GLAD", "GLAD is initializing");
+	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+	{
+		logger.crash("GLAD", "GLAD did not initialize");
+		exit(EXIT_FAILURE);
+	}
+
 	this->width = width;
 	this->height = height;
 	this->name = name;
 
-	makeContext();
+	logger.warning("GLFW", "Setting view port for openGL");
+	glViewport(0, 0, width, height);
+	//glfwSetFramebufferSizeCallback(this->display, this->framebufferSizeCallback);
+
+	
 }
 
-void nerv::window::makeContext()
+void nerv::window::framebufferSizeCallback(GLFWwindow * window, int width, int height)
 {
-	logger.warning("GLFW", "making context for the window");
-	glfwMakeContextCurrent(this->glfwDisplay);
+	glViewport(0, 0, width, height);
+	this->width = width;
+	this->height = height;
 }
 
 bool nerv::window::isOpen()

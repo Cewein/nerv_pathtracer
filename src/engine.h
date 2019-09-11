@@ -9,9 +9,6 @@
 	This file is a regroupement of all the file in /src
 	It help for faster include in code.
 
-	As of now this MUST NOT be included in file where the
-	namespce 'NERV' is present
-
 */
 
 #pragma once

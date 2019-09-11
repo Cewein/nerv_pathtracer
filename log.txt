@@ -1,14 +1,16 @@
 Noodles ready ? you're here for a time!
 
-<Sun Sep  8 20:32:50 2019> [DEFAULT] [init] start of a long journey
-<Sun Sep  8 20:32:50 2019> [LOADING] [Config for window] start loading
-<Sun Sep  8 20:32:50 2019> 		  - open config file
-<Sun Sep  8 20:32:50 2019> 		  - file is open
-<Sun Sep  8 20:32:50 2019> 		  - start of the search
-<Sun Sep  8 20:32:50 2019> 		  - end of the search
-<Sun Sep  8 20:32:50 2019> [LOADING] [Config for window] succesfully loaded in 0.000362s
-<Sun Sep  8 20:32:50 2019> [WARNING] [GLFW] Creating a window
-<Sun Sep  8 20:32:50 2019> [DEFAULT] [GLFW] window full scren state : no
-<Sun Sep  8 20:32:51 2019> [WARNING] [GLFW] making context for the window
-<Sun Sep  8 20:32:51 2019> [DEFAULT] [keyboard] init callback
-<Sun Sep  8 20:32:55 2019> [WARNING] [GLFW] Closing window
+<Wed Sep 11 23:26:22 2019> [DEFAULT] [init] start of a long journey
+<Wed Sep 11 23:26:22 2019> [LOADING] [Config for window] start loading
+<Wed Sep 11 23:26:22 2019> 		  - open config file
+<Wed Sep 11 23:26:22 2019> 		  - file is open
+<Wed Sep 11 23:26:22 2019> 		  - start of the search
+<Wed Sep 11 23:26:22 2019> 		  - end of the search
+<Wed Sep 11 23:26:22 2019> [LOADING] [Config for window] succesfully loaded in 0.000352s
+<Wed Sep 11 23:26:22 2019> [WARNING] [GLFW] Creating a window
+<Wed Sep 11 23:26:22 2019> [DEFAULT] [GLFW] window full scren state : FALSE
+<Wed Sep 11 23:26:23 2019> [WARNING] [GLFW] making context for the window
+<Wed Sep 11 23:26:23 2019> [WARNING] [GLAD] GLAD is initializing
+<Wed Sep 11 23:26:23 2019> [WARNING] [GLFW] Setting view port for openGL
+<Wed Sep 11 23:26:23 2019> [DEFAULT] [keyboard] init callback
+<Wed Sep 11 23:26:26 2019> [WARNING] [GLFW] Closing window

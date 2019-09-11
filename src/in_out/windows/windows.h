@@ -2,6 +2,7 @@
 #include <iostream>
 #include <string>
 
+
 #include "../../../dependencies.h"
 
 namespace nerv
@@ -18,10 +19,12 @@ namespace nerv
 		};
 
 		void create(std::string name, int width, int height, bool fullscreen = false);
-		void makeContext();
+
+		void framebufferSizeCallback(GLFWwindow * win, int width, int height);
 		bool isOpen();
 		void close();
 		void update();
+
 		GLFWwindow* display();
 
 	private: 
