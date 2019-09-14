@@ -46,6 +46,8 @@ void nerv::window::create(std::string name, int width, int height, bool fullscre
 
 	logger.warning("GLFW", "Setting view port for openGL");
 	glViewport(0, 0, width, height);
+
+	//todo fix the callback
 	//glfwSetFramebufferSizeCallback(this->display, this->framebufferSizeCallback);
 
 	
