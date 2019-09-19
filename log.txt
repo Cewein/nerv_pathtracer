@@ -1,24 +1,24 @@
 Noodles ready ? you're here for a time!
 
-<Thu Sep 19 00:17:39 2019> [DEFAULT] [init] start of a long journey
-<Thu Sep 19 00:17:39 2019> [LOADING] [Config for window] start loading
-<Thu Sep 19 00:17:39 2019> 		  - open config file
-<Thu Sep 19 00:17:39 2019> 		  - file is open
-<Thu Sep 19 00:17:39 2019> 		  - start of the search
-<Thu Sep 19 00:17:39 2019> 		  - end of the search
-<Thu Sep 19 00:17:39 2019> [LOADING] [Config for window] succesfully loaded in 0.001533s
-<Thu Sep 19 00:17:39 2019> [WARNING] [GLFW] Creating a window
-<Thu Sep 19 00:17:39 2019> [DEFAULT] [GLFW] window full scren state : FALSE
-<Thu Sep 19 00:17:40 2019> [WARNING] [GLFW] making context for the window
-<Thu Sep 19 00:17:40 2019> [WARNING] [GLAD] GLAD is initializing
-<Thu Sep 19 00:17:40 2019> [WARNING] [GLFW] Setting view port for openGL
-<Thu Sep 19 00:17:40 2019> [DEFAULT] [keyboard] init callback
-<Thu Sep 19 00:17:40 2019> [WARNING] [SHADER] Compiling Vertex shader
-<Thu Sep 19 00:17:40 2019> [WARNING] [FILE] Openning file at shader/basic.vert.glsl
-<Thu Sep 19 00:17:40 2019> [WARNING] [SHADER] Shader loaded and compiled proprely
-<Thu Sep 19 00:17:40 2019> [WARNING] [SHADER] Compiling Fragment shader
-<Thu Sep 19 00:17:40 2019> [WARNING] [FILE] Openning file at shader/basic.frag.glsl
-<Thu Sep 19 00:17:40 2019> [WARNING] [SHADER] Shader loaded and compiled proprely
-<Thu Sep 19 00:17:40 2019> [WARNING] [SHADER] Program in creation
-<Thu Sep 19 00:17:40 2019> [WARNING] [SHADER] Program loaded and compiled proprely
-<Thu Sep 19 00:17:48 2019> [WARNING] [GLFW] Closing window
+<Fri Sep 20 00:01:06 2019> [DEFAULT] [init] start of a long journey
+<Fri Sep 20 00:01:06 2019> [LOADING] [Config for window] start loading
+<Fri Sep 20 00:01:06 2019> 		  - open config file
+<Fri Sep 20 00:01:06 2019> 		  - file is open
+<Fri Sep 20 00:01:06 2019> 		  - start of the search
+<Fri Sep 20 00:01:06 2019> 		  - end of the search
+<Fri Sep 20 00:01:06 2019> [LOADING] [Config for window] succesfully loaded in 0.005123s
+<Fri Sep 20 00:01:06 2019> [WARNING] [GLFW] Creating a window
+<Fri Sep 20 00:01:06 2019> [DEFAULT] [GLFW] window full scren state : FALSE
+<Fri Sep 20 00:01:06 2019> [WARNING] [GLFW] making context for the window
+<Fri Sep 20 00:01:06 2019> [WARNING] [GLAD] GLAD is initializing
+<Fri Sep 20 00:01:06 2019> [WARNING] [GLFW] Setting view port for openGL
+<Fri Sep 20 00:01:06 2019> [DEFAULT] [keyboard] init callback
+<Fri Sep 20 00:01:06 2019> [WARNING] [FILE] Openning file at shader/basic.vert.glsl
+<Fri Sep 20 00:01:06 2019> [WARNING] [SHADER] Compiling Vertex shader
+<Fri Sep 20 00:01:06 2019> [WARNING] [SHADER] Shader loaded and compiled proprely
+<Fri Sep 20 00:01:06 2019> [WARNING] [FILE] Openning file at shader/basic.frag.glsl
+<Fri Sep 20 00:01:06 2019> [WARNING] [SHADER] Compiling Fragment shader
+<Fri Sep 20 00:01:06 2019> [WARNING] [SHADER] Shader loaded and compiled proprely
+<Fri Sep 20 00:01:06 2019> [WARNING] [SHADER] Program in creation
+<Fri Sep 20 00:01:06 2019> [WARNING] [SHADER] Program loaded and compiled proprely
+<Fri Sep 20 00:01:17 2019> [WARNING] [GLFW] Closing window

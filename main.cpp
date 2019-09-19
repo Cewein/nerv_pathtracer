@@ -7,12 +7,15 @@ int main()
 {
 	nerv::init::launch();
 
-	nerv::shader basic("shader/basic.vert.glsl", "shader/basic.frag.glsl");
-
 	float vertices[] = {
-		-0.5f, -0.5f, 0.0f, // left  
-		 0.5f, -0.5f, 0.0f, // right 
-		 0.0f,  0.5f, 0.0f  // top   
+		// first triangle
+		 0.5f,  0.5f, 0.0f,  // top right
+		 0.5f, -0.5f, 0.0f,  // bottom right
+		-0.5f,  0.5f, 0.0f,  // top left 
+		// second triangle
+		 0.5f, -0.5f, 0.0f,  // bottom right
+		-0.5f, -0.5f, 0.0f,  // bottom left
+		-0.5f,  0.5f, 0.0f   // top left
 	};
 
 	nerv::object obj(vertices, sizeof(vertices));
@@ -20,8 +23,6 @@ int main()
 	while (nerv::window::get().isOpen()) {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
-
-		basic.use();
 		
 		obj.show();
 

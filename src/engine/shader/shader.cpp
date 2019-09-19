@@ -2,6 +2,8 @@
 #include <glad/glad.h>
 #include "shader.h"
 
+size_t nerv::shader::liveProgram = NULL;
+
 void nerv::shader::shaderInfo(size_t shaderId)
 {
 	int success;
@@ -36,23 +38,45 @@ void nerv::shader::programInfo(size_t program)
 	}
 }
 
+size_t nerv::shader::createShader(std::string path, int shaderType)
+{
+	const char * file = file::read(path);
+	size_t shdr;
+
+	switch (shaderType)
+	{
+	case GL_VERTEX_SHADER:
+		logger.warning("SHADER", "Compiling Vertex shader");
+		shdr = glCreateShader(GL_VERTEX_SHADER);
+		break;
+	case GL_FRAGMENT_SHADER:
+		logger.warning("SHADER", "Compiling Fragment shader");
+		shdr = glCreateShader(GL_FRAGMENT_SHADER);
+		break;
+	case GL_COMPUTE_SHADER:
+		shdr = glCreateShader(GL_COMPUTE_SHADER);
+		break;
+	default:
+		break;
+	}
+
+	glShaderSource(shdr, 1, &file, NULL);
+	glCompileShader(shdr);
+	shaderInfo(shdr);
+
+	return shdr;
+}
+
+nerv::shader::shader()
+{
+}
+
 nerv::shader::shader(std::string vertPath, std::string fragPath)
 {
 	//TODO remove the dup here, to mayn time the same thing
 
-	logger.warning("SHADER", "Compiling Vertex shader");
-	const char * vertexFile = file::read(vertPath);
-	vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexFile, NULL);
-	glCompileShader(vertexShader);
-	shaderInfo(vertexShader);
-
-	logger.warning("SHADER", "Compiling Fragment shader");
-	const char * fragmentFile = file::read(fragPath);
-	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentFile, NULL);
-	glCompileShader(fragmentShader);
-	shaderInfo(fragmentShader);
+	size_t vertexShader = createShader(vertPath, GL_VERTEX_SHADER);
+	size_t fragmentShader = createShader(fragPath, GL_FRAGMENT_SHADER);
 
 	logger.warning("SHADER", "Program in creation");
 	shaderProgram = glCreateProgram();
@@ -69,5 +93,16 @@ nerv::shader::shader(std::string vertPath, std::string fragPath)
 
 void nerv::shader::use()
 {
-	glUseProgram(shaderProgram);
+	if(compare(this))
+		glUseProgram(liveProgram);
+}
+
+bool nerv::shader::compare(nerv::shader * shader)
+{
+	if (shader->shaderProgram != liveProgram)
+	{
+		liveProgram = shader->shaderProgram;
+		return true;
+	}
+	return false;
 }
