@@ -1,8 +1,16 @@
+#include <vector>
+
 #include "../../../dependencies.h"
 #include "../shader/shader.h"
 
 namespace nerv
 {
+	struct mesh
+	{
+		std::vector<float> vertices;
+		std::vector<size_t> indices;
+	};
+
 	class object
 	{
 	private:
@@ -13,16 +21,16 @@ namespace nerv
 		size_t VAO;
 		size_t EBO;
 
+		mesh mesh;
 
-		float * vertices;
-		size_t * indices;
+		bool isElements;
 
 		int size;
 		object();
 	public:
 
-		object(float * vertex, int size);
-		object(float * vertex, size_t * indices, int size);
+		object(std::vector<float> vertices);
+		object(std::vector<float> vertices, std::vector<size_t>  indices);
 
 		void show();
 
