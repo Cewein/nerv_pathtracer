@@ -2,7 +2,23 @@
 #include <glad/glad.h>
 #include "object.h"
 
-nerv::object::object(std::vector<float> vertices)
+void nerv::object::createShader(std::string fragPath, std::string vertPath)
+{
+	if (!fragPath.empty())
+	{
+		objectShader = shader("shader/basic.vert.glsl", fragPath);
+	}
+	else if (!fragPath.empty() && !vertPath.empty())
+	{
+		objectShader = shader(vertPath, fragPath);
+	}
+	else
+	{
+		objectShader = shader("shader/basic.vert.glsl", "shader/basic.frag.glsl");
+	}
+}
+
+nerv::object::object(std::vector<float> vertices, std::string fragPath, std::string vertPath)
 {
 	this->size = vertices.size();
 	glGenVertexArrays(1, &VAO);
@@ -22,11 +38,11 @@ nerv::object::object(std::vector<float> vertices)
 
 	mesh.vertices = vertices;
 
-	objectShader = shader("shader/basic.vert.glsl", "shader/basic.frag.glsl");
+	createShader(fragPath, vertPath);
 
 }
 
-nerv::object::object(std::vector<float> vertices, std::vector<size_t> indices)
+nerv::object::object(std::vector<float> vertices, std::vector<size_t> indices, std::string fragPath, std::string vertPath)
 {
 	this->size = indices.size();
 	glGenVertexArrays(1, &VAO);
@@ -51,7 +67,14 @@ nerv::object::object(std::vector<float> vertices, std::vector<size_t> indices)
 	mesh.vertices = vertices;
 	mesh.indices = indices;
 
-	objectShader = shader("shader/basic.vert.glsl", "shader/basic.frag.glsl");
+	createShader(fragPath, vertPath);
+}
+
+nerv::object::~object()
+{
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
 }
 
 void nerv::object::show()
@@ -67,4 +90,20 @@ void nerv::object::show()
 int nerv::object::getSize()
 {
 	return size;
+}
+
+nerv::Mesh nerv::object::getMesh()
+{
+	return mesh;
+}
+
+nerv::object nerv::object::setMesh(nerv::Mesh mesh)
+{
+	this->mesh = mesh;
+
+	object temp = isElements ? object(this->mesh.vertices, this->mesh.indices): object(this->mesh.vertices);
+	temp.objectShader = this->objectShader;
+
+	return temp;
+
 }

@@ -19,12 +19,13 @@ int main()
 		1, 2, 3    // second triangle
 	};
 
-	nerv::object obj(vertices, indices);
+	nerv::object obj(vertices, indices, "shader/blue.frag.glsl");
 
 	while (nerv::window::get().isOpen()) {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		
+		obj.objectShader.setFloat("iTime", glfwGetTime());
 		obj.show();
 
 		nerv::window::get().update();
