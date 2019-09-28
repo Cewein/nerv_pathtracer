@@ -73,7 +73,7 @@ void nerv::window::close()
 
 void nerv::window::update()
 {
-	glfwSwapBuffers(glfwDisplay);
+	glfwSwapBuffers(this->glfwDisplay);
 	glfwPollEvents();
 }
 

@@ -17,7 +17,7 @@ namespace nerv
 		} setting;
 
 		//load a config file and return a vector of all the data field for the specified field
-		std::vector<setting> getSetting(std::string filePath, std::string field);
+		std::vector<nerv::config::setting> getSetting(std::string filePath, std::string field);
 		
 	}
 }

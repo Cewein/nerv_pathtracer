@@ -62,7 +62,7 @@ size_t nerv::shader::createShader(std::string path, int shaderType)
 
 	glShaderSource(shdr, 1, &file, NULL);
 	glCompileShader(shdr);
-	shaderInfo(shdr);
+	this->shaderInfo(shdr);
 
 	return shdr;
 }
@@ -73,19 +73,17 @@ nerv::shader::shader()
 
 nerv::shader::shader(std::string vertPath, std::string fragPath)
 {
-	//TODO remove the dup here, to mayn time the same thing
-
-	size_t vertexShader = createShader(vertPath, GL_VERTEX_SHADER);
-	size_t fragmentShader = createShader(fragPath, GL_FRAGMENT_SHADER);
+	size_t vertexShader = this->createShader(vertPath, GL_VERTEX_SHADER);
+	size_t fragmentShader = this->createShader(fragPath, GL_FRAGMENT_SHADER);
 
 	logger.warning("SHADER", "Program in creation");
-	shaderProgram = glCreateProgram();
+	this->shaderProgram = glCreateProgram();
 
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
+	glAttachShader(this->shaderProgram, vertexShader);
+	glAttachShader(this->shaderProgram, fragmentShader);
+	glLinkProgram(this->shaderProgram);
 
-	programInfo(shaderProgram);
+	programInfo(this->shaderProgram);
 
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
@@ -94,14 +92,14 @@ nerv::shader::shader(std::string vertPath, std::string fragPath)
 void nerv::shader::use()
 {
 	if(compare(this))
-		glUseProgram(liveProgram);
+		glUseProgram(nerv::shader::liveProgram);
 }
 
 bool nerv::shader::compare(nerv::shader * shader)
 {
-	if (shader->shaderProgram != liveProgram)
+	if (shader->shaderProgram != nerv::shader::liveProgram)
 	{
-		liveProgram = shader->shaderProgram;
+		nerv::shader::liveProgram = shader->shaderProgram;
 		return true;
 	}
 	return false;

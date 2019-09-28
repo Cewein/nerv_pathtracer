@@ -3,7 +3,7 @@
 std::vector<nerv::config::setting> nerv::config::getSetting(std::string filePath, std::string field)
 {
 	logger.startInit("Config for " + field);
-	std::vector<setting> data;
+	std::vector<nerv::config::setting> data;
 	logger.initLog("open config file");
 	std::ifstream conf(filePath);
 
@@ -21,7 +21,7 @@ std::vector<nerv::config::setting> nerv::config::getSetting(std::string filePath
 			if (inField)
 			{
 				std::size_t pos = line.find('=');
-				setting stg = {
+				nerv::config::setting stg = {
 					line.substr(0, pos),
 
 					0

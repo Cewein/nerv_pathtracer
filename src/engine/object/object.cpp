@@ -2,19 +2,19 @@
 #include <glad/glad.h>
 #include "object.h"
 
-void nerv::object::createShader(std::string fragPath, std::string vertPath)
+void nerv::object::createObjectShader(std::string fragPath, std::string vertPath)
 {
 	if (!fragPath.empty())
 	{
-		objectShader = shader("shader/basic.vert.glsl", fragPath);
+		this->objectShader = nerv::shader("shader/basic.vert.glsl", fragPath);
 	}
 	else if (!fragPath.empty() && !vertPath.empty())
 	{
-		objectShader = shader(vertPath, fragPath);
+		this->objectShader = nerv::shader(vertPath, fragPath);
 	}
 	else
 	{
-		objectShader = shader("shader/basic.vert.glsl", "shader/basic.frag.glsl");
+		this->objectShader = nerv::shader("shader/basic.vert.glsl", "shader/basic.frag.glsl");
 	}
 }
 
@@ -34,11 +34,11 @@ nerv::object::object(std::vector<float> vertices, std::string fragPath, std::str
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	isElements = false;
+	this->isElements = false;
 
-	mesh.vertices = vertices;
+	this->mesh.vertices = vertices;
 
-	createShader(fragPath, vertPath);
+	this->createObjectShader(fragPath, vertPath);
 
 }
 
@@ -49,12 +49,12 @@ nerv::object::object(std::vector<float> vertices, std::vector<size_t> indices, s
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &EBO);
 
-	glBindVertexArray(VAO);
+	glBindVertexArray(this->VAO);
 
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(vertices), &vertices.front(), GL_STATIC_DRAW);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(indices), &indices.front(), GL_STATIC_DRAW);
 
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
@@ -62,12 +62,12 @@ nerv::object::object(std::vector<float> vertices, std::vector<size_t> indices, s
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-	isElements = true;
+	this->isElements = true;
 
-	mesh.vertices = vertices;
-	mesh.indices = indices;
+	this->mesh.vertices = vertices;
+	this->mesh.indices = indices;
 
-	createShader(fragPath, vertPath);
+	this->createObjectShader(fragPath, vertPath);
 }
 
 nerv::object::~object()
@@ -79,29 +79,30 @@ nerv::object::~object()
 
 void nerv::object::show()
 {
-	objectShader.use();
-	glBindVertexArray(VAO);
-	if (isElements)
-		glDrawElements(GL_TRIANGLES, size, GL_UNSIGNED_INT, 0);
+	this->objectShader.use();
+	glBindVertexArray(this->VAO);
+	if (this->isElements)
+		glDrawElements(GL_TRIANGLES, this->size, GL_UNSIGNED_INT, 0);
 	else
-	glDrawArrays(GL_TRIANGLES, 0, size);
+	glDrawArrays(GL_TRIANGLES, 0, this->size);
 }
 
 int nerv::object::getSize()
 {
-	return size;
+	return this->size;
 }
 
-nerv::Mesh nerv::object::getMesh()
+nerv::mesh nerv::object::getMesh()
 {
-	return mesh;
+	return this->mesh;
 }
 
-nerv::object nerv::object::setMesh(nerv::Mesh mesh)
+nerv::object nerv::object::setMesh(nerv::mesh mesh)
 {
 	this->mesh = mesh;
 
-	object temp = isElements ? object(this->mesh.vertices, this->mesh.indices): object(this->mesh.vertices);
+	//WRONG NEED TO REDO THIS PART IS WROOOOONG
+	nerv::object temp = this->isElements ? nerv::object(this->mesh.vertices, this->mesh.indices): nerv::object(this->mesh.vertices);
 	temp.objectShader = this->objectShader;
 
 	return temp;
