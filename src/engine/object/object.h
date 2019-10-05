@@ -1,3 +1,4 @@
+#pragma once
 #include <vector>
 
 #include "../../../dependencies.h"
@@ -14,7 +15,6 @@ namespace nerv
 	class object
 	{
 	private:
-
 
 		size_t VBO;
 		size_t VAO;

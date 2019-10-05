@@ -19,3 +19,4 @@
 #include "env/init/init.h"
 #include "engine/shader/shader.h"
 #include "engine/object/object.h"
+#include "engine/scene.h"

@@ -21,15 +21,26 @@ int main()
 
 	nerv::object obj(vertices, indices, "shader/blue.frag.glsl");
 
+	nerv::scene * worldScene = new nerv::scene();
+	worldScene->add(&obj);
+	worldScene->add(&obj);
+	worldScene->add(&obj);
+	worldScene->add(&obj);
+	worldScene->add(&obj);
+	worldScene->add(&obj);
+	worldScene->showTreeConsole();
+
 	while (nerv::window::get().isOpen()) {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		
-		obj.objectShader.setFloat("iTime", glfwGetTime());
+		//obj.objectShader.setFloat("iTime", glfwGetTime());
 		obj.show();
 
 		nerv::window::get().update();
 	}
+
+	delete worldScene;
 
 	nerv::window::get().close();
 	return EXIT_SUCCESS;
