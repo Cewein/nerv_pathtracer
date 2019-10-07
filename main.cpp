@@ -14,7 +14,7 @@ int main()
 	-0.5f,  0.5f, 0.0f   // top left 
 	};
 
-	std::vector <size_t> indices = {  // note that we start from 0!
+	std::vector<size_t> indices = {  // note that we start from 0!
 		0, 1, 3,   // first triangle
 		1, 2, 3    // second triangle
 	};
@@ -23,18 +23,13 @@ int main()
 
 	nerv::scene * worldScene = new nerv::scene();
 	worldScene->add(&obj);
-	worldScene->add(&obj);
-	worldScene->add(&obj);
-	worldScene->add(&obj);
-	worldScene->add(&obj);
-	worldScene->add(&obj);
 	worldScene->showTreeConsole();
 
 	while (nerv::window::get().isOpen()) {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		
-		//obj.objectShader.setFloat("iTime", glfwGetTime());
+		obj.objectShader.setFloat("iTime", glfwGetTime());
 		obj.show();
 
 		nerv::window::get().update();
