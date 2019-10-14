@@ -2,6 +2,9 @@
 
 uniform float iTime;
 
+in vec3 iColor;
+in vec2 iTexCoord;
+
 out vec4 FragColor;
 
 void main()
