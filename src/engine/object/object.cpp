@@ -26,15 +26,7 @@ nerv::object::object(std::vector<float> &vertices, nerv::material * material)
 
 	vertices.clear();
 
-	this->material = material;
-
-	if (material == nullptr)
-	{
-		this->material = new nerv::material(
-			new nerv::texture("resources/default.png"),
-			new nerv::shader(std::string(), std::string())
-		);
-	}
+	setMaterial(material);
 
 }
 
@@ -68,13 +60,7 @@ nerv::object::object(std::vector<float> &vertices, std::vector<size_t> &indices,
 	indices.clear();
 
 
-	if (material == nullptr)
-		this->material = new nerv::material(
-			new nerv::texture("resources/default.png"), 
-			new nerv::shader(std::string(), std::string())
-		);
-	else
-		this->material = material;
+	setMaterial(material);
 
 }
 
@@ -100,4 +86,15 @@ void nerv::object::show()
 int nerv::object::getSize()
 {
 	return this->size;
+}
+
+void nerv::object::setMaterial(nerv::material * material)
+{
+	if (material == nullptr)
+		this->material = new nerv::material(
+			new nerv::texture("resources/default.png"),
+			new nerv::shader(std::string(), std::string())
+		);
+	else
+		this->material = material;
 }

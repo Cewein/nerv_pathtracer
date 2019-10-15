@@ -20,10 +20,11 @@ namespace nerv
 		object();
 
 
-	public:
-		nerv::material * material;
 
-		nerv::shader objectShader;
+	public:
+
+		nerv::material * material;
+		void setMaterial(nerv::material * material);
 
 		//constructor and destructor
 
