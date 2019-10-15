@@ -2,8 +2,7 @@
 #include <vector>
 
 #include "../../../dependencies.h"
-#include "../shader/shader.h"
-#include "texture.h"
+#include "../material/material.h"
 
 namespace nerv
 {
@@ -20,22 +19,19 @@ namespace nerv
 		int size;
 		object();
 
-		nerv::texture * texture;
-
-		void createObjectShader(std::string fragPath = std::string(), std::string vertPath = std::string());
 
 	public:
+		nerv::material * material;
 
 		nerv::shader objectShader;
 
 		//constructor and destructor
 
-		object(std::vector<float> &vertices, std::string fragPath = std::string(), std::string vertPath = std::string());
-		object(std::vector<float> &vertices, std::vector<size_t> &indices, std::string fragPath = std::string(), std::string vertPath = std::string());
+		object(std::vector<float> &vertices, nerv::material * material = nullptr);
+		object(std::vector<float> &vertices, std::vector<size_t> &indices, nerv::material * material = nullptr);
 		~object();
 
 		void show();
-		void addTexture(std::string path);
 
 		int getSize();
 

@@ -20,8 +20,7 @@ int main()
 		1, 2, 3    // second triangle
 	};
 
-	nerv::object obj(vertices, indices);
-	obj.addTexture("C:/texture.png");
+	nerv::object obj(vertices, indices, new nerv::material(new nerv::texture("resources/default.png"), new nerv::shader("shader/blue.frag.glsl")));
 
 	nerv::scene * worldScene = new nerv::scene();
 
@@ -29,7 +28,7 @@ int main()
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 		
-		obj.objectShader.setFloat("iTime", glfwGetTime());
+		obj.material->shaderprog->setFloat("iTime", glfwGetTime());
 		//obj.objectShader.setInt("simple", obj.)
 		obj.show();
 

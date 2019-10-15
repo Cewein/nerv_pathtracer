@@ -17,6 +17,7 @@
 #include "in_out/input/keyboard.h"
 #include "in_out/file.h"
 #include "env/init/init.h"
-#include "engine/shader/shader.h"
+#include "engine/material/shader.h"
+#include "engine/material/texture.h"
 #include "engine/object/object.h"
 #include "engine/scene.h"

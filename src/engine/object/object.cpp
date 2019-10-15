@@ -2,23 +2,7 @@
 #include <glad/glad.h>
 #include "object.h"
 
-void nerv::object::createObjectShader(std::string fragPath, std::string vertPath)
-{
-	if (!fragPath.empty())
-	{
-		this->objectShader = nerv::shader("shader/basic.vert.glsl", fragPath);
-	}
-	else if (!fragPath.empty() && !vertPath.empty())
-	{
-		this->objectShader = nerv::shader(vertPath, fragPath);
-	}
-	else
-	{
-		this->objectShader = nerv::shader("shader/basic.vert.glsl", "shader/basic.frag.glsl");
-	}
-}
-
-nerv::object::object(std::vector<float> &vertices, std::string fragPath, std::string vertPath)
+nerv::object::object(std::vector<float> &vertices, nerv::material * material)
 {
 	this->size = vertices.size();
 	glGenVertexArrays(1, &VAO);
@@ -42,11 +26,19 @@ nerv::object::object(std::vector<float> &vertices, std::string fragPath, std::st
 
 	vertices.clear();
 
-	this->createObjectShader(fragPath, vertPath);
+	this->material = material;
+
+	if (material == nullptr)
+	{
+		this->material = new nerv::material(
+			new nerv::texture("resources/default.png"),
+			new nerv::shader(std::string(), std::string())
+		);
+	}
 
 }
 
-nerv::object::object(std::vector<float> &vertices, std::vector<size_t> &indices, std::string fragPath, std::string vertPath)
+nerv::object::object(std::vector<float> &vertices, std::vector<size_t> &indices, nerv::material * material)
 {
 	this->size = indices.size();
 	glGenVertexArrays(1, &VAO);
@@ -75,12 +67,20 @@ nerv::object::object(std::vector<float> &vertices, std::vector<size_t> &indices,
 	vertices.clear();
 	indices.clear();
 
-	this->createObjectShader(fragPath, vertPath);
+
+	if (material == nullptr)
+		this->material = new nerv::material(
+			new nerv::texture("resources/default.png"), 
+			new nerv::shader(std::string(), std::string())
+		);
+	else
+		this->material = material;
+
 }
 
 nerv::object::~object()
 {
-	delete(this->texture);
+	delete(this->material);
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
@@ -88,21 +88,13 @@ nerv::object::~object()
 
 void nerv::object::show()
 {
-	this->objectShader.use();
-	if (texture)
-	{
-		glBindTexture(GL_TEXTURE_2D, this->texture->getId());
-	}
+	
+	this->material->use();
 	glBindVertexArray(this->VAO);
 	if (this->isElements)
 		glDrawElements(GL_TRIANGLES, this->size, GL_UNSIGNED_INT, 0);
 	else
 	glDrawArrays(GL_TRIANGLES, 0, this->size);
-}
-
-void nerv::object::addTexture(std::string path)
-{
-	this->texture = new nerv::texture(path);
 }
 
 int nerv::object::getSize()
