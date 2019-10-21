@@ -34,9 +34,13 @@ nerv::texture::texture(std::string path)
 		}
 		glGenerateMipmap(GL_TEXTURE_2D);
 		logger.initLog("uploaded texture to GC");
+		stbi_image_free(data);
+		logger.initLog("cleaned texture's data");
 	}
-	stbi_image_free(data);
-	logger.initLog("cleaned texture's data");
+	else
+	{
+		logger.initLog("error while openning the texture");
+	}
 
 	logger.endInit();
 

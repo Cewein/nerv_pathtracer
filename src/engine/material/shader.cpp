@@ -100,6 +100,8 @@ void nerv::shader::use()
 {
 	if(compare(this))
 		glUseProgram(nerv::shader::liveProgram);
+
+	this->setVec2("screenResolution", nerv::window::get().width, nerv::window::get().height);
 }
 
 bool nerv::shader::compare(nerv::shader * shader)

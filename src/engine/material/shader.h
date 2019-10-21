@@ -3,6 +3,7 @@
 
 #include "../../../dependencies.h"
 #include "../../in_out/file.h"
+#include "../../in_out/windows/windows.h"
 
 namespace nerv {
 	class shader
@@ -22,6 +23,7 @@ namespace nerv {
 
 		inline void setInt(std::string name, int value) { glUniform1i(glGetUniformLocation(shaderProgram, name.c_str()), value); }
 		inline void setFloat(std::string name, float value) { glUniform1f(glGetUniformLocation(shaderProgram, name.c_str()), value); }
+		inline void setVec2(std::string name, float x, float y) { glUniform2f(glGetUniformLocation(shaderProgram, name.c_str()), x, y); }
 		//inline void setVec3(char * name, vec3 value) { glUniform3fv(glGetUniformLocation(shaderProgram, name), 1, &value[0]); }
 		inline void setVec3(std::string name, float x, float y, float z) { glUniform3f(glGetUniformLocation(shaderProgram, name.c_str()), x, y, z); }
 		//inline void setVec4(char * name, vec4 value) { glUniform4fv(glGetUniformLocation(shaderProgram, name), 1, &value[0]); }

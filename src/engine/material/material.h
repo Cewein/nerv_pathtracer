@@ -15,6 +15,8 @@ namespace nerv
 	public:
 		nerv::shader * shaderprog;
 		nerv::texture * texture;
+		nerv::texture * normal;
+		nerv::texture * specular;
 
 		material();
 		material(nerv::texture * texturePtr, nerv::shader * shaderPtr = nullptr);

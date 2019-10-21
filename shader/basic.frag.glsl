@@ -5,9 +5,11 @@ in vec2 iTexCoord;
 
 out vec4 FragColor;
 
-uniform sampler2D simple;
+uniform sampler2D text;
+uniform sampler2D norm;
+uniform sampler2D spec;
 
 void main()
 {
-	FragColor = texture(simple, iTexCoord);
+	FragColor = mix(texture(text, iTexCoord),texture(norm, iTexCoord),0.4);
 }
