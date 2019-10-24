@@ -4,3 +4,6 @@
 [submodule "Logarsh"]
 	path = Logarsh
 	url = https://github.com/cewein/Logarsh
+[submodule "glm"]
+	path = glm
+	url = git://github.com/g-truc/glm.git
