@@ -30,19 +30,9 @@ void nerv::material::setShader(nerv::shader * shaderPtr)
 	this->shaderprog = shaderPtr;
 }
 
-void nerv::material::createShader(std::string vertPath, std::string fragPath)
-{
-	this->shaderprog = new nerv::shader(vertPath, fragPath);
-}
-
 void nerv::material::setTexture(nerv::texture * texturePtr)
 {
 	this->texture = texturePtr;
-}
-
-void nerv::material::createTexture(std::string texturePath)
-{
-	this->texture = new nerv::texture(texturePath);
 }
 
 void nerv::material::use()

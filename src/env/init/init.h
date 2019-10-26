@@ -10,6 +10,9 @@
 
 namespace nerv{
 	namespace init{
+		//lauch the application and load config
+		//as of now it's a poor launcher function
+		//but do the job
 		void launch();
 	};
 }
