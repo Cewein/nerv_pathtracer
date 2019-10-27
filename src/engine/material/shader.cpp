@@ -102,6 +102,7 @@ void nerv::shader::use()
 		glUseProgram(nerv::shader::liveProgram);
 
 	this->setVec2("screenResolution", nerv::window::get().width, nerv::window::get().height);
+	this->setFloat("iTime", glfwGetTime());
 }
 
 bool nerv::shader::compare(nerv::shader * shader)

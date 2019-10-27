@@ -37,12 +37,12 @@ namespace nerv
 		inline void setInt(std::string name, int value) { glUniform1i(glGetUniformLocation(shaderProgram, name.c_str()), value); }
 		inline void setFloat(std::string name, float value) { glUniform1f(glGetUniformLocation(shaderProgram, name.c_str()), value); }
 		inline void setVec2(std::string name, float x, float y) { glUniform2f(glGetUniformLocation(shaderProgram, name.c_str()), x, y); }
-		inline void setVec3(char * name, glm::vec3 value) { glUniform3fv(glGetUniformLocation(shaderProgram, name), 1, &value[0]); }
+		inline void setVec3(std::string name, glm::vec3 value) { glUniform3fv(glGetUniformLocation(shaderProgram, name.c_str()), 1, &value[0]); }
 		inline void setVec3(std::string name, float x, float y, float z) { glUniform3f(glGetUniformLocation(shaderProgram, name.c_str()), x, y, z); }
-		inline void setVec4(char * name, glm::vec4 value) { glUniform4fv(glGetUniformLocation(shaderProgram, name), 1, &value[0]); }
+		inline void setVec4(std::string name, glm::vec4 value) { glUniform4fv(glGetUniformLocation(shaderProgram, name.c_str()), 1, &value[0]); }
 		inline void setVec4(std::string name, float x, float y, float z, float w) { glUniform4f(glGetUniformLocation(shaderProgram, name.c_str()), x, y, z, w); }
-		inline void setMat3(char * name, glm::mat3 value) { glUniformMatrix3fv(glGetUniformLocation(shaderProgram, name), 1, GL_FALSE, &value[0][0]); }
-		inline void setMat4(char * name, glm::mat4 value) { glUniformMatrix4fv(glGetUniformLocation(shaderProgram, name), 1, GL_FALSE, &value[0][0]); }
+		inline void setMat3(std::string name, glm::mat3 value) { glUniformMatrix3fv(glGetUniformLocation(shaderProgram, name.c_str()), 1, GL_FALSE, &value[0][0]); }
+		inline void setMat4(std::string name, glm::mat4 value) { glUniformMatrix4fv(glGetUniformLocation(shaderProgram, name.c_str()), 1, GL_FALSE, &value[0][0]); }
 
 		shader();
 
