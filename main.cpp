@@ -27,8 +27,8 @@ int main()
 	while (nerv::window::get().isOpen()) {
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
-
-		obj.rotate(glm::radians(90.0) + glfwGetTime() * 50.0, glm::vec3(0., 0., 1.));
+		
+		obj.transform->rotate(glm::radians(90.0) + glfwGetTime() * 50.0, glm::vec3(0., 0., 1.));
 		obj.show();
 
 		nerv::window::get().update();

@@ -27,7 +27,7 @@ nerv::object::object(std::vector<float> &vertices, nerv::material * material)
 	vertices.clear();
 
 	setMaterial(material);
-	this->transform = glm::mat4(1.0f);
+	this->transform = new nerv::transform();
 }
 
 nerv::object::object(std::vector<float> &vertices, std::vector<size_t> &indices, nerv::material * material)
@@ -61,48 +61,29 @@ nerv::object::object(std::vector<float> &vertices, std::vector<size_t> &indices,
 
 
 	setMaterial(material);
-	this->transform = glm::mat4(1.0f);
+	this->transform = new nerv::transform();
 }
 
 nerv::object::~object()
 {
 	delete(this->material);
+	delete(this->transform);
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
 
 }
 
-void nerv::object::translate(glm::vec3 move)
-{
-	this->transform = glm::translate(this->transform, move);
-}
-
-void nerv::object::rotate(double angle, glm::vec3 axes)
-{
-	this->transform = glm::rotate(this->transform, (float)glm::radians(angle), axes);
-}
-
-void nerv::object::scale(glm::vec3 scale)
-{
-	this->transform = glm::scale(this->transform, scale);
-}
-
-glm::mat4x4 nerv::object::getTransformMatrix()
-{
-	return this->transform;
-}
-
 void nerv::object::show()
 {
 	this->material->use();
-	this->material->shaderprog->setMat4("transform", this->transform);
+	this->material->shaderprog->setMat4("transform", this->transform->getTransformMatrix());
 	glBindVertexArray(this->VAO);
 	if (this->isElements)
 		glDrawElements(GL_TRIANGLES, this->size, GL_UNSIGNED_INT, 0);
 	else
 	glDrawArrays(GL_TRIANGLES, 0, this->size);
-	this->transform = glm::mat4(1.0f);
+	this->transform->reset();
 }
 
 int nerv::object::getSize()
