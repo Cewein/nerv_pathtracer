@@ -21,3 +21,4 @@
 #include "engine/material/texture.h"
 #include "engine/object/object.h"
 #include "engine/scene.h"
+#include "engine/object/camera.h"

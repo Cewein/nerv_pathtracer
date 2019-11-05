@@ -76,7 +76,10 @@ nerv::object::~object()
 
 void nerv::object::show()
 {
-	this->material->use();
+	//this->material->use();
+
+	
+
 	this->material->shaderprog->setMat4("transform", this->transform->getTransformMatrix());
 	glBindVertexArray(this->VAO);
 	if (this->isElements)

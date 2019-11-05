@@ -62,6 +62,8 @@ void nerv::window::framebufferSizeCallback(GLFWwindow * window, int width, int h
 
 bool nerv::window::isOpen()
 {
+	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
 	return !glfwWindowShouldClose(this->glfwDisplay);
 }
 
