@@ -37,6 +37,15 @@ nerv::camera::~camera()
 void nerv::camera::sendInfo()
 {
 	glUniformMatrix4fv(glGetUniformLocation(nerv::shader::liveProgram, "projection"), 1, GL_FALSE, &projection[0][0]);
-	glUniformMatrix4fv(glGetUniformLocation(nerv::shader::liveProgram, "view"), 1, GL_FALSE, &transform->getTransformMatrix()[0][0]);
+	
+	//temp
+	float radius = 10.0f;
+	float camX = sin(glfwGetTime()) * radius;
+	float camZ = cos(glfwGetTime()) * radius;
+	nerv::transform * view = new nerv::transform();
+
+	view->translate(glm::vec3(camX, 0.0, camZ));
+
+	glUniformMatrix4fv(glGetUniformLocation(nerv::shader::liveProgram, "view"), 1, GL_FALSE, &glm::inverse(view->getTransformMatrix())[0][0]);
 	this->transform->reset();
 }

@@ -4,7 +4,7 @@
 
 nerv::object::object(std::vector<float> &vertices, nerv::material * material)
 {
-	this->size = vertices.size();
+	this->size = (vertices.size() / 8);
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 

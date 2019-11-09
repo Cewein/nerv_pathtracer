@@ -15,7 +15,6 @@ out vec2 iTexCoord;
 
 void main()
 {
-	gl_Position =  projection * view * transform * vec4(aPos, 1.); 
-	iColor = aColor;
+	gl_Position =  projection * view * transform * vec4(aPos, 1.);
 	iTexCoord = aTexCoord;
 }

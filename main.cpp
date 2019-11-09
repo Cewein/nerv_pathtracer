@@ -8,33 +8,81 @@ int main()
 	nerv::init::launch();
 
 	std::vector<float> vertices = {
-    // positions          // colors           // texture coords
-     0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
-     0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
-    -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-    -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
+	-0.5f, -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 0.0f, 0.0f,
+	 0.5f, -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 1.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 1.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 1.0f, 1.0f,
+	-0.5f,  0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 0.0f, 0.0f,
+	-0.5f, -0.5f,  0.5f, 0.5f,  0.0f, 0.0f, 0.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f, 0.5f,  0.0f, 0.0f, 1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f, 0.5f,  0.0f, 0.0f, 1.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f, 0.5f,  0.0f, 0.0f, 1.0f, 1.0f,
+	-0.5f,  0.5f,  0.5f, 0.5f,  0.0f, 0.0f, 0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f, 0.5f,  0.0f, 0.0f, 0.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f, 0.5f,  0.0f, 0.0f, 1.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 1.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 0.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 0.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f, 0.5f,  0.0f, 0.0f, 0.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f, 0.5f,  0.0f, 0.0f, 1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f, 0.5f,  0.0f, 0.0f, 1.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 1.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 0.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 0.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f, 0.5f,  0.0f, 0.0f, 0.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f, 0.5f,  0.0f, 0.0f, 1.0f, 0.0f,
+	-0.5f, -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 0.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 1.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f, 0.5f,  0.0f, 0.0f, 1.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f, 0.5f,  0.0f, 0.0f, 1.0f, 0.0f,
+	-0.5f, -0.5f,  0.5f, 0.5f,  0.0f, 0.0f, 0.0f, 0.0f,
+	-0.5f, -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 0.0f, 1.0f,
+	-0.5f,  0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 0.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 1.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f, 0.5f,  0.0f, 0.0f, 1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f, 0.5f,  0.0f, 0.0f, 1.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f, 0.5f,  0.0f, 0.0f, 0.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 0.0f, 1.0f
 	};
+
 	std::vector<size_t> indices = {  // note that we start from 0!
 		0, 1, 3,   // first triangle
 		1, 2, 3    // second triangle
 	};
 
-	nerv::object obj(vertices, indices, new nerv::material(new nerv::texture("resources/default.png")));
+	glm::vec3 cubePositions[] = {
+		glm::vec3(0.0f,  0.0f,  0.0f),
+		glm::vec3(2.0f,  5.0f, -15.0f),
+		glm::vec3(-1.5f, -2.2f, -2.5f),
+		glm::vec3(-3.8f, -2.0f, -12.3f),
+		glm::vec3(2.4f, -0.4f, -3.5f),
+		glm::vec3(-1.7f,  3.0f, -7.5f),
+		glm::vec3(1.3f, -2.0f, -2.5f),
+		glm::vec3(1.5f,  2.0f, -2.5f),
+		glm::vec3(1.5f,  0.2f, -1.5f),
+		glm::vec3(-1.3f,  1.0f, -1.5f)
+	};
+
+	nerv::object obj(vertices, new nerv::material(new nerv::texture("resources/default.png")));
 
 	nerv::scene * worldScene = new nerv::scene();
 	nerv::camera cam(nerv::camera::projectionType::PERSPECTIVE_PROJECTION);
 
 	while (nerv::window::get().isOpen()) {
 		
-		obj.transform->rotate(glm::radians(90.0) + glfwGetTime() * 50.0, glm::vec3(1., 0.0, 1.));
-		cam.transform->translate(glm::vec3(0., 0., -3.));
-
-
 
 		obj.material->use();
+		cam.transform->translate(glm::vec3(0., 0., -3.));
 		cam.sendInfo();
 
-		obj.show();
+		for (int i = 0; i < 10; i++)
+		{
+			obj.transform->translate(cubePositions[i]);
+			obj.transform->rotate(20.0 * i, glm::vec3(1., 0.0, 1.));
+			obj.show();
+		}
+
 		nerv::window::get().update();
 	}
 
