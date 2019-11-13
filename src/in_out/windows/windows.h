@@ -4,6 +4,8 @@
 
 
 #include "../../../dependencies.h"
+#define WINDOW_GLFW_DISPLAY nerv::window::get().display() 
+
 
 namespace nerv
 {
@@ -12,6 +14,7 @@ namespace nerv
 		int width;
 		int height;
 		std::string name;
+		
 
 		//singelton for the windows so it can be access everywhere
 		static window& get() {
@@ -27,10 +30,16 @@ namespace nerv
 		void close();
 		void update();
 
+		//time function
+		void calculateDeltaTime();
+		inline float getDeltaTime() { return deltaTime; };
+
 		//actual GLFW display, everything is in it, see GLFW docs for more info
 		GLFWwindow* display();
 
 	private: 
+		float deltaTime;
+		float lastFrame;
 		GLFWwindow* glfwDisplay;
 		window() {}
 	};

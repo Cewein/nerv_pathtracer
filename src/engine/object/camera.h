@@ -18,6 +18,8 @@ namespace nerv
 		//placement of the camera
 		nerv::transform * transform;
 		
+		float speed;
+
 		enum projectionType
 		{
 			PERSPECTIVE_PROJECTION,

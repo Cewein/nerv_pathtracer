@@ -47,6 +47,9 @@ void nerv::window::create(std::string name, int width, int height, bool fullscre
 	logger.warning("GLFW", "Setting view port for openGL");
 	glViewport(0, 0, width, height);
 
+	this->deltaTime = 0.0f;
+	this->lastFrame = 0.0f;
+
 	//todo fix the callback
 	//glfwSetFramebufferSizeCallback(this->display, this->framebufferSizeCallback);
 
@@ -76,8 +79,16 @@ void nerv::window::close()
 
 void nerv::window::update()
 {
+	calculateDeltaTime();
 	glfwSwapBuffers(this->glfwDisplay);
 	glfwPollEvents();
+}
+
+void nerv::window::calculateDeltaTime()
+{
+	float currentFrame = glfwGetTime();
+	this->deltaTime = currentFrame - lastFrame;
+	this->lastFrame = currentFrame;
 }
 
 GLFWwindow* nerv::window::display()

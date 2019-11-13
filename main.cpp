@@ -67,22 +67,22 @@ int main()
 	nerv::object obj(vertices, new nerv::material(new nerv::texture("resources/default.png")));
 
 	nerv::scene * worldScene = new nerv::scene();
-	nerv::camera cam(nerv::camera::projectionType::PERSPECTIVE_PROJECTION);
+	nerv::camera * cam = new nerv::camera(nerv::camera::projectionType::PERSPECTIVE_PROJECTION);
+	cam->transform->translate(glm::vec3(0., 0., 3.));
 
 	while (nerv::window::get().isOpen()) {
 		
 
-		obj.material->use();
-		cam.transform->translate(glm::vec3(0., 0., -3.));
-		cam.sendInfo();
+		cam->sendInfo();
 
 		for (int i = 0; i < 10; i++)
 		{
 			obj.transform->translate(cubePositions[i]);
-			obj.transform->rotate(20.0 * i, glm::vec3(1., 0.0, 1.));
+			obj.transform->rotate(20.0 * i + glfwGetTime(), glm::vec3(1., 0.0, 1.));
 			obj.show();
 		}
 
+		nerv::keyboard::updateCameraKeyboard(cam);
 		nerv::window::get().update();
 	}
 

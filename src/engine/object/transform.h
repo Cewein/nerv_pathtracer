@@ -8,15 +8,16 @@ namespace nerv
 	{
 	private:
 
-		//info for the set transform matrix
-		glm::vec3 positionVec;
-		glm::vec3 scaleVec;
-		glm::vec3 rotateVec;
 
 		//mat4 who containe all the info of the object,
 		//she is reset ever time show() is used
 		glm::mat4x4 trans;
+
 	public:
+		//info for the set transform matrix
+		glm::vec3 positionVec;
+		glm::vec3 scaleVec;
+		glm::vec3 rotateVec;
 
 		transform();
 		void reset();
