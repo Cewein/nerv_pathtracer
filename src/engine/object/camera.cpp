@@ -39,6 +39,6 @@ nerv::camera::~camera()
 void nerv::camera::sendInfo()
 {
 	glUniformMatrix4fv(10, 1, GL_FALSE, &projection[0][0]);
-	glUniformMatrix4fv(15, 1, GL_FALSE, &this->transform->getTransformMatrix()[0][0]);
+	glUniformMatrix4fv(15, 1, GL_FALSE, &glm::inverse(this->transform->getTransformMatrix())[0][0]);
 	this->transform->reset();
 }

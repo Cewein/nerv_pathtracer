@@ -31,14 +31,17 @@ void nerv::transform::scale(glm::vec3 scale)
 
 void nerv::transform::rotateX(double angle)
 {
+	this->rotateVec = (float)glm::radians(angle) * glm::vec3(1.,0.,0.);
 }
 
 void nerv::transform::rotateY(double angle)
 {
+	this->rotateVec = (float)glm::radians(angle) * glm::vec3(0., 1., 0.);
 }
 
 void nerv::transform::rotateZ(double angle)
 {
+	this->rotateVec = (float)glm::radians(angle) * glm::vec3(0., 0., 1.);
 }
 
 glm::mat4x4 nerv::transform::getTransformMatrix()

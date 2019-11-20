@@ -14,6 +14,9 @@ namespace nerv {
 		void keyboardCallBack(GLFWwindow *window, int key, int scancode, int action, int mods);
 
 		void updateCameraKeyboard(nerv::camera * cam);
-		//void keyboard
 	};
+
+	namespace mouse {
+		void updateCameraMouse();
+	}
 }

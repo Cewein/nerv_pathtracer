@@ -75,11 +75,15 @@ int main()
 
 		cam->sendInfo();
 
-		for (int i = 0; i < 10; i++)
+		for (size_t j = 0; j < 10; j++)
 		{
-			obj.transform->translate(cubePositions[i]);
-			obj.transform->rotate(20.0 * i + glfwGetTime(), glm::vec3(1., 0.0, 1.));
-			obj.show();
+			obj.transform->translate(glm::vec3(10) * cubePositions[j]);
+			for (int i = 0; i < 10; i++)
+			{
+				obj.transform->translate(cubePositions[i]);
+				obj.transform->rotate(20.0 * i + glfwGetTime(), glm::vec3(1., 0.0, 1.));
+				obj.show();
+			}
 		}
 
 		nerv::keyboard::updateCameraKeyboard(cam);

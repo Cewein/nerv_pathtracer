@@ -19,11 +19,15 @@ void nerv::keyboard::keyboardCallBack(GLFWwindow * window, int key, int scancode
 void nerv::keyboard::updateCameraKeyboard(nerv::camera * camera)
 {
 	if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_W) == GLFW_PRESS)
-		camera->transform->positionVec += nerv::window::get().getDeltaTime() * camera->speed * glm::vec3(0.f, 0.f, 1.f);
-	if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_S) == GLFW_PRESS)
 		camera->transform->positionVec -= nerv::window::get().getDeltaTime() * camera->speed * glm::vec3(0.f, 0.f, 1.f);
+	if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_S) == GLFW_PRESS)
+		camera->transform->positionVec += nerv::window::get().getDeltaTime() * camera->speed * glm::vec3(0.f, 0.f, 1.f);
 	if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_A) == GLFW_PRESS)
-		camera->transform->positionVec += nerv::window::get().getDeltaTime() * camera->speed * glm::vec3(1.f, 0.f, 0.f);
-	if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_D) == GLFW_PRESS)
 		camera->transform->positionVec -= nerv::window::get().getDeltaTime() * camera->speed * glm::vec3(1.f, 0.f, 0.f);
+	if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_D) == GLFW_PRESS)
+		camera->transform->positionVec += nerv::window::get().getDeltaTime() * camera->speed * glm::vec3(1.f, 0.f, 0.f);
+	if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_Q) == GLFW_PRESS)
+		camera->transform->rotateX(10 * nerv::window::get().getDeltaTime() + glm::degrees(camera->transform->rotateVec.x));
+	if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_E) == GLFW_PRESS)
+		camera->transform->rotateX(-10 * nerv::window::get().getDeltaTime() + glm::degrees(camera->transform->rotateVec.x));
 }
