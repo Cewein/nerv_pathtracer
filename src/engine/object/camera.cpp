@@ -43,9 +43,6 @@ void nerv::camera::sendInfo()
 	glUniformMatrix4fv(10, 1, GL_FALSE, &projection[0][0]);
 	if (sendViewInfo)
 	{
-		/*this->transform->positionVec += this->transform->getFront();
-		this->transform->positionVec += this->transform->getRight();
-		this->transform->positionVec += glm::vec3(0, 1, 0);*/
 		glUniformMatrix4fv(15, 1, GL_FALSE, &glm::inverse(this->transform->getTransformMatrix())[0][0]);
 	}
 	else
