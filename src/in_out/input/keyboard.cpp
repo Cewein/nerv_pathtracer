@@ -31,3 +31,8 @@ void nerv::keyboard::updateCameraKeyboard(nerv::camera * camera)
 	if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_E) == GLFW_PRESS)
 		camera->transform->rotateX(-10 * nerv::window::get().getDeltaTime() + glm::degrees(camera->transform->rotateVec.x));
 }
+
+void nerv::mouse::updateCameraMouse()
+{
+
+}

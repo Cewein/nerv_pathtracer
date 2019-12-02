@@ -71,7 +71,6 @@ int main()
 	cam->transform->translate(glm::vec3(0., 0., 3.));
 
 	while (nerv::window::get().isOpen()) {
-		
 
 		cam->sendInfo();
 

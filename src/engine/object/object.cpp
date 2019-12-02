@@ -83,7 +83,6 @@ void nerv::object::show()
 		glDrawElements(GL_TRIANGLES, this->size, GL_UNSIGNED_INT, 0);
 	else
 	glDrawArrays(GL_TRIANGLES, 0, this->size);
-	this->transform->reset();
 }
 
 int nerv::object::getSize()

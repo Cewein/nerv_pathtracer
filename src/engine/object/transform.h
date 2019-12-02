@@ -6,13 +6,6 @@ namespace nerv
 {
 	class transform
 	{
-	private:
-
-
-		//mat4 who containe all the info of the object,
-		//she is reset ever time show() is used
-		glm::mat4x4 trans;
-
 	public:
 		//info for the set transform matrix
 		glm::vec3 positionVec;
@@ -20,7 +13,6 @@ namespace nerv
 		glm::vec3 rotateVec;
 
 		transform();
-		void reset();
 
 		//movement, rotation and scale
 		void translate(glm::vec3 move);
@@ -31,6 +23,11 @@ namespace nerv
 		void rotateX(double angle);
 		void rotateY(double angle);
 		void rotateZ(double angle);
+
+		//matrix transform function
+		glm::vec3 getFront();
+		glm::vec3 getRight();
+		glm::vec3 getUp();
 
 		//get transform matrices
 		glm::mat4x4 getTransformMatrix();

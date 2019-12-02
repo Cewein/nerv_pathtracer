@@ -12,6 +12,7 @@ namespace nerv
 
 		//projection matrix of the camera
 		glm::mat4 projection;
+		bool sendViewInfo;
 
 	public:
 
@@ -32,6 +33,7 @@ namespace nerv
 		
 		//send info to the shader in use
 		void sendInfo();
+		inline void sendViewInfoToShader(bool value) { sendViewInfo = value; }
 	};
 
 }
