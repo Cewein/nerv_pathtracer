@@ -17,6 +17,6 @@ namespace nerv {
 	};
 
 	namespace mouse {
-		void updateCameraMouse();
+		void updateCameraMouse(nerv::camera * camera);
 	}
 }

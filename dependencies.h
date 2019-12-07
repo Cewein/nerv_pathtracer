@@ -6,6 +6,7 @@
 #include <gtc/matrix_transform.hpp>
 #include <gtc/type_ptr.hpp>
 #include <gtx/string_cast.hpp>
+#include <gtx/matrix_decompose.hpp>
 
 // dont forget to #define STB_IMAGE_IMPLEMENTATION
 // when using stb_image.h

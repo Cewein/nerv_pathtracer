@@ -20,6 +20,14 @@ namespace nerv
 		nerv::transform * transform;
 		
 		float speed;
+		float sensitivity;
+
+		float lastX;
+		float lastY;
+
+		float yaw;
+		float pitch;
+
 
 		enum projectionType
 		{

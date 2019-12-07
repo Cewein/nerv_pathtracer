@@ -29,6 +29,9 @@ namespace nerv
 		glm::vec3 getRight();
 		glm::vec3 getUp();
 
+		//matrix set function, they use  decomposition to reverse the modified matrix into her original TSR state
+		void setFront(glm::vec3 front);
+
 		//get transform matrices
 		glm::mat4x4 getTransformMatrix();
 	};
