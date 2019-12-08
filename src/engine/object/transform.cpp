@@ -25,17 +25,17 @@ void nerv::transform::scale(glm::vec3 scale)
 
 void nerv::transform::rotateX(double angle)
 {
-	this->rotateVec = (float)glm::radians(angle) * glm::vec3(1.,0.,0.);
+	this->rotateVec.x = (float)glm::radians(angle);
 }
 
 void nerv::transform::rotateY(double angle)
 {
-	this->rotateVec = (float)glm::radians(angle) * glm::vec3(0., 1., 0.);
+	this->rotateVec.y = (float)glm::radians(angle);
 }
 
 void nerv::transform::rotateZ(double angle)
 {
-	this->rotateVec = (float)glm::radians(angle) * glm::vec3(0., 0., 1.);
+	this->rotateVec.z = (float)glm::radians(angle);
 }
 
 glm::vec3 nerv::transform::getFront()
@@ -54,21 +54,6 @@ glm::vec3 nerv::transform::getUp()
 {												
 	glm::mat4 m = this->getTransformMatrix();	
 	return glm::vec3(m[1]);						
-}												
-
-void nerv::transform::setFront(glm::vec3 front)
-{
-	glm::mat4 m = this->getTransformMatrix();
-
-	m[2] = glm::vec4(front,0.);
-
-	glm::quat rotation;
-	glm::vec3 skew;
-	glm::vec4 perspective;
-
-	glm::decompose(m, this->scaleVec, rotation, this->positionVec, skew, perspective);
-
-	this->rotateVec = glm::vec3(rotation * glm::vec4(1.));
 }
 
 glm::mat4x4 nerv::transform::getTransformMatrix()

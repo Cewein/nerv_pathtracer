@@ -85,8 +85,8 @@ int main()
 			}
 		}
 
-		nerv::keyboard::updateCameraKeyboard(cam);
 		nerv::mouse::updateCameraMouse(cam);
+		nerv::keyboard::updateCameraKeyboard(cam);
 		nerv::window::get().update();
 	}
 

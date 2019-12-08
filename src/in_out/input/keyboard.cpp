@@ -39,10 +39,12 @@ void nerv::mouse::updateCameraMouse(nerv::camera * camera)
 	glfwGetCursorPos(nerv::window::get().display(), &xpos, &ypos);
 
 
-	if (xpos != camera->lastX && ypos != camera->lastY)
+	if (xpos != camera->lastX || ypos != camera->lastY)
 	{
+
+
 		float xoffset = xpos - camera->lastX;
-		float yoffset = camera->lastY - ypos;
+		float yoffset = ypos - camera->lastY;
 
 		camera->lastX = xpos;
 		camera->lastY = ypos;
@@ -58,12 +60,7 @@ void nerv::mouse::updateCameraMouse(nerv::camera * camera)
 		if (camera->pitch < -89.9f)
 			camera->pitch = -89.9f;
 
-		glm::vec3 front;
-
-		front.x = cos(glm::radians(camera->yaw)) * cos(glm::radians(camera->pitch));
-		front.y = sin(glm::radians(camera->pitch));
-		front.z = sin(glm::radians(camera->yaw)) * cos(glm::radians(camera->pitch));
-
-		camera->transform->setFront(glm::normalize(front));
+		camera->transform->rotateX(-camera->pitch);
+		camera->transform->rotateY(-camera->yaw);
 	}
 }

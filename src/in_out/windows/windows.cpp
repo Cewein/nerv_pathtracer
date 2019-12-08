@@ -53,6 +53,7 @@ void nerv::window::create(std::string name, int width, int height, bool fullscre
 	//todo fix the callback
 	//glfwSetFramebufferSizeCallback(this->display, this->framebufferSizeCallback);
 
+	glfwSetInputMode(this->glfwDisplay, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	
 }
 
