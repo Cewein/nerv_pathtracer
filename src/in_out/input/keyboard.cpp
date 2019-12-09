@@ -20,17 +20,13 @@ void nerv::keyboard::keyboardCallBack(GLFWwindow * window, int key, int scancode
 void nerv::keyboard::updateCameraKeyboard(nerv::camera * camera)
 {
 	if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_W) == GLFW_PRESS)
-		camera->transform->positionVec -= nerv::window::get().getDeltaTime() * camera->speed * camera->transform->getFront();
+		camera->transform->positionVec -= nerv::window::get().getDeltaTime() * camera->speed * camera->getFront();
 	if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_S) == GLFW_PRESS)
-		camera->transform->positionVec += nerv::window::get().getDeltaTime() * camera->speed * camera->transform->getFront();
+		camera->transform->positionVec += nerv::window::get().getDeltaTime() * camera->speed * camera->getFront();
 	if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_A) == GLFW_PRESS)
-		camera->transform->positionVec += nerv::window::get().getDeltaTime() * camera->speed * glm::normalize(glm::cross(camera->transform->getFront(), camera->transform->getUp()));
+		camera->transform->positionVec += nerv::window::get().getDeltaTime() * camera->speed * glm::normalize(glm::cross(camera->getFront(), camera->getUp()));
 	if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_D) == GLFW_PRESS)
-		camera->transform->positionVec -= nerv::window::get().getDeltaTime() * camera->speed * glm::normalize(glm::cross(camera->transform->getFront(), camera->transform->getUp()));
-	if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_Q) == GLFW_PRESS)
-		camera->transform->rotateZ(10 * nerv::window::get().getDeltaTime() + glm::degrees(camera->transform->rotateVec.z));
-	if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_E) == GLFW_PRESS)
-		camera->transform->rotateZ(-10 * nerv::window::get().getDeltaTime() + glm::degrees(camera->transform->rotateVec.z));
+		camera->transform->positionVec -= nerv::window::get().getDeltaTime() * camera->speed * glm::normalize(glm::cross(camera->getFront(), camera->getUp()));
 }
 
 void nerv::mouse::updateCameraMouse(nerv::camera * camera)
@@ -38,13 +34,12 @@ void nerv::mouse::updateCameraMouse(nerv::camera * camera)
 	double xpos, ypos;
 	glfwGetCursorPos(nerv::window::get().display(), &xpos, &ypos);
 
-
 	if (xpos != camera->lastX || ypos != camera->lastY)
 	{
 
 
 		float xoffset = xpos - camera->lastX;
-		float yoffset = ypos - camera->lastY;
+		float yoffset = camera->lastY - ypos;
 
 		camera->lastX = xpos;
 		camera->lastY = ypos;
@@ -59,8 +54,5 @@ void nerv::mouse::updateCameraMouse(nerv::camera * camera)
 			camera->pitch = 89.9f;
 		if (camera->pitch < -89.9f)
 			camera->pitch = -89.9f;
-
-		camera->transform->rotateX(-camera->pitch);
-		camera->transform->rotateY(-camera->yaw);
 	}
 }

@@ -12,6 +12,7 @@ namespace nerv
 
 		//projection matrix of the camera
 		glm::mat4 projection;
+		glm::mat4 view;
 		bool sendViewInfo;
 
 	public:
@@ -38,6 +39,14 @@ namespace nerv
 		camera();
 		camera(enum nerv::camera::projectionType projectionType);
 		~camera();
+
+		//view matrix function
+		glm::vec3 getFront();
+		glm::vec3 getRight();
+		glm::vec3 getUp();
+
+		//view type
+		glm::mat4 getFPSView();
 		
 		//send info to the shader in use
 		void sendInfo();

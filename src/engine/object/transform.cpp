@@ -38,24 +38,6 @@ void nerv::transform::rotateZ(double angle)
 	this->rotateVec.z = (float)glm::radians(angle);
 }
 
-glm::vec3 nerv::transform::getFront()
-{
-	glm::mat4 m = this->getTransformMatrix();
-	return glm::vec3(m[2]);
-}
-
-glm::vec3 nerv::transform::getRight()
-{
-	glm::mat4 m = this->getTransformMatrix();
-	return glm::vec3(m[0]);
-}	
-												
-glm::vec3 nerv::transform::getUp()				
-{												
-	glm::mat4 m = this->getTransformMatrix();	
-	return glm::vec3(m[1]);						
-}
-
 glm::mat4x4 nerv::transform::getTransformMatrix()
 {
 	glm::mat4 m = glm::translate(glm::mat4(1), this->positionVec);

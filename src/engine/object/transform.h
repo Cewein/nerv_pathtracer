@@ -24,11 +24,6 @@ namespace nerv
 		void rotateY(double angle);
 		void rotateZ(double angle);
 
-		//matrix transform function
-		glm::vec3 getFront();
-		glm::vec3 getRight();
-		glm::vec3 getUp();
-
 		//get transform matrices
 		glm::mat4x4 getTransformMatrix();
 	};
