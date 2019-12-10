@@ -72,8 +72,8 @@ int main()
 
 	while (nerv::window::get().isOpen()) {
 
-		nerv::mouse::updateCameraMouse(cam);
 		nerv::keyboard::updateCameraKeyboard(cam);
+		nerv::mouse::updateCameraMouse(cam);
 		cam->sendInfo();
 
 		for (size_t j = 0; j < 10; j++)

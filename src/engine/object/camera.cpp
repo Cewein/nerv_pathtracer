@@ -76,12 +76,6 @@ glm::mat4 nerv::camera::getFPSView()
 {
 	glm::vec3 eye = this->transform->positionVec;
 
-	glm::vec3 direction;
-
-	direction.x = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
-	direction.y = sin(glm::radians(pitch));
-	direction.z = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
-
 	float cosPitch = cosf(glm::radians(this->pitch));
 	float sinPitch = sinf(glm::radians(this->pitch));
 	float cosYaw = cosf(-glm::radians(this->yaw));

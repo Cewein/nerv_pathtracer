@@ -41,9 +41,8 @@ void nerv::transform::rotateZ(double angle)
 glm::mat4x4 nerv::transform::getTransformMatrix()
 {
 	glm::mat4 m = glm::translate(glm::mat4(1), this->positionVec);
-	m = glm::rotate(m, this->rotateVec.x, glm::vec3(1, 0, 0));
-	m = glm::rotate(m, this->rotateVec.y, glm::vec3(0, 1, 0));
-	m = glm::rotate(m, this->rotateVec.z, glm::vec3(0, 0, 1));
+	glm::quat qt = glm::quat(this->rotateVec);
+	m *= glm::toMat4(qt);
 	m = glm::scale(m, this->scaleVec);
 	return m;
 }
