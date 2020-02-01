@@ -20,20 +20,20 @@ void nerv::keyboard::keyboardCallBack(GLFWwindow * window, int key, int scancode
 void nerv::keyboard::updateCameraKeyboard(nerv::camera * camera)
 {
 	if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_W) == GLFW_PRESS)
-		camera->transform->positionVec -= nerv::window::get().getDeltaTime() * camera->speed * camera->getFront();
+		camera->transform->positionVec -= nerv::window::get().getDeltaTime() * camera->speed * camera->front;
 	if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_S) == GLFW_PRESS)
-		camera->transform->positionVec += nerv::window::get().getDeltaTime() * camera->speed * camera->getFront();
+		camera->transform->positionVec += nerv::window::get().getDeltaTime() * camera->speed * camera->front;
 	if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_A) == GLFW_PRESS)
-		camera->transform->positionVec.x -= nerv::window::get().getDeltaTime() * camera->speed;
+		camera->transform->positionVec += nerv::window::get().getDeltaTime() * camera->speed * glm::normalize(glm::cross(camera->front, camera->up));
 	if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_D) == GLFW_PRESS)
-		camera->transform->positionVec.x += nerv::window::get().getDeltaTime() * camera->speed;
+		camera->transform->positionVec -= nerv::window::get().getDeltaTime() * camera->speed * glm::normalize(glm::cross(camera->front, camera->up));
 	if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_SPACE) == GLFW_PRESS)
-		camera->transform->positionVec.y += nerv::window::get().getDeltaTime() * camera->speed;
+		camera->transform->positionVec += nerv::window::get().getDeltaTime() * camera->speed * camera->up;
 	if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-		camera->transform->positionVec.y -= nerv::window::get().getDeltaTime() * camera->speed;
+		camera->transform->positionVec -= nerv::window::get().getDeltaTime() * camera->speed * camera->up;
 
 
-	logger.info("input", glm::to_string(camera->transform->positionVec));
+	//logger.info("input", glm::to_string(camera->transform->positionVec));
 }
 
 void nerv::mouse::updateCameraMouse(nerv::camera * camera)
@@ -61,5 +61,11 @@ void nerv::mouse::updateCameraMouse(nerv::camera * camera)
 			camera->pitch = 89.9f;
 		if (camera->pitch < -89.9f)
 			camera->pitch = -89.9f;
+
+		glm::vec3 front;
+		front.x = cos(glm::radians(camera->yaw)) * cos(glm::radians(camera->pitch));
+		front.y = sin(glm::radians(camera->pitch));
+		front.z = sin(glm::radians(camera->yaw)) * cos(glm::radians(camera->pitch));
+		camera->front = glm::normalize(front);
 	}
 }

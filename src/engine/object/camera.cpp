@@ -47,29 +47,14 @@ nerv::camera::camera(enum nerv::camera::projectionType projectionType)
 	this->yaw = 0;
 	this->pitch = 0;
 	this->sensitivity = 0.05f;
+	this->up = glm::vec3(0.0f, 1.0f, 0.0f);
+	this->front = glm::vec3(0.0f, 0.0f, -1.0f);
+	this->right = glm::vec3(0.);
 }
 
 nerv::camera::~camera()
 {
 	delete(this->transform);
-}
-
-glm::vec3 nerv::camera::getFront()
-{
-	glm::mat4 m = this->view;
-	return glm::vec3(m[2]);
-}
-
-glm::vec3 nerv::camera::getRight()
-{
-	glm::mat4 m = this->view;
-	return glm::vec3(m[0]);
-}
-
-glm::vec3 nerv::camera::getUp()
-{
-	glm::mat4 m = this->view;
-	return glm::vec3(m[1]);
 }
 
 glm::mat4 nerv::camera::getFPSView()
@@ -81,21 +66,21 @@ glm::mat4 nerv::camera::getFPSView()
 	float cosYaw = cosf(-glm::radians(this->yaw));
 	float sinYaw = sinf(-glm::radians(this->yaw));
 
-	glm::vec3 r = { cosYaw, 0, -sinYaw };
-	glm::vec3 u = { sinYaw * sinPitch, cosPitch, cosYaw * sinPitch };
-	glm::vec3 f = { sinYaw * cosPitch, -sinPitch, cosPitch * cosYaw };
+	right = { cosYaw, 0, -sinYaw };
+	up = { sinYaw * sinPitch, cosPitch, cosYaw * sinPitch };
+	front = { sinYaw * cosPitch, -sinPitch, cosPitch * cosYaw };
 
-	r = glm::normalize(r);
-	u = glm::normalize(u);
-	f = glm::normalize(f);
+	right = glm::normalize(right);
+	up = glm::normalize(up);
+	front = glm::normalize(front);
 
 	this->view = {
-		glm::vec4(r.x,            u.x,            f.x,      0),
-		glm::vec4(r.y,            u.y,            f.y,      0),
-		glm::vec4(r.z,            u.z,            f.z,      0),
-		glm::vec4(-glm::dot(r, eye), -glm::dot(u, eye), -glm::dot(f, eye), 1)
+		glm::vec4(right.x,            up.x,            front.x,      0),
+		glm::vec4(right.y,            up.y,            front.y,      0),
+		glm::vec4(right.z,            up.z,            front.z,      0),
+		glm::vec4(-glm::dot(right, eye), -glm::dot(up, eye), -glm::dot(front, eye), 1)
 	};
-	
+
 	return this->view;
 }
 

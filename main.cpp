@@ -72,8 +72,7 @@ int main()
 
 	while (nerv::window::get().isOpen()) {
 
-		nerv::keyboard::updateCameraKeyboard(cam);
-		nerv::mouse::updateCameraMouse(cam);
+		
 		cam->sendInfo();
 
 		for (size_t j = 0; j < 10; j++)
@@ -88,6 +87,8 @@ int main()
 		}
 
 		nerv::window::get().update();
+		nerv::keyboard::updateCameraKeyboard(cam);
+		nerv::mouse::updateCameraMouse(cam);
 	}
 
 	delete worldScene;
