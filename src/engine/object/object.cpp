@@ -78,6 +78,8 @@ void nerv::object::show()
 {
 	this->material->use();
 	this->material->shaderprog->setMat4("transform", this->transform->getTransformMatrix());
+	this->material->shaderprog->setVec2("iResolution", nerv::window::get().width, nerv::window::get().height);
+	this->material->shaderprog->setFloat("iTime", glfwGetTime());
 	glBindVertexArray(this->VAO);
 	if (this->isElements)
 		glDrawElements(GL_TRIANGLES, this->size, GL_UNSIGNED_INT, 0);

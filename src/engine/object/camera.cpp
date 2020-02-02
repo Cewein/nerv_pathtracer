@@ -27,7 +27,7 @@ nerv::camera::camera(enum nerv::camera::projectionType projectionType)
 	{
 	case 0:
 		logger.info("camera", "Perspective projection selected");
-		this->projection = glm::perspective(glm::radians(45.0f), (float)window::get().width/ (float)window::get().height, 0.1f, 100.0f);
+		this->projection = glm::perspective(glm::radians(90.0f), (float)window::get().width/ (float)window::get().height, 0.1f, 100.0f);
 		break;
 	case 1:
 		logger.info("camera", "Orthogonal projection selected");
@@ -35,7 +35,7 @@ nerv::camera::camera(enum nerv::camera::projectionType projectionType)
 		break;
 	default:
 		logger.info("camera", "Perspective projection selected");
-		this->projection = glm::perspective(glm::radians(45.0f), (float)window::get().width / (float)window::get().height, 0.1f, 100.0f);
+		this->projection = glm::perspective(glm::radians(90.0f), (float)window::get().width / (float)window::get().height, 0.1f, 100.0f);
 		break;
 	}
 
@@ -93,6 +93,8 @@ void nerv::camera::sendInfo()
 	if (sendViewInfo)
 	{
 		glUniformMatrix4fv(15, 1, GL_FALSE, &this->getFPSView()[0][0]);
+		glUniformMatrix4fv(20, 1, GL_FALSE, &this->transform->getTransformMatrix()[0][0]);
+		glUniformMatrix4fv(25, 1, GL_FALSE, &glm::inverse(projection * this->getFPSView())[0][0]);
 	}
 	else
 		glUniformMatrix4fv(15, 1, GL_FALSE, &glm::mat4(1.0)[0][0]);

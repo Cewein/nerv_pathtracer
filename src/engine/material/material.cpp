@@ -59,5 +59,4 @@ void nerv::material::use()
 		glBindTexture(GL_TEXTURE_2D, this->specular->getId());
 		this->shaderprog->setInt("spec", 2);
 	}
-	
 }
