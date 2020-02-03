@@ -1,7 +1,15 @@
 #version 450 core
 
+layout (location = 20) uniform mat4 cameraTransform;
+layout (location = 30) uniform vec3 up;
+layout (location = 31) uniform vec3 front;
+layout (location = 32) uniform vec3 right;
+layout (location = 33) uniform float fov;
+
 uniform vec2 iResolution;
 uniform float iTime;
+
+in vec2 iTexCoord;
 
 out vec4 fragColor;
 
@@ -33,15 +41,7 @@ struct sphere
 struct hitableList {
     sphere[4] sList;
     int size;
-};
-
-struct camera {
-    vec3 llc;
-    vec3 h;
-    vec3 v;
-    vec3 o;
-};
-        
+};      
            
 vec3 origin(ray r) {return r.A; }
 vec3 direction(ray r) {return r.B; }
@@ -97,7 +97,19 @@ bool hit(in ray r, float tmin, float tmax, inout hitRecord rec, hitableList list
     return hitAny;
 }
 
-ray getRay(float u, float v, camera cam) { return ray(cam.o,cam.llc + u*cam.h + v*cam.v); }
+ray getRay(vec2 uv) 
+{
+	float scale = tan(fov * 0.5);
+	vec2 d = (2.0 * iTexCoord - 1.0);
+	d.x *= (iResolution.x / iResolution.y) * scale;
+	d.y *= scale;
+	
+	vec3 origin = (cameraTransform * vec4(0.,0.,0.,1.)).xyz; 
+
+	vec3 direction = normalize(d.x * right + d.y * up + front);
+	return ray(origin,direction); 
+}
+
 
 float random (vec2 st) {
     highp float a = 12.9898;
@@ -158,13 +170,8 @@ vec3 color(ray r, hitableList list, vec2 st)
 void main()
 {
     // Normalized pixel coordinates (from 0 to 1)
-    vec2 st = gl_FragCoord.xy/iResolution.xy;
-    camera cam;
-    cam.llc = vec3(-2.,-1.,-1.);
-    cam.h = vec3(4.,0.,0.);
-    cam.v = vec3(0.,2.25,0.);
-    cam.o = vec3(0.);
-    
+    vec2 st = gl_FragCoord.xy/iResolution.y;;
+
     hitableList list;
     list.size = 4;
     list.sList = sphere[4](
@@ -174,7 +181,7 @@ void main()
         sphere(vec3(0.,-100.5,-1.),100.,0,vec3(0.8,0.8,0.0))
     );
 
-    ray r = getRay(st.x, st.y, cam);
+    ray r = getRay(st);
     vec3 col = vec3(0.);
     
     float sizeBlending = 20.;

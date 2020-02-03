@@ -8,12 +8,10 @@ int main()
 	nerv::init::launch();
 
 	std::vector<float> vertices = {
-	-1.0f, -1.0f, -0.0f, 0.5f,  0.0f, 0.0f, 0.0f, 0.0f,
-	 1.0f, -1.0f, -0.0f, 0.5f,  0.0f, 0.0f, 1.0f, 0.0f,
-	 1.0f,  1.0f, -0.0f, 0.5f,  0.0f, 0.0f, 1.0f, 1.0f,
-	 1.0f,  1.0f, -0.0f, 0.5f,  0.0f, 0.0f, 1.0f, 1.0f,
-	-1.0f,  1.0f, -0.0f, 0.5f,  0.0f, 0.0f, 0.0f, 1.0f,
-	-1.0f, -1.0f, -0.0f, 0.5f,  0.0f, 0.0f, 0.0f, 0.0f,
+		 1.0f,  1.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+		 1.0f, -1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+		-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
+		-1.0f,  1.0f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left
 	};
 
 	std::vector<size_t> indices = {  // note that we start from 0!
@@ -21,7 +19,7 @@ int main()
 		1, 2, 3    // second triangle
 	};
 
-	nerv::object obj(vertices, new nerv::material(nullptr, new nerv::shader("shader/raytraced.frag.glsl")));
+	nerv::object obj(vertices,indices, new nerv::material(nullptr, new nerv::shader("shader/raytraced.frag.glsl")));
 
 	nerv::scene * worldScene = new nerv::scene();
 	nerv::camera * cam = new nerv::camera(nerv::camera::projectionType::PERSPECTIVE_PROJECTION);

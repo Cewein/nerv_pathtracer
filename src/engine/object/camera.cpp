@@ -95,6 +95,11 @@ void nerv::camera::sendInfo()
 		glUniformMatrix4fv(15, 1, GL_FALSE, &this->getFPSView()[0][0]);
 		glUniformMatrix4fv(20, 1, GL_FALSE, &this->transform->getTransformMatrix()[0][0]);
 		glUniformMatrix4fv(25, 1, GL_FALSE, &glm::inverse(projection * this->getFPSView())[0][0]);
+		glUniform3fv(30, 1, &this->front[0]);
+		glUniform3fv(31, 1, &this->up[0]);
+		glUniform3fv(32, 1, &this->right[0]);
+		float fov = 45;
+		glUniform1fv(33, 1, &fov);
 	}
 	else
 		glUniformMatrix4fv(15, 1, GL_FALSE, &glm::mat4(1.0)[0][0]);
