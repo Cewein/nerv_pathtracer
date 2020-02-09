@@ -17,7 +17,7 @@ nerv::camera::camera()
 	this->sensitivity = 0.05f;
 }
 
-nerv::camera::camera(enum nerv::camera::projectionType projectionType)
+nerv::camera::camera(enum nerv::camera::projectionType projectionType, float fov)
 {
 	this->sendViewInfo = true;
 	this->projection = glm::mat4(1.0f);
@@ -27,7 +27,7 @@ nerv::camera::camera(enum nerv::camera::projectionType projectionType)
 	{
 	case 0:
 		logger.info("camera", "Perspective projection selected");
-		this->projection = glm::perspective(glm::radians(90.0f), (float)window::get().width/ (float)window::get().height, 0.1f, 100.0f);
+		this->projection = glm::perspective(glm::radians(fov), (float)window::get().width/ (float)window::get().height, 0.1f, 100.0f);
 		break;
 	case 1:
 		logger.info("camera", "Orthogonal projection selected");
@@ -35,12 +35,13 @@ nerv::camera::camera(enum nerv::camera::projectionType projectionType)
 		break;
 	default:
 		logger.info("camera", "Perspective projection selected");
-		this->projection = glm::perspective(glm::radians(90.0f), (float)window::get().width / (float)window::get().height, 0.1f, 100.0f);
+		this->projection = glm::perspective(glm::radians(fov), (float)window::get().width / (float)window::get().height, 0.1f, 100.0f);
 		break;
 	}
 
 	this->transform = new nerv::transform();
 	this->speed = 5.f;
+	this->fov = fov;
 
 	this->lastX = nerv::window::get().width / 2;
 	this->lastY = nerv::window::get().height / 2;
@@ -94,12 +95,10 @@ void nerv::camera::sendInfo()
 	{
 		glUniformMatrix4fv(15, 1, GL_FALSE, &this->getFPSView()[0][0]);
 		glUniformMatrix4fv(20, 1, GL_FALSE, &this->transform->getTransformMatrix()[0][0]);
-		glUniformMatrix4fv(25, 1, GL_FALSE, &glm::inverse(projection * this->getFPSView())[0][0]);
-		glUniform3fv(30, 1, &this->front[0]);
-		glUniform3fv(31, 1, &this->up[0]);
-		glUniform3fv(32, 1, &this->right[0]);
-		float fov = 45;
-		glUniform1fv(33, 1, &fov);
+		glUniform3fv(25, 1, &this->front[0]);
+		glUniform3fv(26, 1, &this->up[0]);
+		glUniform3fv(27, 1, &this->right[0]);
+		glUniform1fv(28, 1, &this->fov);
 	}
 	else
 		glUniformMatrix4fv(15, 1, GL_FALSE, &glm::mat4(1.0)[0][0]);

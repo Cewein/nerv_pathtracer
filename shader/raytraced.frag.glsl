@@ -1,10 +1,10 @@
 #version 450 core
 
 layout (location = 20) uniform mat4 cameraTransform;
-layout (location = 30) uniform vec3 up;
-layout (location = 31) uniform vec3 front;
-layout (location = 32) uniform vec3 right;
-layout (location = 33) uniform float fov;
+layout (location = 25) uniform vec3 up;
+layout (location = 26) uniform vec3 front;
+layout (location = 27) uniform vec3 right;
+layout (location = 28) uniform float fov;
 
 uniform vec2 iResolution;
 uniform float iTime;
@@ -39,7 +39,7 @@ struct sphere
 };
     
 struct hitableList {
-    sphere[4] sList;
+    sphere[5] sList;
     int size;
 };      
            
@@ -126,6 +126,18 @@ vec3 randInUnitSphere(vec2 st) {
     
     return vec3(cos(phi) * sin(theta), cos(theta), sin(phi) * sin(theta));
 }
+
+bool checkRefract(vec3 v, vec3 n, float niOverNt)
+{
+	vec3 uv = v;
+	float dt = dot(uv, n);
+	float discriminant = 1.0 - niOverNt * niOverNt * (1. - dt * dt);
+	if (discriminant > 0.)
+	{
+		return true;
+	}
+	return false;
+}
               
 vec3 color(ray r, hitableList list, vec2 st)
 {
@@ -135,7 +147,7 @@ vec3 color(ray r, hitableList list, vec2 st)
     
     vec3 att = vec3(1.);
     
-    int bounceSize = 10;
+    int bounceSize = 5;
     int bounce = 0;
     
     while(hit(r, 0.001, FLT_MAX, rec, list) && bounce < bounceSize)
@@ -155,9 +167,30 @@ vec3 color(ray r, hitableList list, vec2 st)
         }
         if(rec.mat == 2)
         {
-            float refractiveIndex = 1.5;
-            vec3 reflracted = refract(unitDirection, rec.normal, 1.0/ refractiveIndex);
-            r = ray(rec.p, reflracted);
+			float refractiveIndex = 1.65;
+			vec3 outwardNormal;
+			vec3 reflected = reflect(unitDirection, rec.normal);
+			float niOverNt;
+			vec3 refracted;
+
+			if (dot(unitDirection, rec.normal) > 0.)
+			{
+				outwardNormal = -rec.normal;
+				niOverNt = refractiveIndex;
+			}
+			else
+			{
+				outwardNormal = rec.normal;
+				niOverNt = 1.0 / refractiveIndex;
+			}
+			if (checkRefract(unitDirection, outwardNormal, niOverNt))
+			{
+				r = ray(rec.p, refract(unitDirection, outwardNormal, niOverNt));
+			}
+			else
+			{
+				r = ray(rec.p, reflected);
+			}
         }
         bounce++;
     }
@@ -172,19 +205,20 @@ void main()
     // Normalized pixel coordinates (from 0 to 1)
     vec2 st = gl_FragCoord.xy/iResolution.y;;
 
-    hitableList list;
-    list.size = 4;
-    list.sList = sphere[4](
-        sphere(vec3(0.,0.,-1.5),0.5,0,vec3(0.8,0.3,0.3)),
-        sphere(vec3(-1.,.0,-1.5 + sin(iTime)),0.5,1,vec3(0.8,0.8,0.8)),
-        sphere(vec3(1.,.0,-1.5+ cos(iTime)),0.5,1,vec3(0.8,0.6,0.2)),
-        sphere(vec3(0.,-100.5,-1.),100.,0,vec3(0.8,0.8,0.0))
-    );
+	hitableList list;
+	list.size = 5;
+	list.sList = sphere[5](
+		sphere(vec3(0., 0., -1.5), 0.5, 0, vec3(0.8, 0.3, 0.3)),
+		sphere(vec3(-1., .0, -1.5), 0.5, 1, vec3(0.8, 0.8, 0.8)),
+		sphere(vec3(1.0, .0, -1.5), 0.5, 2, vec3(0.8, 0.6, 0.2)),
+		sphere(vec3(0., -100.5, -1.), 100., 0, vec3(0.8, 0.8, 0.0)),
+		sphere(vec3(0., 0.5, -10.), 5., 1, vec3(0.8, 0.6, 0.2))
+		);;
 
     ray r = getRay(st);
     vec3 col = vec3(0.);
     
-    float sizeBlending = 20.;
+    float sizeBlending = 10.;
     
     for( float x = 0.; x < sizeBlending; x++)
     {

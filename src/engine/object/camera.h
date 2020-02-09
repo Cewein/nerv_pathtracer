@@ -29,6 +29,8 @@ namespace nerv
 		float yaw;
 		float pitch;
 
+		float fov;
+
 		glm::vec3 front;
 		glm::vec3 up;
 		glm::vec3 right;
@@ -41,7 +43,7 @@ namespace nerv
 		};
 
 		camera();
-		camera(enum nerv::camera::projectionType projectionType);
+		camera(enum nerv::camera::projectionType projectionType, float fov = 45.0);
 		~camera();
 
 		//view type
