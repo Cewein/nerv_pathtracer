@@ -33,8 +33,11 @@ int main()
 		obj.show();
 
 		nerv::window::get().update();
+		cam->isMoving = false;
 		nerv::keyboard::updateCameraKeyboard(cam);
 		nerv::mouse::updateCameraMouse(cam);
+		if (cam->isMoving)
+			logger.info("ENGINE", "Camera is moving");
 	}
 
 	delete worldScene;

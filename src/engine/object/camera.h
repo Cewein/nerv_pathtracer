@@ -35,6 +35,7 @@ namespace nerv
 		glm::vec3 up;
 		glm::vec3 right;
 
+		bool isMoving;
 
 		enum projectionType
 		{

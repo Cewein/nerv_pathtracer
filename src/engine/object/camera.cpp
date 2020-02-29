@@ -13,8 +13,9 @@ nerv::camera::camera()
 	this->lastX = nerv::window::get().width / 2;
 	this->lastY = nerv::window::get().height / 2;
 	this->yaw = 0;
-	this->pitch = 0;
+	this->pitch = -90.f;
 	this->sensitivity = 0.05f;
+	this->isMoving = true;
 }
 
 nerv::camera::camera(enum nerv::camera::projectionType projectionType, float fov)
@@ -46,11 +47,12 @@ nerv::camera::camera(enum nerv::camera::projectionType projectionType, float fov
 	this->lastX = nerv::window::get().width / 2;
 	this->lastY = nerv::window::get().height / 2;
 	this->yaw = 0;
-	this->pitch = 0;
+	this->pitch = -90.f;
 	this->sensitivity = 0.05f;
 	this->up = glm::vec3(0.0f, 1.0f, 0.0f);
 	this->front = glm::vec3(0.0f, 0.0f, -1.0f);
 	this->right = glm::vec3(0.);
+	this->isMoving = true;
 }
 
 nerv::camera::~camera()

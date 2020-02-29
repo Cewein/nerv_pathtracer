@@ -17,6 +17,8 @@ out vec4 fragColor;
 const float PI  = 3.14159265359;
 const float PHI = 1.61803398875;
 
+float loopCount = 0.;
+
 struct ray {
     vec3 A;
     vec3 B;
@@ -139,61 +141,87 @@ bool checkRefract(vec3 v, vec3 n, float niOverNt)
 	return false;
 }
               
+float schlick(float cosine, float refIdx)
+{
+	float r0 = (1. - refIdx) / (1. + refIdx);
+	r0 = r0 * r0;
+	return r0 + (1. - r0) * pow((1. - cosine), 5.);
+}
+
 vec3 color(ray r, hitableList list, vec2 st)
 {
-    hitRecord rec;
-    vec3 unitDirection;
-    float t;
-    
-    vec3 att = vec3(1.);
-    
-    int bounceSize = 5;
-    int bounce = 0;
-    
-    while(hit(r, 0.001, FLT_MAX, rec, list) && bounce < bounceSize)
-    {
-        unitDirection = normalize(direction(r));
-        if(rec.mat == 0)
-        {
-            vec3 target = rec.p + rec.normal + randInUnitSphere(st);
-            r = ray(rec.p, target-rec.p);
-            att *= rec.color;
-        }
-        if(rec.mat == 1)
-        {
-            vec3 reflected =reflect(normalize(direction(r)), rec.normal);
-            r = ray(rec.p, reflected);
-            att *= rec.color; // if  att *= rec.color * 50; then the shpere become a light source o_O
-        }
-        if(rec.mat == 2)
-        {
-			float refractiveIndex = 1.65;
+	hitRecord rec;
+	vec3 unitDirection;
+	float t;
+
+	vec3 att = vec3(1.);
+
+	int bounceSize = 5;
+	int bounce = 0;
+
+	while (hit(r, 0.001, FLT_MAX, rec, list) && bounce < bounceSize)
+	{
+		unitDirection = normalize(direction(r));
+		if (rec.mat == 0)
+		{
+			vec3 target = rec.p + rec.normal + randInUnitSphere(st);
+			r = ray(rec.p, target - rec.p);
+			att *= rec.color;
+		}
+		if (rec.mat == 1)
+		{
+			float globalFuzz = 0.;// change to 0 for full reflection
+			vec3 reflected = reflect(unitDirection, rec.normal);
+			r = ray(rec.p, reflected + globalFuzz * randInUnitSphere(st));
+			att *= rec.color; // if  att *= rec.color * 50; then the shpere become a light source o_O
+		}
+		if (rec.mat == 2)
+		{
+			float refractiveIndex = 1.9;
 			vec3 outwardNormal;
 			vec3 reflected = reflect(unitDirection, rec.normal);
 			float niOverNt;
 			vec3 refracted;
 
+			float refProb;
+			float cosine;
+
 			if (dot(unitDirection, rec.normal) > 0.)
 			{
 				outwardNormal = -rec.normal;
 				niOverNt = refractiveIndex;
+				cosine = refractiveIndex * dot(direction(r), rec.normal) / length(direction(r));
 			}
 			else
 			{
 				outwardNormal = rec.normal;
 				niOverNt = 1.0 / refractiveIndex;
+				cosine = -dot(direction(r), rec.normal) / length(direction(r));
 			}
 			if (checkRefract(unitDirection, outwardNormal, niOverNt))
 			{
-				r = ray(rec.p, refract(unitDirection, outwardNormal, niOverNt));
+
+				refProb = schlick(cosine, refractiveIndex);
 			}
 			else
 			{
+				refProb = 1.0;
+			}
+
+			if (random(vec2(loopCount)) < refProb)
+			{
+				
 				r = ray(rec.p, reflected);
 			}
-        }
-        bounce++;
-    }
+			else
+			{
+				r = ray(rec.p, refract(unitDirection, outwardNormal, niOverNt));
+			}
+
+			//vec3 refracted = refract(unitDirection, rec.normal, 1.0 / refractiveIndex);
+		}
+		bounce++;
+	}
     
     unitDirection = normalize(direction(r));
     t =  (unitDirection.y + 1.);
@@ -218,11 +246,12 @@ void main()
     ray r = getRay(st);
     vec3 col = vec3(0.);
     
-    float sizeBlending = 10.;
+    float sizeBlending = 50.;
     
     for( float x = 0.; x < sizeBlending; x++)
     {
         col += color(r,list,st + x);
+		loopCount++;
     }
     
     col = col / sizeBlending;
