@@ -29,7 +29,6 @@ int main()
 
 		
 		cam->sendInfo();
-
 		obj.show();
 
 		nerv::window::get().update();

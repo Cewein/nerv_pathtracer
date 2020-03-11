@@ -42,6 +42,7 @@
 #include "env/init/init.h"
 #include "engine/material/shader.h"
 #include "engine/material/texture.h"
+#include "engine/material/framebuffer.h"
 #include "engine/object/object.h"
 #include "engine/scene.h"
 #include "engine/object/camera.h"

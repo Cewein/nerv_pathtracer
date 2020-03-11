@@ -8,6 +8,7 @@ layout (location = 28) uniform float fov;
 
 uniform vec2 iResolution;
 uniform float iTime;
+uniform sampler3D hdrCubeMap;
 
 in vec2 iTexCoord;
 
@@ -30,6 +31,8 @@ struct hitRecord {
     vec3 normal;
     int mat;
     vec3 color;
+	float fuzz;
+	float refaction;
 };
 
 struct sphere 
@@ -38,6 +41,8 @@ struct sphere
     float radius;
     int mat;
     vec3 color;
+	float fuzz;
+	float refaction;
 };
     
 struct hitableList {
@@ -66,6 +71,8 @@ bool hitSphere(in ray r, float tmin, float tmax, inout hitRecord rec, sphere s)
             rec.normal = (rec.p - s.center) / s.radius;
             rec.mat = s.mat;
             rec.color = s.color;
+			rec.fuzz = s.fuzz;
+			rec.refaction = s.refaction;
             return true;
         }
         temp = (-b + sqrt(b*b-a*c))/a;
@@ -76,6 +83,8 @@ bool hitSphere(in ray r, float tmin, float tmax, inout hitRecord rec, sphere s)
             rec.normal = (rec.p - s.center) / s.radius;
             rec.mat = s.mat;
             rec.color = s.color;
+			rec.fuzz = s.fuzz;
+			rec.refaction = s.refaction;
             return true;
         }
     }
@@ -170,14 +179,13 @@ vec3 color(ray r, hitableList list, vec2 st)
 		}
 		if (rec.mat == 1)
 		{
-			float globalFuzz = 0.;// change to 0 for full reflection
 			vec3 reflected = reflect(unitDirection, rec.normal);
-			r = ray(rec.p, reflected + globalFuzz * randInUnitSphere(st));
+			r = ray(rec.p, reflected + rec.fuzz * randInUnitSphere(st + loopCount));
 			att *= rec.color; // if  att *= rec.color * 50; then the shpere become a light source o_O
 		}
 		if (rec.mat == 2)
 		{
-			float refractiveIndex = 1.9;
+			float refractiveIndex = rec.refaction;
 			vec3 outwardNormal;
 			vec3 reflected = reflect(unitDirection, rec.normal);
 			float niOverNt;
@@ -218,7 +226,6 @@ vec3 color(ray r, hitableList list, vec2 st)
 				r = ray(rec.p, refract(unitDirection, outwardNormal, niOverNt));
 			}
 
-			//vec3 refracted = refract(unitDirection, rec.normal, 1.0 / refractiveIndex);
 		}
 		bounce++;
 	}
@@ -236,17 +243,17 @@ void main()
 	hitableList list;
 	list.size = 5;
 	list.sList = sphere[5](
-		sphere(vec3(0., 0., -1.5), 0.5, 0, vec3(0.8, 0.3, 0.3)),
-		sphere(vec3(-1., .0, -1.5), 0.5, 1, vec3(0.8, 0.8, 0.8)),
-		sphere(vec3(1.0, .0, -1.5), 0.5, 2, vec3(0.8, 0.6, 0.2)),
-		sphere(vec3(0., -100.5, -1.), 100., 0, vec3(0.8, 0.8, 0.0)),
-		sphere(vec3(0., 0.5, -10.), 5., 1, vec3(0.8, 0.6, 0.2))
+		sphere(vec3(0., 0., -1.5), 0.5, 0, vec3(0.8, 0.3, 0.3),0.0,0.0),
+		sphere(vec3(-1., .0, -1.5), 0.5, 1, vec3(0.8, 0.8, 0.8),0.5,0.),
+		sphere(vec3(1.0, .0, -1.5), 0.5, 2, vec3(0.8, 0.6, 0.2),0.0,2.5),
+		sphere(vec3(0., -100.5, -1.), 100., 0, vec3(0.8, 0.8, 0.0),0.,0.),
+		sphere(vec3(0., 0.5, -10.), 5., 1, vec3(0.8, 0.6, 0.2),0.,0.)
 		);;
 
     ray r = getRay(st);
     vec3 col = vec3(0.);
     
-    float sizeBlending = 50.;
+    float sizeBlending = 20.;
     
     for( float x = 0.; x < sizeBlending; x++)
     {
