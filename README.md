@@ -1,8 +1,12 @@
-# Nerv engine - light simulation rendering
+# Nerv engine - physically based rendering
 
-![https://i.imgur.com/3nG63re.png](https://i.imgur.com/3nG63re.png)
+![Imgur](https://i.imgur.com/JcnvOOF.png)
 
 This is a 3D engine for light simulation in mind.<br>
+The goal of this engine is to implement a real-time raytraced physically based renderer with the pixar material model.<br>
+<br>
+The engine use OpenGL, GLFW and GLM, but in the future we plan to remove the need of GLM. <br>
+Nerv's core is generalist and can render object in a rastered way but heavly use shaders and a single quad to make "realtime raybased application".
 
 ## Nerv engine status
 ### core
@@ -19,13 +23,17 @@ This is a 3D engine for light simulation in mind.<br>
  - [x] basic objects
  - [x] textures (kinda)
  - [ ] glTF loader
+ - [ ] frame buffer
+ - [ ] GUI
+ - [ ] BVH
  
  ### rendering
  
   - [x] raytracing
   - [x] reflection mat
-  - [ ] refraction mat
+  - [X] refraction mat
   - [x] lambert mat
   - [ ] shadow
   - [ ] light
-  - [ ] BRDF
+  - [ ] Pixar BSDF model
+  - [ ] progressive sampleling
