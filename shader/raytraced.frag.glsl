@@ -1,5 +1,5 @@
 #version 450 core
-
+layout (location = 0) out vec3 fragColor;
 layout (location = 20) uniform mat4 cameraTransform;
 layout (location = 25) uniform vec3 up;
 layout (location = 26) uniform vec3 front;
@@ -12,7 +12,7 @@ uniform sampler3D hdrCubeMap;
 
 in vec2 iTexCoord;
 
-out vec4 fragColor;
+//out vec4 fragColor;
 
 #define FLT_MAX 3.402823466e+38
 const float PI  = 3.14159265359;
@@ -238,7 +238,7 @@ vec3 color(ray r, hitableList list, vec2 st)
 void main()
 {
     // Normalized pixel coordinates (from 0 to 1)
-    vec2 st = gl_FragCoord.xy/iResolution.y;;
+    vec2 st = gl_FragCoord.xy/iResolution.y;
 
 	hitableList list;
 	list.size = 5;
@@ -253,7 +253,7 @@ void main()
     ray r = getRay(st);
     vec3 col = vec3(0.);
     
-    float sizeBlending = 20.;
+    float sizeBlending = 10.;
     
     for( float x = 0.; x < sizeBlending; x++)
     {
@@ -265,5 +265,5 @@ void main()
     col = sqrt(col);
 
     // Output to screen
-    fragColor = vec4(col,1.0);
+    fragColor = col;
 }

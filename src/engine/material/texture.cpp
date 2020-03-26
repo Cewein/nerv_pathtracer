@@ -41,7 +41,6 @@ nerv::texture::texture(std::string path)
 	{
 		logger.initLog("error while openning the texture");
 	}
-
 	logger.endInit();
 
 	
@@ -55,6 +54,9 @@ nerv::texture::texture(int width, int height)
 	this->height = height;
 	this->width = width;
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	logger.info("TEXTURE", "size is " +  std::to_string(width) + 'x' + std::to_string(height));
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
 }

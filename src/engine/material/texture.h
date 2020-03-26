@@ -8,7 +8,7 @@ namespace nerv
 {
 	class texture
 	{
-	private:
+	public:
 		//id of the texture
 		size_t id;
 		int width;
@@ -17,7 +17,6 @@ namespace nerv
 		//nbChanels is if a texture is RGB, RGBA, ect...
 		int nbChannels;
 
-	public:
 
 		texture();
 

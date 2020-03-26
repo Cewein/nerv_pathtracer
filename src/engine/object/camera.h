@@ -54,5 +54,4 @@ namespace nerv
 		void sendInfo();
 		inline void sendViewInfoToShader(bool value) { sendViewInfo = value; }
 	};
-
 }

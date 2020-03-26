@@ -1,6 +1,6 @@
 #pragma once
 #include "../../../dependencies.h"
-#include "texture.h"
+#include "../material/texture.h"
 #include "../../in_out/windows/windows.h"
 
 namespace nerv

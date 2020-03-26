@@ -1,4 +1,5 @@
 dependencies/glfw-3.3/
 Debug/
+Release/
 *.vcxproj*
 log.txt

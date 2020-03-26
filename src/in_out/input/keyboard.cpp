@@ -19,6 +19,7 @@ void nerv::keyboard::keyboardCallBack(GLFWwindow * window, int key, int scancode
 //Input a Camera and get a FPS gamera
 void nerv::keyboard::updateCameraKeyboard(nerv::camera * camera)
 {
+
 	if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_W) == GLFW_PRESS)
 	{
 		camera->transform->positionVec += nerv::window::get().getDeltaTime() * camera->speed * camera->up;

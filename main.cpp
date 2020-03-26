@@ -19,7 +19,10 @@ int main()
 		1, 2, 3    // second triangle
 	};
 
-	nerv::object obj(vertices,indices, new nerv::material(nullptr, new nerv::shader("shader/raytraced.frag.glsl")));
+	nerv::framebuffer * framebuffer = new nerv::framebuffer();
+
+	nerv::object scene(vertices,indices, new nerv::material(nullptr, new nerv::shader("shader/raytraced.frag.glsl")));
+	nerv::object post(vertices, indices, new nerv::material(framebuffer->frameTexture, new nerv::shader("shader/postprocess.frag.glsl")));
 
 	nerv::scene * worldScene = new nerv::scene();
 	nerv::camera * cam = new nerv::camera(nerv::camera::projectionType::PERSPECTIVE_PROJECTION);
@@ -27,19 +30,26 @@ int main()
 
 	while (nerv::window::get().isOpen()) {
 
+		nerv::render::mainpass();
 		
 		cam->sendInfo();
-		obj.show();
+		scene.show();
+
+		/*if (cam->isMoving)
+			logger.info("ENGINE", "Camera is moving");*/
+
+		//nerv::render::postpass();
+		//post.show();
 
 		nerv::window::get().update();
 		cam->isMoving = false;
 		nerv::keyboard::updateCameraKeyboard(cam);
 		nerv::mouse::updateCameraMouse(cam);
-		if (cam->isMoving)
-			logger.info("ENGINE", "Camera is moving");
 	}
 
 	delete worldScene;
+	delete cam;
+	//delete framebuffer;
 
 	nerv::window::get().close();
 	return EXIT_SUCCESS;

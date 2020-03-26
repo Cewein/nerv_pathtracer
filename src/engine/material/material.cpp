@@ -19,10 +19,14 @@ nerv::material::material(nerv::texture * texturePtr, nerv::shader * shaderPtr)
 
 nerv::material::~material()
 {
-	delete(this->shaderprog);
-	delete(this->texture);
-	delete(this->normal);
-	delete(this->specular);
+	if (this->shaderprog)
+		delete(this->shaderprog);
+	if (this->texture)
+		delete(this->texture);
+	if (this->normal)
+		delete(this->normal);
+	if (this->specular)
+		delete(this->specular);
 }
 
 void nerv::material::setShader(nerv::shader * shaderPtr)

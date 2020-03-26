@@ -24,8 +24,6 @@ nerv::object::object(std::vector<float> &vertices, nerv::material * material)
 
 	this->isElements = false;
 
-	vertices.clear();
-
 	setMaterial(material);
 	this->transform = new nerv::transform();
 }
@@ -55,10 +53,6 @@ nerv::object::object(std::vector<float> &vertices, std::vector<size_t> &indices,
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	this->isElements = true;
-
-	vertices.clear();
-	indices.clear();
-
 
 	setMaterial(material);
 	this->transform = new nerv::transform();
