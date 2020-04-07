@@ -157,6 +157,64 @@ float schlick(float cosine, float refIdx)
 	return r0 + (1. - r0) * pow((1. - cosine), 5.);
 }
 
+vec3 lambert(in hitRecord rec, in vec2 st, inout ray r)
+{
+	vec3 target = rec.p + rec.normal + randInUnitSphere(st);
+	r = ray(rec.p, target - rec.p);
+	return rec.color;
+}
+
+vec3 metalic(in hitRecord rec, in vec3 unitDirection, in vec2 st, inout ray r)
+{
+	vec3 reflected = reflect(unitDirection, rec.normal);
+	r = ray(rec.p, reflected + rec.fuzz * randInUnitSphere(st + loopCount));
+	return rec.color; // if  att *= rec.color * 50; then the shpere become a light source o_O
+}
+
+void dialetric(in hitRecord rec, in vec3 unitDirection, in vec2 st, inout ray r)
+{
+	float refractiveIndex = rec.refaction;
+	vec3 outwardNormal;
+	vec3 reflected = reflect(unitDirection, rec.normal);
+	float niOverNt;
+	vec3 refracted;
+
+	float refProb;
+	float cosine;
+
+	if (dot(unitDirection, rec.normal) > 0.)
+	{
+		outwardNormal = -rec.normal;
+		niOverNt = refractiveIndex;
+		cosine = refractiveIndex * dot(direction(r), rec.normal) / length(direction(r));
+	}
+	else
+	{
+		outwardNormal = rec.normal;
+		niOverNt = 1.0 / refractiveIndex;
+		cosine = -dot(direction(r), rec.normal) / length(direction(r));
+	}
+	if (checkRefract(unitDirection, outwardNormal, niOverNt))
+	{
+
+		refProb = schlick(cosine, refractiveIndex);
+	}
+	else
+	{
+		refProb = 1.0;
+	}
+
+	if (random(vec2(loopCount)) < refProb)
+	{
+				
+		r = ray(rec.p, reflected);
+	}
+	else
+	{
+		r = ray(rec.p, refract(unitDirection, outwardNormal, niOverNt));
+	}
+}
+
 vec3 color(ray r, hitableList list, vec2 st)
 {
 	hitRecord rec;
@@ -173,59 +231,15 @@ vec3 color(ray r, hitableList list, vec2 st)
 		unitDirection = normalize(direction(r));
 		if (rec.mat == 0)
 		{
-			vec3 target = rec.p + rec.normal + randInUnitSphere(st);
-			r = ray(rec.p, target - rec.p);
-			att *= rec.color;
+			att *= lambert(rec,st,r);
 		}
 		if (rec.mat == 1)
 		{
-			vec3 reflected = reflect(unitDirection, rec.normal);
-			r = ray(rec.p, reflected + rec.fuzz * randInUnitSphere(st + loopCount));
-			att *= rec.color; // if  att *= rec.color * 50; then the shpere become a light source o_O
+			att *= metalic(rec, unitDirection, st, r);
 		}
 		if (rec.mat == 2)
 		{
-			float refractiveIndex = rec.refaction;
-			vec3 outwardNormal;
-			vec3 reflected = reflect(unitDirection, rec.normal);
-			float niOverNt;
-			vec3 refracted;
-
-			float refProb;
-			float cosine;
-
-			if (dot(unitDirection, rec.normal) > 0.)
-			{
-				outwardNormal = -rec.normal;
-				niOverNt = refractiveIndex;
-				cosine = refractiveIndex * dot(direction(r), rec.normal) / length(direction(r));
-			}
-			else
-			{
-				outwardNormal = rec.normal;
-				niOverNt = 1.0 / refractiveIndex;
-				cosine = -dot(direction(r), rec.normal) / length(direction(r));
-			}
-			if (checkRefract(unitDirection, outwardNormal, niOverNt))
-			{
-
-				refProb = schlick(cosine, refractiveIndex);
-			}
-			else
-			{
-				refProb = 1.0;
-			}
-
-			if (random(vec2(loopCount)) < refProb)
-			{
-				
-				r = ray(rec.p, reflected);
-			}
-			else
-			{
-				r = ray(rec.p, refract(unitDirection, outwardNormal, niOverNt));
-			}
-
+			dialetric(rec, unitDirection, st, r);
 		}
 		bounce++;
 	}

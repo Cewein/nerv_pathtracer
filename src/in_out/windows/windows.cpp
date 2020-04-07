@@ -44,7 +44,7 @@ void nerv::window::create(std::string name, int width, int height, bool fullscre
 	this->height = height;
 	this->name = name;
 
-	logger.warning("GLFW", "Setting view port for openGL");
+	logger.warning("GLFW", "Setting view port for openGL\n");
 	glViewport(0, 0, width, height);
 
 	this->deltaTime = 0.0f;
