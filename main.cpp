@@ -3,6 +3,7 @@
 #include "src/engine.h"
 
 
+
 int main()
 {
 	nerv::init::launch();
@@ -31,6 +32,7 @@ int main()
 	while (nerv::window::get().isOpen()) {
 
 		nerv::render::mainpass();
+
 		
 		cam->sendInfo();
 		scene.show();
@@ -42,11 +44,13 @@ int main()
 		//post.show();
 
 		nerv::window::get().update();
+
 		cam->isMoving = false;
 		nerv::keyboard::updateCameraKeyboard(cam);
 		nerv::mouse::updateCameraMouse(cam);
 	}
 
+	nerv::ui::clean();
 	delete worldScene;
 	delete cam;
 	//delete framebuffer;

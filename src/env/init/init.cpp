@@ -11,4 +11,7 @@ void nerv::init::launch()
 	logger.info("GPU INFO", std::string((char*)glGetString(GL_VENDOR)) + '\n');
 
 	nerv::keyboard::init();
+
+	logger.info("IMGUI", "initializing");
+	nerv::ui::init();
 }

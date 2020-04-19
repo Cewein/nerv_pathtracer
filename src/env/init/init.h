@@ -7,6 +7,7 @@
 #include "../../in_out/windows/windows.h"
 #include "../../in_out/input/keyboard.h"
 #include "../../config/config.h"
+#include "../../engine/ui.h"
 
 namespace nerv{
 	namespace init{
