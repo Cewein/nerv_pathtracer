@@ -36,6 +36,7 @@ namespace nerv
 		glm::vec3 right;
 
 		bool isMoving;
+		inline static bool focusing = true;
 
 		enum projectionType
 		{

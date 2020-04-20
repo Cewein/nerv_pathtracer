@@ -12,30 +12,33 @@
 
 void nerv::ui::init()
 {
+	logger.warning("DEAR IMGUI", "Setting up dear imgui");
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 
 	ImGui::StyleColorsDark();
 
-	ImGui_ImplGlfw_InitForOpenGL(nerv::window::get().display(), true);
+	logger.warning("DEAR IMGUI", "linking to opengl and glfw");
+	ImGui_ImplGlfw_InitForOpenGL(WINDOW_GLFW_DISPLAY, true);
 	ImGui_ImplOpenGL3_Init("#version 450 core");
 }
 
-void nerv::ui::render()
+void nerv::ui::newFrame()
 {
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
+}
 
-	bool tr = true;
-
-	ImGui::ShowDemoWindow(&tr);
+void nerv::ui::draw()
+{
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 void nerv::ui::clean()
 {
+	logger.warning("DEAR IMGUI", "using a broom to clean everything");
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();

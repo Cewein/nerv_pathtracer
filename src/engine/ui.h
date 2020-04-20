@@ -9,7 +9,8 @@ namespace nerv
 	namespace ui
 	{
 		void init();
-		void render();
+		void newFrame();
+		void draw();
 		void clean();
 	}
 }

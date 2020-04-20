@@ -25,8 +25,8 @@ int main()
 	nerv::object scene(vertices,indices, new nerv::material(nullptr, new nerv::shader("shader/raytraced.frag.glsl")));
 	nerv::object post(vertices, indices, new nerv::material(framebuffer->frameTexture, new nerv::shader("shader/postprocess.frag.glsl")));
 
-	nerv::scene * worldScene = new nerv::scene();
 	nerv::camera * cam = new nerv::camera(nerv::camera::projectionType::PERSPECTIVE_PROJECTION);
+
 	cam->transform->translate(glm::vec3(0., 0., 3.));
 
 	while (nerv::window::get().isOpen()) {
@@ -37,12 +37,16 @@ int main()
 		cam->sendInfo();
 		scene.show();
 
-		/*if (cam->isMoving)
-			logger.info("ENGINE", "Camera is moving");*/
+		nerv::ui::newFrame();
 
-		//nerv::render::postpass();
-		//post.show();
+		if (ImGui::Begin("FPS counter"))
+		{
+			int fps = 1. / nerv::window::get().getDeltaTime();
+			ImGui::Text((std::to_string(fps) + " fps").c_str());
+		}
+		ImGui::End();
 
+		nerv::ui::draw();
 		nerv::window::get().update();
 
 		cam->isMoving = false;
@@ -51,7 +55,6 @@ int main()
 	}
 
 	nerv::ui::clean();
-	delete worldScene;
 	delete cam;
 	//delete framebuffer;
 
