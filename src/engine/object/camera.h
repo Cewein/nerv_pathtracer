@@ -30,6 +30,8 @@ namespace nerv
 		float pitch;
 
 		float fov;
+		float aperture;
+		float focusDistance;
 
 		glm::vec3 front;
 		glm::vec3 up;

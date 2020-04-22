@@ -16,6 +16,9 @@ nerv::camera::camera()
 	this->pitch = -90.f;
 	this->sensitivity = 0.05f;
 	this->isMoving = true;
+	this->fov = 90.0;
+	this->focusDistance = 10.0;
+	this->aperture = 0.1;
 }
 
 nerv::camera::camera(enum nerv::camera::projectionType projectionType, float fov)
@@ -43,6 +46,8 @@ nerv::camera::camera(enum nerv::camera::projectionType projectionType, float fov
 	this->transform = new nerv::transform();
 	this->speed = 5.f;
 	this->fov = fov;
+	this->focusDistance = 10.0;
+	this->aperture = 0.1;
 
 	this->lastX = nerv::window::get().width / 2;
 	this->lastY = nerv::window::get().height / 2;
@@ -101,6 +106,8 @@ void nerv::camera::sendInfo()
 		glUniform3fv(26, 1, &this->up[0]);
 		glUniform3fv(27, 1, &this->right[0]);
 		glUniform1fv(28, 1, &this->fov);
+		glUniform1fv(29, 1, &this->aperture);
+		glUniform1fv(30, 1, &this->focusDistance);
 	}
 	else
 		glUniformMatrix4fv(15, 1, GL_FALSE, &glm::mat4(1.0)[0][0]);

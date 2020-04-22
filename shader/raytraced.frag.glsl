@@ -5,10 +5,13 @@ layout (location = 25) uniform vec3 up;
 layout (location = 26) uniform vec3 front;
 layout (location = 27) uniform vec3 right;
 layout (location = 28) uniform float fov;
+layout (location = 29) uniform float aperture;
+layout (location = 30) uniform float focusDistance;
 
 uniform vec2 iResolution;
 uniform float iTime;
 uniform sampler3D hdrCubeMap;
+uniform int nbSample;
 
 in vec2 iTexCoord;
 
@@ -110,11 +113,13 @@ bool hit(in ray r, float tmin, float tmax, inout hitRecord rec, hitableList list
 
 ray getRay(vec2 uv) 
 {
-	float scale = tan(fov * 0.5);
+	float lensRaduis = aperture / 2.0;
+
+	float scale = tan(fov/180.0);
 	vec2 d = (2.0 * iTexCoord - 1.0);
 	d.x *= (iResolution.x / iResolution.y) * scale;
 	d.y *= scale;
-	
+
 	vec3 origin = (cameraTransform * vec4(0.,0.,0.,1.)).xyz; 
 
 	vec3 direction = normalize(d.x * right + d.y * up + front);
@@ -136,6 +141,11 @@ vec3 randInUnitSphere(vec2 st) {
     float theta = random(st.xy) * 3.14169265;
     
     return vec3(cos(phi) * sin(theta), cos(theta), sin(phi) * sin(theta));
+}
+
+vec2 randInUnitDisk(vec2 st)
+{
+	return vec2(random(st.yx),random(st.xy)) * 2.0 - 1.0; 
 }
 
 bool checkRefract(vec3 v, vec3 n, float niOverNt)
@@ -267,15 +277,13 @@ void main()
     ray r = getRay(st);
     vec3 col = vec3(0.);
     
-    float sizeBlending = 10.;
-    
-    for( float x = 0.; x < sizeBlending; x++)
+    for( float x = 0.; x < float(nbSample); x++)
     {
         col += color(r,list,st + x);
 		loopCount++;
     }
     
-    col = col / sizeBlending;
+    col = col / float(nbSample);
     col = sqrt(col);
 
     // Output to screen
