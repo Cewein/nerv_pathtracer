@@ -1,4 +1,5 @@
 #version 450 core
+#define DOF
 layout (location = 0) out vec3 fragColor;
 layout (location = 20) uniform mat4 cameraTransform;
 layout (location = 25) uniform vec3 up;
@@ -111,22 +112,6 @@ bool hit(in ray r, float tmin, float tmax, inout hitRecord rec, hitableList list
     return hitAny;
 }
 
-ray getRay(vec2 uv) 
-{
-	float lensRaduis = aperture / 2.0;
-
-	float scale = tan(fov/180.0);
-	vec2 d = (2.0 * iTexCoord - 1.0);
-	d.x *= (iResolution.x / iResolution.y) * scale;
-	d.y *= scale;
-
-	vec3 origin = (cameraTransform * vec4(0.,0.,0.,1.)).xyz; 
-
-	vec3 direction = normalize(d.x * right + d.y * up + front);
-	return ray(origin,direction); 
-}
-
-
 float random (vec2 st) {
     highp float a = 12.9898;
     highp float b = 78.233;
@@ -143,10 +128,45 @@ vec3 randInUnitSphere(vec2 st) {
     return vec3(cos(phi) * sin(theta), cos(theta), sin(phi) * sin(theta));
 }
 
-vec2 randInUnitDisk(vec2 st)
+vec3 randInUnitDisk(vec2 st)
 {
-	return vec2(random(st.yx),random(st.xy)) * 2.0 - 1.0; 
+	return vec3(random(st.yx),random(st.xy),0.) * 2.0 - 1.0; 
 }
+
+#ifdef DOF
+ray getRay(vec2 uv) 
+{
+
+	
+	float scale = tan(fov/180.0);
+	vec2 d = (2.0 * iTexCoord - 1.0);
+	d.x *= (iResolution.x / iResolution.y) * scale;
+	d.y *= scale;
+
+	vec3 origin = (cameraTransform * vec4(0.,0.,0.,1.)).xyz;
+	float lensRaduis = aperture/2.0;
+	vec3 rd = lensRaduis * randInUnitDisk(uv);
+	vec3 offset = up * rd.x + right * rd.y;
+
+	vec3 ft = origin + d.y * focusDistance * up + d.x * focusDistance * right + focusDistance * front;
+
+	vec3 direction = normalize(d.x * right + d.y * up + ft - origin - offset);
+	return ray(origin + offset,direction); 
+}
+#else
+ray getRay(vec2 uv) 
+{
+	float scale = tan(fov/180.0);
+	vec2 d = (2.0 * iTexCoord - 1.0);
+	d.x *= (iResolution.x / iResolution.y) * scale;
+	d.y *= scale;
+
+	vec3 origin = (cameraTransform * vec4(0.,0.,0.,1.)).xyz;
+
+	vec3 direction = normalize(d.x * right + d.y * up + front);
+	return ray(origin,direction); 
+}
+#endif
 
 bool checkRefract(vec3 v, vec3 n, float niOverNt)
 {
@@ -274,11 +294,12 @@ void main()
 		sphere(vec3(0., 0.5, -10.), 5., 1, vec3(0.8, 0.6, 0.2),0.,0.)
 		);;
 
-    ray r = getRay(st);
+    
     vec3 col = vec3(0.);
     
     for( float x = 0.; x < float(nbSample); x++)
     {
+	ray r = getRay(st + x);
         col += color(r,list,st + x);
 		loopCount++;
     }

@@ -58,7 +58,7 @@ int main()
 			ImGui::Text("Camera");
 			ImGui::Separator();
 			ImGui::SliderFloat("FOV", &(cam->fov), 0.0, 180.0);
-			ImGui::SliderFloat("focus Distance", &(cam->focusDistance), 0.0, 20.0);
+			ImGui::SliderFloat("focus Distance", &(cam->focusDistance), 0.0001, 20.0);
 			ImGui::SliderFloat("apperture", &(cam->aperture), 0.0, 1.0);
 
 			ImGui::Text("rendering");

@@ -18,7 +18,7 @@ nerv::camera::camera()
 	this->isMoving = true;
 	this->fov = 90.0;
 	this->focusDistance = 10.0;
-	this->aperture = 0.1;
+	this->aperture = 0.0;
 }
 
 nerv::camera::camera(enum nerv::camera::projectionType projectionType, float fov)
@@ -47,7 +47,7 @@ nerv::camera::camera(enum nerv::camera::projectionType projectionType, float fov
 	this->speed = 5.f;
 	this->fov = fov;
 	this->focusDistance = 10.0;
-	this->aperture = 0.1;
+	this->aperture = 0.0;
 
 	this->lastX = nerv::window::get().width / 2;
 	this->lastY = nerv::window::get().height / 2;
