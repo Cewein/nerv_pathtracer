@@ -1,5 +1,6 @@
 dependencies/glfw-3.3/
 Debug/
 Release/
-*.vcxproj*
 log.txt
+nerv_engine.vcxproj.filters
+nerv_engine.vcxproj.user
