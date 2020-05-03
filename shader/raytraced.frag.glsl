@@ -50,7 +50,7 @@ struct sphere
 };
     
 struct hitableList {
-    sphere[5] sList;
+    sphere[6] sList;
     int size;
 };      
            
@@ -95,6 +95,53 @@ bool hitSphere(in ray r, float tmin, float tmax, inout hitRecord rec, sphere s)
     return false;
 }
 
+bool hitTriangle(in ray r, vec3 v0, vec3 v1, vec3 v2,float tmax, inout hitRecord rec) {
+
+	vec3 e1,e2,h,s,q;
+	float a,f,u,v, t;
+	e1 = v1 - v0;
+	e2 = v1 - v2;
+
+	h =  cross(direction(r),e2);
+	a = dot(e1,h);
+
+	if (a > -0.00001 && a < 0.00001)
+		return false;
+
+	f = 1/a;
+	s = origin(r) - v0;
+	u = f * (dot(s,h));
+
+	if (u < 0.0 || u > 1.0)
+		return false;
+
+	q = cross(s,e1);
+	v = f * dot(direction(r),q);
+
+	if (v < 0.0 || u + v > 1.0)
+		return false;
+
+	// at this stage we can compute t to find out where
+	// the intersection point is on the line
+	t = f * dot(e2,q);
+
+	if (t > 0.00001 && t < tmax) // ray intersection
+	{
+		rec.t = t;
+        rec.p = pointAtParameter(r,rec.t);
+        rec.normal = normalize(cross(v1 - v0, v2 - v0));
+		rec.mat = 1;
+        rec.color = vec3(0.8, 0.8, 0.0);
+		rec.fuzz = 0.25;
+		rec.refaction = 1.4;
+		return true ;
+	}
+	else // this means that there is a line intersection
+		 // but not a ray intersection
+		 return false;
+
+}
+
 bool hit(in ray r, float tmin, float tmax, inout hitRecord rec, hitableList list)
 {
     hitRecord tempRec;
@@ -109,6 +156,18 @@ bool hit(in ray r, float tmin, float tmax, inout hitRecord rec, hitableList list
             rec = tempRec;
         }
     }
+
+	vec3 v0 = vec3(-5, 0, 0);
+	vec3 v1 = vec3(5, 0, 0);
+	vec3 v2 = vec3(0, -5 * sqrt(2), 0);
+
+	if(hitTriangle(r, v0, v1, v2, closestSoFar, tempRec))
+	{
+		hitAny = true;
+		closestSoFar = tempRec.t;
+		rec = tempRec;
+	}
+
     return hitAny;
 }
 
@@ -285,14 +344,15 @@ void main()
     vec2 st = gl_FragCoord.xy/iResolution.y;
 
 	hitableList list;
-	list.size = 5;
-	list.sList = sphere[5](
+	list.size = 6;
+	list.sList = sphere[6](
 		sphere(vec3(0., 0., -1.5), 0.5, 0, vec3(0.8, 0.3, 0.3),0.0,0.0),
 		sphere(vec3(-1., .0, -1.5), 0.5, 1, vec3(0.8, 0.8, 0.8),0.5,0.),
 		sphere(vec3(1.0, .0, -1.5), 0.5, 2, vec3(0.8, 0.6, 0.2),0.0,2.5),
 		sphere(vec3(0., -100.5, -1.), 100., 0, vec3(0.8, 0.8, 0.0),0.,0.),
-		sphere(vec3(0., 0.5, -10.), 5., 1, vec3(0.8, 0.6, 0.2),0.,0.)
-		);;
+		sphere(vec3(0., 0.5, -10.), 5., 1, vec3(0.8, 0.6, 0.2),0.,0.),
+		sphere(vec3(0., 0.5, 10.), 5., 2, vec3(0.8, 0.6, 0.2),0.,1.4)
+		);
 
     
     vec3 col = vec3(0.);
