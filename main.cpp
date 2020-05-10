@@ -11,6 +11,38 @@
 
  std::mt19937 rng;
 
+ sphere * makeSphereData(int size)
+ {
+
+	 std::uniform_real_distribution<float_t> floatGen(0.0f, 1.0f);
+
+	 sphere * s = new sphere[size];
+
+	 for (int i = 0; i < size - 1; i++)
+	 {
+		 float x = floatGen(rng) * 80.0f - 40.0f;
+		 float y = floatGen(rng) * 80.0f - 40.0f;
+		 float z = floatGen(rng) * 80.0f - 40.0f;
+		 float sz = 0.5f;
+
+		 s[i] =
+		 {
+			 {x, 0.f, z, 1.0f},
+			 {sz, floorf(floatGen(rng) * 3.f), floatGen(rng), floatGen(rng) + 1.f},
+			 {floatGen(rng),floatGen(rng), floatGen(rng), 0.0f}
+		 };
+	 }
+
+	 s[size - 1] =
+	 {
+		 {0.0f, -2000.5f, 0.0f, 1.0f},
+		 {2000.0f, 0.f, 0.f, 0.f},
+		 {0.4f,0.4f, 0.4f, 0.0f}
+	 };
+
+	 return s;
+ }
+
 int main()
 {
 
@@ -37,7 +69,7 @@ int main()
 	nerv::camera * cam = new nerv::camera(nerv::camera::projectionType::PERSPECTIVE_PROJECTION, 90.0f);
 	cam->transform->translate(glm::vec3(0., 0., 3.));
 
-	const int size = 6;
+	const int size = 1;
 	sphere * s = makeSphereData(size);
 	
 	int nbSample = 10;
@@ -101,34 +133,3 @@ int main()
 	return EXIT_SUCCESS;
 }
 
-sphere * makeSphereData(int size)
-{
-
-	std::uniform_real_distribution<float_t> floatGen(0.0f, 1.0f);
-
-	sphere * s = new sphere[size];
-
-	for (int i = 0; i < size - 1; i++)
-	{
-		float x = floatGen(rng) * 80.0f - 40.0f;
-		float y = floatGen(rng) * 80.0f - 40.0f;
-		float z = floatGen(rng) * 80.0f - 40.0f;
-		float sz = 0.5f;
-
-		s[i] =
-		{
-			{x, 0.f, z, 1.0f},
-			{sz, floorf(floatGen(rng) * 3.f), floatGen(rng), floatGen(rng) + 1.f},
-			{floatGen(rng),floatGen(rng), floatGen(rng), 0.0f}
-		};
-	}
-
-	s[size - 1] =
-	{
-		{0.0f, -2000.5f, 0.0f, 1.0f},
-		{2000.0f, 0.f, 0.f, 0.f},
-		{0.4f,0.4f, 0.4f, 0.0f}
-	};
-
-	return s;
-}
