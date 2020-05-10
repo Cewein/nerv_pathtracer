@@ -22,6 +22,18 @@ void nerv::shader::shaderInfo(size_t shaderId)
 
 }
 
+unsigned int nerv::shader::createBuffer(int size, void * data)
+{
+	unsigned int ssbo = 0;
+	glGenBuffers(1, &ssbo);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, ssbo);
+
+	glBufferData(GL_SHADER_STORAGE_BUFFER, size, data, GL_DYNAMIC_DRAW);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, ssbo);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+	return ssbo;
+}
+
 void nerv::shader::programInfo(size_t program)
 {
 	int success;

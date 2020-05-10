@@ -9,10 +9,13 @@ layout (location = 28) uniform float fov;
 layout (location = 29) uniform float aperture;
 layout (location = 30) uniform float focusDistance;
 
+
+
 uniform vec2 iResolution;
 uniform float iTime;
 uniform sampler3D hdrCubeMap;
 uniform int nbSample;
+uniform int size;
 
 in vec2 iTexCoord;
 
@@ -33,37 +36,30 @@ struct hitRecord {
     float t;
     vec3 p;
     vec3 normal;
-    int mat;
+    float mat;
     vec3 color;
 	float fuzz;
 	float refaction;
 };
 
-struct sphere 
-{
-    vec3 center;
-    float radius;
-    int mat;
-    vec3 color;
-	float fuzz;
-	float refaction;
+struct sphere{
+    vec4 pos;
+	vec4 rmfr; //raduis material fuzz refractionIndex
+	vec4 color;
 };
-    
-struct hitableList {
-    sphere[6] sList;
-    int size;
-};      
+
+layout (std430,binding=0) buffer testBufer {
+	sphere s[];
+};
            
-vec3 origin(ray r) {return r.A; }
-vec3 direction(ray r) {return r.B; }
 vec3 pointAtParameter(ray r, float t) { return r.A + t*r.B; }
 
 bool hitSphere(in ray r, float tmin, float tmax, inout hitRecord rec, sphere s)
 {
-    vec3 oc = origin(r) - s.center;
-    float a = dot(direction(r),direction(r));
-    float b = dot(oc, direction(r));
-    float c = dot(oc,oc)-s.radius*s.radius;
+    vec3 oc = r.A - s.pos.xyz;
+    float a = dot(r.B,r.B);
+    float b = dot(oc, r.B);
+    float c = dot(oc,oc)-s.rmfr.x*s.rmfr.x;
     float d = b*b - a*c;
     if (d > 0.) 
     {
@@ -72,11 +68,11 @@ bool hitSphere(in ray r, float tmin, float tmax, inout hitRecord rec, sphere s)
         {
             rec.t = temp;
             rec.p = pointAtParameter(r,rec.t);
-            rec.normal = (rec.p - s.center) / s.radius;
-            rec.mat = s.mat;
-            rec.color = s.color;
-			rec.fuzz = s.fuzz;
-			rec.refaction = s.refaction;
+            rec.normal = (rec.p - s.pos.xyz) / s.rmfr.x;
+            rec.mat = s.rmfr.y;
+            rec.color = s.color.xyz;
+			rec.fuzz = s.rmfr.z;
+			rec.refaction = s.rmfr.w;
             return true;
         }
         temp = (-b + sqrt(b*b-a*c))/a;
@@ -84,11 +80,11 @@ bool hitSphere(in ray r, float tmin, float tmax, inout hitRecord rec, sphere s)
         {
             rec.t = temp;
             rec.p = pointAtParameter(r,rec.t);
-            rec.normal = (rec.p - s.center) / s.radius;
-            rec.mat = s.mat;
-            rec.color = s.color;
-			rec.fuzz = s.fuzz;
-			rec.refaction = s.refaction;
+            rec.normal = (rec.p - s.pos.xyz) / s.rmfr.x;
+            rec.mat = s.rmfr.y;
+            rec.color = s.color.xyz;
+			rec.fuzz = s.rmfr.z;
+			rec.refaction = s.rmfr.w;
             return true;
         }
     }
@@ -102,21 +98,21 @@ bool hitTriangle(in ray r, vec3 v0, vec3 v1, vec3 v2,float tmax, inout hitRecord
 	e1 = v1 - v0;
 	e2 = v1 - v2;
 
-	h =  cross(direction(r),e2);
+	h =  cross(r.B,e2);
 	a = dot(e1,h);
 
 	if (a > -0.00001 && a < 0.00001)
 		return false;
 
 	f = 1/a;
-	s = origin(r) - v0;
+	s = r.A - v0;
 	u = f * (dot(s,h));
 
 	if (u < 0.0 || u > 1.0)
 		return false;
 
 	q = cross(s,e1);
-	v = f * dot(direction(r),q);
+	v = f * dot(r.B,q);
 
 	if (v < 0.0 || u + v > 1.0)
 		return false;
@@ -132,7 +128,7 @@ bool hitTriangle(in ray r, vec3 v0, vec3 v1, vec3 v2,float tmax, inout hitRecord
         rec.normal = normalize(cross(v1 - v0, v2 - v0));
 		rec.mat = 1;
         rec.color = vec3(0.8, 0.8, 0.0);
-		rec.fuzz = 0.25;
+		rec.fuzz = 0.0;
 		rec.refaction = 1.4;
 		return true ;
 	}
@@ -142,14 +138,14 @@ bool hitTriangle(in ray r, vec3 v0, vec3 v1, vec3 v2,float tmax, inout hitRecord
 
 }
 
-bool hit(in ray r, float tmin, float tmax, inout hitRecord rec, hitableList list)
+bool hit(in ray r, float tmin, float tmax, inout hitRecord rec)
 {
     hitRecord tempRec;
     bool hitAny = false;
     float closestSoFar = tmax;
-    for(int i = 0; i < list.size; i++)
+    for(int i = 0; i < size; i++)
     {
-        if(hitSphere(r,tmin, closestSoFar,tempRec, list.sList[i]))
+        if(hitSphere(r,tmin, closestSoFar,tempRec, s[i]))
         {
             hitAny = true;
             closestSoFar = tempRec.t;
@@ -275,13 +271,13 @@ void dialetric(in hitRecord rec, in vec3 unitDirection, in vec2 st, inout ray r)
 	{
 		outwardNormal = -rec.normal;
 		niOverNt = refractiveIndex;
-		cosine = refractiveIndex * dot(direction(r), rec.normal) / length(direction(r));
+		cosine = refractiveIndex * dot(r.B, rec.normal) / length(r.B);
 	}
 	else
 	{
 		outwardNormal = rec.normal;
 		niOverNt = 1.0 / refractiveIndex;
-		cosine = -dot(direction(r), rec.normal) / length(direction(r));
+		cosine = -dot(r.B, rec.normal) / length(r.B);
 	}
 	if (checkRefract(unitDirection, outwardNormal, niOverNt))
 	{
@@ -304,7 +300,7 @@ void dialetric(in hitRecord rec, in vec3 unitDirection, in vec2 st, inout ray r)
 	}
 }
 
-vec3 color(ray r, hitableList list, vec2 st)
+vec3 color(ray r, vec2 st)
 {
 	hitRecord rec;
 	vec3 unitDirection;
@@ -315,25 +311,25 @@ vec3 color(ray r, hitableList list, vec2 st)
 	int bounceSize = 5;
 	int bounce = 0;
 
-	while (hit(r, 0.001, FLT_MAX, rec, list) && bounce < bounceSize)
+	while (hit(r, 0.001, FLT_MAX, rec) && bounce < bounceSize)
 	{
-		unitDirection = normalize(direction(r));
-		if (rec.mat == 0)
+		unitDirection = normalize(r.B);
+		if (rec.mat == 0.0)
 		{
 			att *= lambert(rec,st,r);
 		}
-		if (rec.mat == 1)
+		if (rec.mat == 1.0)
 		{
 			att *= metalic(rec, unitDirection, st, r);
 		}
-		if (rec.mat == 2)
+		if (rec.mat == 2.0)
 		{
 			dialetric(rec, unitDirection, st, r);
 		}
 		bounce++;
 	}
     
-    unitDirection = normalize(direction(r));
+    unitDirection = normalize(r.B);
     t =  (unitDirection.y + 1.);
     return att * (t*vec3(0.6,0.8,1.));
 }
@@ -343,24 +339,12 @@ void main()
     // Normalized pixel coordinates (from 0 to 1)
     vec2 st = gl_FragCoord.xy/iResolution.y;
 
-	hitableList list;
-	list.size = 6;
-	list.sList = sphere[6](
-		sphere(vec3(0., 0., -1.5), 0.5, 0, vec3(0.8, 0.3, 0.3),0.0,0.0),
-		sphere(vec3(-1., .0, -1.5), 0.5, 1, vec3(0.8, 0.8, 0.8),0.5,0.),
-		sphere(vec3(1.0, .0, -1.5), 0.5, 2, vec3(0.8, 0.6, 0.2),0.0,2.5),
-		sphere(vec3(0., -100.5, -1.), 100., 0, vec3(0.8, 0.8, 0.0),0.,0.),
-		sphere(vec3(0., 0.5, -10.), 5., 1, vec3(0.8, 0.6, 0.2),0.,0.),
-		sphere(vec3(0., 0.5, 10.), 5., 2, vec3(0.8, 0.6, 0.2),0.,1.4)
-		);
-
-    
     vec3 col = vec3(0.);
     
     for( float x = 0.; x < float(nbSample); x++)
     {
 	ray r = getRay(st + x);
-        col += color(r,list,st + x);
+        col += color(r,st + x);
 		loopCount++;
     }
     

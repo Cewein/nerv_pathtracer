@@ -1,12 +1,21 @@
 #include <glad/glad.h>
 #include "dependencies.h"
 #include "src/engine.h"
+#include <random>
 
+ typedef struct spheres {
+	float pos[4];
+	float rmfr[4]; //raduis material fuzz refractionIndex
+	float color[4];
+}sphere;
 
+ std::mt19937 rng;
 
 int main()
 {
+
 	nerv::init::launch();
+	rng.seed(1337);
 
 	std::vector<float> vertices = {
 		 1.0f,  1.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
@@ -26,10 +35,39 @@ int main()
 	nerv::object post(vertices, indices, new nerv::material(framebuffer->frameTexture, new nerv::shader("shader/postprocess.frag.glsl")));
 
 	nerv::camera * cam = new nerv::camera(nerv::camera::projectionType::PERSPECTIVE_PROJECTION, 90.0f);
-
 	cam->transform->translate(glm::vec3(0., 0., 3.));
 
-	int nbSample = 20;
+	std::uniform_real_distribution<float_t> floatGen(0.0f,1.0f);
+
+	const int size = 500;
+
+	sphere * s = new sphere[size];
+	
+	for(int i = 0; i < size - 1; i++)
+	{ 
+		float x = floatGen(rng) * 80.0f - 40.0f;
+		float y = floatGen(rng) * 80.0f - 40.0f;
+		float z = floatGen(rng) * 80.0f - 40.0f;
+		float sz = 0.5f;
+
+		s[i] =
+		{
+			{x, 0.f, z, 1.0f},
+			{sz, floorf(floatGen(rng) * 3.f), floatGen(rng), floatGen(rng) + 1.f},
+			{floatGen(rng),floatGen(rng), floatGen(rng), 0.0f}
+		};
+	}
+
+	s[size - 1] =
+	{
+		{0.0f, -2000.5f, 0.0f, 1.0f},
+		{2000.0f, 0.f, 0.f, 0.f},
+		{0.4f,0.4f, 0.4f, 0.0f}
+	};
+
+	int nbSample = 2;
+	
+	unsigned int ssbo = nerv::shader::createBuffer(sizeof(sphere) * size, s);
 
 	while (nerv::window::get().isOpen()) {
 
@@ -37,6 +75,7 @@ int main()
 
 		
 		cam->sendInfo();
+		scene.material->shaderprog->setInt("size", size);
 		scene.show();
 
 		nerv::ui::newFrame();
@@ -46,9 +85,10 @@ int main()
 		{
 			int fps = 1. / nerv::window::get().getDeltaTime();
 			ImGui::Text((std::to_string(fps) + " fps").c_str());
+			ImGui::Text((std::to_string(nerv::window::get().getDeltaTime()) + " time between frame").c_str());
 
-			/*static float arr[] = { 0.6f, 0.1f, 1.0f, 0.5f, 0.92f, 0.1f, 0.2f };
-			ImGui::PlotLines("Frame Times", arr, IM_ARRAYSIZE(arr));*/
+			static float arr[] = { 0.6f, 0.1f, 1.0f, 0.5f, 0.92f, 0.1f, 0.2f };
+			ImGui::PlotLines("Frame Times", arr, IM_ARRAYSIZE(arr));
 		}
 		ImGui::End();
 
@@ -79,6 +119,7 @@ int main()
 
 	nerv::ui::clean();
 	delete cam;
+	delete s;
 	//delete framebuffer;
 
 	nerv::window::get().close();
