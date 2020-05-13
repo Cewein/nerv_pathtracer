@@ -18,7 +18,7 @@
 
 	 sphere * s = new sphere[size];
 
-	 for (int i = 0; i < size - 1; i++)
+	 for (int i = 0; i < size; i++)
 	 {
 		 float x = floatGen(rng) * 80.0f - 40.0f;
 		 float y = floatGen(rng) * 80.0f - 40.0f;
@@ -32,14 +32,6 @@
 			 {floatGen(rng),floatGen(rng), floatGen(rng), 0.0f}
 		 };
 	 }
-
-	 s[size - 1] =
-	 {
-		 {0.0f, -2000.5f, 0.0f, 1.0f},
-		 {2000.0f, 0.f, 0.f, 0.f},
-		 {0.4f,0.4f, 0.4f, 0.0f}
-	 };
-
 	 return s;
  }
 
@@ -69,7 +61,7 @@ int main()
 	nerv::camera * cam = new nerv::camera(nerv::camera::projectionType::PERSPECTIVE_PROJECTION, 90.0f);
 	cam->transform->translate(glm::vec3(0., 0., 3.));
 
-	const int size = 1;
+	const int size = 10;
 	sphere * s = makeSphereData(size);
 	
 	int nbSample = 10;

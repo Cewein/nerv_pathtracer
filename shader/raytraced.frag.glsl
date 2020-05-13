@@ -28,8 +28,8 @@ const float PHI = 1.61803398875;
 float loopCount = 0.;
 
 struct ray {
-    vec3 A;
-    vec3 B;
+    vec3 A; //origin
+    vec3 B; //direction
 };
     
 struct hitRecord {
@@ -138,6 +138,27 @@ bool hitTriangle(in ray r, vec3 v0, vec3 v1, vec3 v2,float tmax, inout hitRecord
 
 }
 
+bool hitGround(in ray r, float tmax, inout hitRecord rec) 
+{ 
+    float t = -(r.A.y + 0.5) / r.B.y;
+	if (t > 0.0001 && t < tmax)
+	{
+
+		rec.t = t;
+        rec.p = pointAtParameter(r,rec.t);
+		rec.normal = vec3(0.f, 1.f, 0.f);
+		if(mod(floor(rec.p.xz), 2.0) == vec2(0.) || mod(floor(rec.p.xz), 2.0) == vec2(1.))
+			rec.mat = 1;
+		else
+			rec.mat = 0;
+        rec.color = vec3(.2);
+		rec.fuzz = 0.1;
+		rec.refaction = 1.4;
+		return true;
+	}
+	return false;
+} 
+
 bool hit(in ray r, float tmin, float tmax, inout hitRecord rec)
 {
     hitRecord tempRec;
@@ -155,9 +176,16 @@ bool hit(in ray r, float tmin, float tmax, inout hitRecord rec)
 
 	vec3 v0 = vec3(-5, 0, 0);
 	vec3 v1 = vec3(5, 0, 0);
-	vec3 v2 = vec3(0, -5 * sqrt(2), 0);
+	vec3 v2 = vec3(0, -5 * sqrt(2), 0.5);
 
 	if(hitTriangle(r, v0, v1, v2, closestSoFar, tempRec))
+	{
+		hitAny = true;
+		closestSoFar = tempRec.t;
+		rec = tempRec;
+	}
+
+	if(hitGround(r, closestSoFar, tempRec))
 	{
 		hitAny = true;
 		closestSoFar = tempRec.t;
@@ -168,12 +196,7 @@ bool hit(in ray r, float tmin, float tmax, inout hitRecord rec)
 }
 
 float random (vec2 st) {
-    highp float a = 12.9898;
-    highp float b = 78.233;
-    highp float c = 43758.5453;
-    highp float dt= dot(st.xy ,vec2(a,b));
-    highp float sn= mod(dt,3.14);
-    return fract(sin(sn) * c);
+	return fract(sin(dot(st, vec2(12.9898, 78.233))) * 43758.5453);
 }
 
 vec3 randInUnitSphere(vec2 st) {
