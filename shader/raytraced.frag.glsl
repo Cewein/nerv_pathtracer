@@ -42,54 +42,12 @@ struct hitRecord {
 	float refaction;
 };
 
-struct sphere{
-    vec4 pos;
-	vec4 rmfr; //raduis material fuzz refractionIndex
-	vec4 color;
-};
 
 layout (std430,binding=0) buffer testBufer {
-	sphere s[];
+	float v[];
 };
            
 vec3 pointAtParameter(ray r, float t) { return r.A + t*r.B; }
-
-bool hitSphere(in ray r, float tmin, float tmax, inout hitRecord rec, sphere s)
-{
-    vec3 oc = r.A - s.pos.xyz;
-    float a = dot(r.B,r.B);
-    float b = dot(oc, r.B);
-    float c = dot(oc,oc)-s.rmfr.x*s.rmfr.x;
-    float d = b*b - a*c;
-    if (d > 0.) 
-    {
-        float temp = (-b - sqrt(b*b-a*c))/a;
-        if(temp < tmax && temp > tmin)
-        {
-            rec.t = temp;
-            rec.p = pointAtParameter(r,rec.t);
-            rec.normal = (rec.p - s.pos.xyz) / s.rmfr.x;
-            rec.mat = s.rmfr.y;
-            rec.color = s.color.xyz;
-			rec.fuzz = s.rmfr.z;
-			rec.refaction = s.rmfr.w;
-            return true;
-        }
-        temp = (-b + sqrt(b*b-a*c))/a;
-        if(temp < tmax && temp > tmin)
-        {
-            rec.t = temp;
-            rec.p = pointAtParameter(r,rec.t);
-            rec.normal = (rec.p - s.pos.xyz) / s.rmfr.x;
-            rec.mat = s.rmfr.y;
-            rec.color = s.color.xyz;
-			rec.fuzz = s.rmfr.z;
-			rec.refaction = s.rmfr.w;
-            return true;
-        }
-    }
-    return false;
-}
 
 bool hitTriangle(in ray r, vec3 v0, vec3 v1, vec3 v2,float tmax, inout hitRecord rec) {
 
@@ -140,7 +98,7 @@ bool hitTriangle(in ray r, vec3 v0, vec3 v1, vec3 v2,float tmax, inout hitRecord
 
 bool hitGround(in ray r, float tmax, inout hitRecord rec) 
 { 
-    float t = -(r.A.y + 0.5) / r.B.y;
+    float t = -(r.A.y) / r.B.y;
 	if (t > 0.0001 && t < tmax)
 	{
 
@@ -164,26 +122,19 @@ bool hit(in ray r, float tmin, float tmax, inout hitRecord rec)
     hitRecord tempRec;
     bool hitAny = false;
     float closestSoFar = tmax;
-    for(int i = 0; i < size; i++)
+    for(int i = 0; i < size; i+=9)
     {
-        if(hitSphere(r,tmin, closestSoFar,tempRec, s[i]))
-        {
-            hitAny = true;
-            closestSoFar = tempRec.t;
-            rec = tempRec;
-        }
+
+		vec3 v0 = vec3(v[i], v[i+1], v[i+2]);
+		vec3 v1 = vec3(v[i+3], v[i+4], v[i+5]);
+		vec3 v2 = vec3(v[i+6], v[i+7], v[i+8]);
+        if(hitTriangle(r, v0, v1, v2, closestSoFar, tempRec))
+		{
+			hitAny = true;
+			closestSoFar = tempRec.t;
+			rec = tempRec;
+		}
     }
-
-	vec3 v0 = vec3(-5, 0, 0);
-	vec3 v1 = vec3(5, 0, 0);
-	vec3 v2 = vec3(0, -5 * sqrt(2), 0.5);
-
-	if(hitTriangle(r, v0, v1, v2, closestSoFar, tempRec))
-	{
-		hitAny = true;
-		closestSoFar = tempRec.t;
-		rec = tempRec;
-	}
 
 	if(hitGround(r, closestSoFar, tempRec))
 	{

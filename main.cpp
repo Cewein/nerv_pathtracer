@@ -3,6 +3,9 @@
 #include "src/engine.h"
 #include <random>
 
+#define TINYOBJLOADER_IMPLEMENTATION
+#include "Dependencies/tiny_obj_loader.h"
+
  typedef struct spheres {
 	float pos[4];
 	float rmfr[4]; //raduis material fuzz refractionIndex
@@ -64,9 +67,58 @@ int main()
 	const int size = 10;
 	sphere * s = makeSphereData(size);
 	
-	int nbSample = 10;
+	int nbSample = 2;
 	
-	unsigned int ssbo = nerv::shader::createBuffer(sizeof(sphere) * size, s);
+
+	//test code for obj loading
+
+	tinyobj::attrib_t attrib;
+	std::vector<tinyobj::shape_t> shape;
+	std::vector<tinyobj::material_t> material;
+
+	std::string warn;
+	std::string err;
+	
+	logger.startInit("TINYOBJLOADER");
+	bool ret = tinyobj::LoadObj(&attrib, &shape, &material, &warn, &err, "model/bunny.obj");
+
+	if (!warn.empty()) {
+		//std::cout << std::endl << warn << std::endl;
+	}
+
+	if (!err.empty()) {
+		//std::cerr << std::endl << err << std::endl;
+	}
+
+	if (!ret) {
+		exit(1);
+	}
+
+
+	logger.initLog("nb vertices : " + std::to_string(attrib.vertices.size()));
+	logger.initLog("nb indice : " + std::to_string(shape[0].mesh.indices.size()));
+
+	size_t index_offset = 0;
+	std::vector<float> triangles;
+	for (size_t s = 0; s < shape.size(); s++) {
+		for (size_t f = 0; f < shape[s].mesh.num_face_vertices.size(); f++) {
+			int fv = shape[s].mesh.num_face_vertices[f];
+
+			// Loop over vertices in the face.
+			for (size_t v = 0; v < fv; v++) {
+				// access to vertex
+				tinyobj::index_t idx = shape[s].mesh.indices[index_offset + v];
+				triangles.push_back(attrib.vertices[3 * idx.vertex_index + 0]);
+				triangles.push_back(attrib.vertices[3 * idx.vertex_index + 1]);
+				triangles.push_back(attrib.vertices[3 * idx.vertex_index + 2]);
+			}
+			index_offset += fv;
+		}
+	}
+
+	unsigned int ssbo = nerv::shader::createBuffer(sizeof(float) * triangles.size(), triangles.data());
+
+	logger.endInit();
 
 	while (nerv::window::get().isOpen()) {
 
@@ -74,7 +126,7 @@ int main()
 
 		
 		cam->sendInfo();
-		scene.material->shaderprog->setInt("size", size);
+		scene.material->shaderprog->setInt("size", triangles.size());
 		scene.show();
 
 		nerv::ui::newFrame();
