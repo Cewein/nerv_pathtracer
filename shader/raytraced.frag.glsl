@@ -16,6 +16,7 @@ uniform float iTime;
 uniform sampler3D hdrCubeMap;
 uniform int nbSample;
 uniform int size;
+uniform int nbt;
 
 in vec2 iTexCoord;
 
@@ -42,9 +43,15 @@ struct hitRecord {
 	float refaction;
 };
 
+struct triangle {
+	 vec4 v1;
+	 vec4 v2;
+	 vec4 v3;
+ };
+
 
 layout (std430,binding=0) buffer testBufer {
-	float v[];
+	triangle tris[];
 };
            
 vec3 pointAtParameter(ray r, float t) { return r.A + t*r.B; }
@@ -122,13 +129,9 @@ bool hit(in ray r, float tmin, float tmax, inout hitRecord rec)
     hitRecord tempRec;
     bool hitAny = false;
     float closestSoFar = tmax;
-    for(int i = 0; i < size; i+=9)
+    for(int i = 0; i < size; i++)
     {
-
-		vec3 v0 = vec3(v[i], v[i+1], v[i+2]);
-		vec3 v1 = vec3(v[i+3], v[i+4], v[i+5]);
-		vec3 v2 = vec3(v[i+6], v[i+7], v[i+8]);
-        if(hitTriangle(r, v0, v1, v2, closestSoFar, tempRec))
+        if(hitTriangle(r, tris[i].v1.xyz, tris[i].v2.xyz, tris[i].v3.xyz, closestSoFar, tempRec))
 		{
 			hitAny = true;
 			closestSoFar = tempRec.t;

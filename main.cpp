@@ -1,7 +1,6 @@
 #include <glad/glad.h>
 #include "dependencies.h"
 #include "src/engine.h"
-#include <random>
 
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "Dependencies/tiny_obj_loader.h"
@@ -12,37 +11,35 @@
 	float color[4];
 }sphere;
 
- std::mt19937 rng;
+ typedef struct triangles {
+	 float v1[4];
+	 float v2[4];
+	 float v3[4];
 
- sphere * makeSphereData(int size)
- {
-
-	 std::uniform_real_distribution<float_t> floatGen(0.0f, 1.0f);
-
-	 sphere * s = new sphere[size];
-
-	 for (int i = 0; i < size; i++)
+	 void print()
 	 {
-		 float x = floatGen(rng) * 80.0f - 40.0f;
-		 float y = floatGen(rng) * 80.0f - 40.0f;
-		 float z = floatGen(rng) * 80.0f - 40.0f;
-		 float sz = 0.5f;
-
-		 s[i] =
-		 {
-			 {x, 0.f, z, 1.0f},
-			 {sz, floorf(floatGen(rng) * 3.f), floatGen(rng), floatGen(rng) + 1.f},
-			 {floatGen(rng),floatGen(rng), floatGen(rng), 0.0f}
-		 };
+		 logger.info("TRIANGLE", std::to_string(v1[0]) + " " + std::to_string(v1[1]) + " " + std::to_string(v1[2]));
+		 logger.info("TRIANGLE", std::to_string(v2[0]) + " " + std::to_string(v2[1]) + " " + std::to_string(v2[2]));
+		 logger.info("TRIANGLE", std::to_string(v3[0]) + " " + std::to_string(v3[1]) + " " + std::to_string(v3[2]));
 	 }
-	 return s;
+ }triangle;
+
+ void changeCamPitch(nerv::camera * cam, float newPitch)
+ {
+	 cam->pitch += newPitch;
+	 glm::vec3 front;
+
+	 front.x = cos(glm::radians(cam->yaw)) * cos(glm::radians(cam->pitch));
+	 front.y = sin(glm::radians(cam->pitch));
+	 front.z = sin(glm::radians(cam->yaw)) * cos(glm::radians(cam->pitch));
+
+	 cam->front = glm::normalize(front);
  }
 
 int main()
 {
 
 	nerv::init::launch();
-	rng.seed(1337);
 
 	std::vector<float> vertices = {
 		 1.0f,  1.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
@@ -58,16 +55,13 @@ int main()
 
 	nerv::framebuffer * framebuffer = new nerv::framebuffer();
 
-	nerv::object scene(vertices,indices, new nerv::material(nullptr, new nerv::shader("shader/raytraced.frag.glsl")));
+	nerv::object scene(vertices,indices, new nerv::material(nullptr, new nerv::shader("shader/raytraced.frag.glsl", "shader/static.vert.glsl")));
 	nerv::object post(vertices, indices, new nerv::material(framebuffer->frameTexture, new nerv::shader("shader/postprocess.frag.glsl")));
 
 	nerv::camera * cam = new nerv::camera(nerv::camera::projectionType::PERSPECTIVE_PROJECTION, 90.0f);
 	cam->transform->translate(glm::vec3(0., 0., 3.));
-
-	const int size = 10;
-	sphere * s = makeSphereData(size);
 	
-	int nbSample = 2;
+	int nbSample = 1;
 	
 
 	//test code for obj loading
@@ -80,7 +74,7 @@ int main()
 	std::string err;
 	
 	logger.startInit("TINYOBJLOADER");
-	bool ret = tinyobj::LoadObj(&attrib, &shape, &material, &warn, &err, "model/bunny.obj");
+	bool ret = tinyobj::LoadObj(&attrib, &shape, &material, &warn, &err, "model/rabbit.obj");
 
 	if (!warn.empty()) {
 		//std::cout << std::endl << warn << std::endl;
@@ -97,28 +91,67 @@ int main()
 
 	logger.initLog("nb vertices : " + std::to_string(attrib.vertices.size()));
 	logger.initLog("nb indice : " + std::to_string(shape[0].mesh.indices.size()));
+	logger.endInit();
 
 	size_t index_offset = 0;
-	std::vector<float> triangles;
+	std::vector<triangle> triangles;
+	std::vector<float> obj;
+	int id = 1;
 	for (size_t s = 0; s < shape.size(); s++) {
 		for (size_t f = 0; f < shape[s].mesh.num_face_vertices.size(); f++) {
 			int fv = shape[s].mesh.num_face_vertices[f];
 
-			// Loop over vertices in the face.
+			triangle t;
+
+			tinyobj::index_t idx = shape[s].mesh.indices[index_offset];
+			t.v1[0] = attrib.vertices[3 * idx.vertex_index + 0];
+			t.v1[1] = attrib.vertices[3 * idx.vertex_index + 1];
+			t.v1[2] = attrib.vertices[3 * idx.vertex_index + 2];
+			t.v1[3] = 0;
+			idx = shape[s].mesh.indices[index_offset + 1];
+			t.v2[0] = attrib.vertices[3 * idx.vertex_index + 0];
+			t.v2[1] = attrib.vertices[3 * idx.vertex_index + 1];
+			t.v2[2] = attrib.vertices[3 * idx.vertex_index + 2];
+			t.v2[3] = 0;
+			idx = shape[s].mesh.indices[index_offset + 2];
+			t.v3[0] = attrib.vertices[3 * idx.vertex_index + 0];
+			t.v3[1] = attrib.vertices[3 * idx.vertex_index + 1];
+			t.v3[2] = attrib.vertices[3 * idx.vertex_index + 2];
+			t.v3[3] = 0;
+
 			for (size_t v = 0; v < fv; v++) {
 				// access to vertex
 				tinyobj::index_t idx = shape[s].mesh.indices[index_offset + v];
-				triangles.push_back(attrib.vertices[3 * idx.vertex_index + 0]);
-				triangles.push_back(attrib.vertices[3 * idx.vertex_index + 1]);
-				triangles.push_back(attrib.vertices[3 * idx.vertex_index + 2]);
+				obj.push_back(attrib.vertices[3 * idx.vertex_index + 0]);
+				obj.push_back(attrib.vertices[3 * idx.vertex_index + 1]);
+				obj.push_back(attrib.vertices[3 * idx.vertex_index + 2]);
+				obj.push_back(attrib.normals[3 * idx.normal_index + 0]);
+				obj.push_back(attrib.normals[3 * idx.normal_index + 1]);
+				obj.push_back(attrib.normals[3 * idx.normal_index + 2]);
+				obj.push_back(attrib.texcoords[2 * idx.texcoord_index + 0]);
+				obj.push_back(attrib.texcoords[2 * idx.texcoord_index + 1]);
 			}
+
+			t.print();
+
+			triangles.push_back(t);
+
 			index_offset += fv;
 		}
 	}
 
-	unsigned int ssbo = nerv::shader::createBuffer(sizeof(float) * triangles.size(), triangles.data());
+	nerv::object object(obj);
 
-	logger.endInit();
+	logger.info("SSBO DATA", "size of data is : " + std::to_string(sizeof(triangle)));
+
+	unsigned int ssbo = nerv::shader::createBuffer(sizeof(triangle) * triangles.size(), triangles.data());
+
+	float arr[] = 
+	{ 
+		0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f 
+	};
+	int i = 0;
+	
 
 	while (nerv::window::get().isOpen()) {
 
@@ -126,8 +159,16 @@ int main()
 
 		
 		cam->sendInfo();
-		scene.material->shaderprog->setInt("size", triangles.size());
-		scene.show();
+
+		if (nerv::camera::raytraced)
+		{
+			scene.material->shaderprog->setInt("size", triangles.size());
+			scene.show();
+		}
+		else
+		{
+			object.show();
+		}
 
 		nerv::ui::newFrame();
 
@@ -138,8 +179,11 @@ int main()
 			ImGui::Text((std::to_string(fps) + " fps").c_str());
 			ImGui::Text((std::to_string(nerv::window::get().getDeltaTime()) + " time between frame").c_str());
 
-			static float arr[] = { 0.6f, 0.1f, 1.0f, 0.5f, 0.92f, 0.1f, 0.2f };
-			ImGui::PlotLines("Frame Times", arr, IM_ARRAYSIZE(arr));
+			arr[i] = nerv::window::get().getDeltaTime();
+
+			i = (i + 1) % 96;
+
+			ImGui::PlotLines("Frame Times", arr, 96);
 		}
 		ImGui::End();
 
@@ -156,6 +200,9 @@ int main()
 			ImGui::Separator();
 			ImGui::SliderInt("Number of sample", &nbSample, 1,150);
 			scene.material->shaderprog->setInt("nbSample", nbSample);
+			bool pressed = ImGui::Checkbox("raytracing", &nerv::camera::raytraced);
+			if (pressed && !nerv::camera::raytraced) changeCamPitch(cam, 90.0f);
+			if (pressed && nerv::camera::raytraced) changeCamPitch(cam, -90.0f);
 
 		}
 		ImGui::End();
@@ -170,7 +217,6 @@ int main()
 
 	nerv::ui::clean();
 	delete cam;
-	delete s;
 	//delete framebuffer;
 
 	nerv::window::get().close();

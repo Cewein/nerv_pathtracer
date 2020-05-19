@@ -16,6 +16,8 @@ namespace nerv
 		bool sendViewInfo;
 
 	public:
+		//rendering and controle boolean (controle a mess up as of now)
+		inline static bool raytraced = true;
 
 		//placement of the camera
 		nerv::transform * transform;

@@ -209,6 +209,7 @@
     <None Include="shader\blue.frag.glsl" />
     <None Include="shader\postprocess.frag.glsl" />
     <None Include="shader\raytraced.frag.glsl" />
+    <None Include="shader\static.vert.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

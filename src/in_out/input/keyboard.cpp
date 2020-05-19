@@ -28,15 +28,51 @@ void nerv::keyboard::updateCameraKeyboard(nerv::camera * camera)
 {
 	if (camera::focusing)
 	{
-		if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_W) == GLFW_PRESS)
+		if (nerv::camera::raytraced)
 		{
-			camera->transform->positionVec += nerv::window::get().getDeltaTime() * camera->speed * camera->up;
-			camera->isMoving = true;
+			if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_W) == GLFW_PRESS)
+			{
+				camera->transform->positionVec += nerv::window::get().getDeltaTime() * camera->speed * camera->up;
+				camera->isMoving = true;
+			}
+			if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_S) == GLFW_PRESS)
+			{
+				camera->transform->positionVec -= nerv::window::get().getDeltaTime() * camera->speed * camera->up;
+				camera->isMoving = true;
+			}
+			if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_SPACE) == GLFW_PRESS)
+			{
+				camera->transform->positionVec += nerv::window::get().getDeltaTime() * camera->speed * camera->front;
+				camera->isMoving = true;
+			}
+			if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+			{
+				camera->transform->positionVec -= nerv::window::get().getDeltaTime() * camera->speed * camera->front;
+				camera->isMoving = true;
+			}
 		}
-		if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_S) == GLFW_PRESS)
+		else
 		{
-			camera->transform->positionVec -= nerv::window::get().getDeltaTime() * camera->speed * camera->up;
-			camera->isMoving = true;
+			if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_W) == GLFW_PRESS)
+			{
+				camera->transform->positionVec -= nerv::window::get().getDeltaTime() * camera->speed * camera->front;
+				camera->isMoving = true;
+			}
+			if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_S) == GLFW_PRESS)
+			{
+				camera->transform->positionVec += nerv::window::get().getDeltaTime() * camera->speed * camera->front;
+				camera->isMoving = true;
+			}
+			if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_SPACE) == GLFW_PRESS)
+			{
+				camera->transform->positionVec += nerv::window::get().getDeltaTime() * camera->speed * camera->up;
+				camera->isMoving = true;
+			}
+			if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+			{
+				camera->transform->positionVec -= nerv::window::get().getDeltaTime() * camera->speed * camera->up;
+				camera->isMoving = true;
+			}
 		}
 		if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_A) == GLFW_PRESS)
 		{
@@ -46,16 +82,6 @@ void nerv::keyboard::updateCameraKeyboard(nerv::camera * camera)
 		if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_D) == GLFW_PRESS)
 		{
 			camera->transform->positionVec -= nerv::window::get().getDeltaTime() * camera->speed * glm::normalize(glm::cross(camera->front, camera->up));
-			camera->isMoving = true;
-		}
-		if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_SPACE) == GLFW_PRESS)
-		{
-			camera->transform->positionVec += nerv::window::get().getDeltaTime() * camera->speed * camera->front;
-			camera->isMoving = true;
-		}
-		if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-		{
-			camera->transform->positionVec -= nerv::window::get().getDeltaTime() * camera->speed * camera->front;
 			camera->isMoving = true;
 		}
 	}
@@ -84,16 +110,22 @@ void nerv::mouse::updateCameraMouse(nerv::camera * camera)
 
 			camera->yaw += xoffset;
 			camera->pitch += yoffset;
-
-			if (camera->pitch > (89.9f - 90.f))
+			
+			if (camera->pitch > (89.9f - 90.f) && nerv::camera::raytraced)
 				camera->pitch = (89.9f - 90.f);
-			if (camera->pitch < (-89.9f - 90.f))
+			else if (camera->pitch > 89.9f && !nerv::camera::raytraced)
+				camera->pitch = 89.9f;
+			if (camera->pitch < (-89.9f - 90.f) && nerv::camera::raytraced)
 				camera->pitch = (-89.9f - 90.f);
+			else if (camera->pitch < -89.9f && !nerv::camera::raytraced)
+				camera->pitch = -89.9f;
 
 			glm::vec3 front;
+
 			front.x = cos(glm::radians(camera->yaw)) * cos(glm::radians(camera->pitch));
 			front.y = sin(glm::radians(camera->pitch));
 			front.z = sin(glm::radians(camera->yaw)) * cos(glm::radians(camera->pitch));
+
 			camera->front = glm::normalize(front);
 		}
 	}
