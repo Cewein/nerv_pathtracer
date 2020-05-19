@@ -29,8 +29,8 @@ const float PHI = 1.61803398875;
 float loopCount = 0.;
 
 struct ray {
-    vec3 A; //origin
-    vec3 B; //direction
+    vec3 origin;	//origin
+    vec3 direction; //direction
 };
     
 struct hitRecord {
@@ -54,37 +54,35 @@ layout (std430,binding=0) buffer testBufer {
 	triangle tris[];
 };
            
-vec3 pointAtParameter(ray r, float t) { return r.A + t*r.B; }
+vec3 pointAtParameter(ray r, float t) { return r.origin + t*r.direction; }
 
-bool hitTriangle(in ray r, vec3 v0, vec3 v1, vec3 v2,float tmax, inout hitRecord rec) {
-
-	vec3 e1,e2,h,s,q;
-	float a,f,u,v, t;
-	e1 = v1 - v0;
-	e2 = v1 - v2;
-
-	h =  cross(r.B,e2);
-	a = dot(e1,h);
-
-	if (a > -0.00001 && a < 0.00001)
-		return false;
-
-	f = 1/a;
-	s = r.A - v0;
-	u = f * (dot(s,h));
-
-	if (u < 0.0 || u > 1.0)
-		return false;
-
-	q = cross(s,e1);
-	v = f * dot(r.B,q);
-
-	if (v < 0.0 || u + v > 1.0)
-		return false;
-
-	// at this stage we can compute t to find out where
-	// the intersection point is on the line
-	t = f * dot(e2,q);
+bool hitTriangle(ray r, vec3 v0, vec3 v1, vec3 v2, float tmax, inout hitRecord rec)
+{
+	 // find vectors for two edges sharing vert0
+    vec3 edge1 = v1 - v0;
+    vec3 edge2 = v2 - v0;
+    // begin calculating determinant - also used to calculate U parameter
+    vec3 pvec = cross(r.direction, edge2);
+    // if determinant is near zero, ray lies in plane of triangle
+    float det = dot(edge1, pvec);
+    // use backface culling
+    if (det < 0.00001)
+        return false;
+    float inv_det = 1.0f / det;
+    // calculate distance from vert0 to ray origin
+    vec3 tvec = r.origin - v0;
+    // calculate U parameter and test bounds
+    float u = dot(tvec, pvec) * inv_det;
+    if (u < 0.0 || u > 1.0f)
+        return false;
+    // prepare to test V parameter
+    vec3 qvec = cross(tvec, edge1);
+    // calculate V parameter and test bounds
+    float v = dot(r.direction, qvec) * inv_det;
+    if (v < 0.0 || u + v > 1.0f)
+        return false;
+    // calculate t, ray intersects triangle
+    float t = dot(edge2, qvec) * inv_det;
 
 	if (t > 0.00001 && t < tmax) // ray intersection
 	{
@@ -95,17 +93,16 @@ bool hitTriangle(in ray r, vec3 v0, vec3 v1, vec3 v2,float tmax, inout hitRecord
         rec.color = vec3(0.8, 0.8, 0.0);
 		rec.fuzz = 0.0;
 		rec.refaction = 1.4;
-		return true ;
+		return true;
 	}
-	else // this means that there is a line intersection
-		 // but not a ray intersection
-		 return false;
+
+    return false;
 
 }
 
 bool hitGround(in ray r, float tmax, inout hitRecord rec) 
 { 
-    float t = -(r.A.y) / r.B.y;
+    float t = -(r.origin.y) / r.direction.y;
 	if (t > 0.0001 && t < tmax)
 	{
 
@@ -248,13 +245,13 @@ void dialetric(in hitRecord rec, in vec3 unitDirection, in vec2 st, inout ray r)
 	{
 		outwardNormal = -rec.normal;
 		niOverNt = refractiveIndex;
-		cosine = refractiveIndex * dot(r.B, rec.normal) / length(r.B);
+		cosine = refractiveIndex * dot(r.direction, rec.normal) / length(r.direction);
 	}
 	else
 	{
 		outwardNormal = rec.normal;
 		niOverNt = 1.0 / refractiveIndex;
-		cosine = -dot(r.B, rec.normal) / length(r.B);
+		cosine = -dot(r.direction, rec.normal) / length(r.direction);
 	}
 	if (checkRefract(unitDirection, outwardNormal, niOverNt))
 	{
@@ -290,7 +287,7 @@ vec3 color(ray r, vec2 st)
 
 	while (hit(r, 0.001, FLT_MAX, rec) && bounce < bounceSize)
 	{
-		unitDirection = normalize(r.B);
+		unitDirection = normalize(r.direction);
 		if (rec.mat == 0.0)
 		{
 			att *= lambert(rec,st,r);
@@ -306,7 +303,7 @@ vec3 color(ray r, vec2 st)
 		bounce++;
 	}
     
-    unitDirection = normalize(r.B);
+    unitDirection = normalize(r.direction);
     t =  (unitDirection.y + 1.);
     return att * (t*vec3(0.6,0.8,1.));
 }

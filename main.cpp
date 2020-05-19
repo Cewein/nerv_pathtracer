@@ -15,13 +15,6 @@
 	 float v1[4];
 	 float v2[4];
 	 float v3[4];
-
-	 void print()
-	 {
-		 logger.info("TRIANGLE", std::to_string(v1[0]) + " " + std::to_string(v1[1]) + " " + std::to_string(v1[2]));
-		 logger.info("TRIANGLE", std::to_string(v2[0]) + " " + std::to_string(v2[1]) + " " + std::to_string(v2[2]));
-		 logger.info("TRIANGLE", std::to_string(v3[0]) + " " + std::to_string(v3[1]) + " " + std::to_string(v3[2]));
-	 }
  }triangle;
 
  void changeCamPitch(nerv::camera * cam, float newPitch)
@@ -59,7 +52,7 @@ int main()
 	nerv::object post(vertices, indices, new nerv::material(framebuffer->frameTexture, new nerv::shader("shader/postprocess.frag.glsl")));
 
 	nerv::camera * cam = new nerv::camera(nerv::camera::projectionType::PERSPECTIVE_PROJECTION, 90.0f);
-	cam->transform->translate(glm::vec3(0., 0., 3.));
+	cam->transform->translate(glm::vec3(0., 1., 3.));
 	
 	int nbSample = 1;
 	
@@ -77,21 +70,16 @@ int main()
 	bool ret = tinyobj::LoadObj(&attrib, &shape, &material, &warn, &err, "model/rabbit.obj");
 
 	if (!warn.empty()) {
-		//std::cout << std::endl << warn << std::endl;
+		std::cout << std::endl << warn << std::endl;
 	}
 
 	if (!err.empty()) {
-		//std::cerr << std::endl << err << std::endl;
+		std::cerr << std::endl << err << std::endl;
 	}
 
 	if (!ret) {
 		exit(1);
 	}
-
-
-	logger.initLog("nb vertices : " + std::to_string(attrib.vertices.size()));
-	logger.initLog("nb indice : " + std::to_string(shape[0].mesh.indices.size()));
-	logger.endInit();
 
 	size_t index_offset = 0;
 	std::vector<triangle> triangles;
@@ -107,17 +95,17 @@ int main()
 			t.v1[0] = attrib.vertices[3 * idx.vertex_index + 0];
 			t.v1[1] = attrib.vertices[3 * idx.vertex_index + 1];
 			t.v1[2] = attrib.vertices[3 * idx.vertex_index + 2];
-			t.v1[3] = 0;
+			t.v1[3] = 1.0f;
 			idx = shape[s].mesh.indices[index_offset + 1];
 			t.v2[0] = attrib.vertices[3 * idx.vertex_index + 0];
 			t.v2[1] = attrib.vertices[3 * idx.vertex_index + 1];
 			t.v2[2] = attrib.vertices[3 * idx.vertex_index + 2];
-			t.v2[3] = 0;
+			t.v2[3] = 1.0f;
 			idx = shape[s].mesh.indices[index_offset + 2];
 			t.v3[0] = attrib.vertices[3 * idx.vertex_index + 0];
 			t.v3[1] = attrib.vertices[3 * idx.vertex_index + 1];
 			t.v3[2] = attrib.vertices[3 * idx.vertex_index + 2];
-			t.v3[3] = 0;
+			t.v3[3] = 1.0f;
 
 			for (size_t v = 0; v < fv; v++) {
 				// access to vertex
@@ -132,13 +120,15 @@ int main()
 				obj.push_back(attrib.texcoords[2 * idx.texcoord_index + 1]);
 			}
 
-			t.print();
-
 			triangles.push_back(t);
 
 			index_offset += fv;
 		}
 	}
+
+	logger.initLog("nb vertices : " + std::to_string(attrib.vertices.size()));
+	logger.initLog("nb indice : " + std::to_string(shape[0].mesh.indices.size()));
+	logger.endInit();
 
 	nerv::object object(obj);
 
