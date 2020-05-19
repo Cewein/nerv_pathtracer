@@ -1,12 +1,12 @@
 # Nerv engine - physically based rendering
 
-![Imgur](https://i.imgur.com/JcnvOOF.png)
+![Imgur](https://i.imgur.com/ignSEsy.png)
 
 This is a 3D engine for light simulation in mind.<br>
 The goal of this engine is to implement a real-time raytraced physically based renderer with the pixar material model.<br>
 <br>
 The engine use OpenGL, GLFW and GLM, but in the future we plan to remove the need of GLM. <br>
-Nerv's core is generalist and can render object in a rastered way but heavly use shaders and a single quad to make "realtime raybased application".
+Nerv's core is generalist and can render object in a rastered way but heavly use shaders and a single quad to make "realtime ray based application".
 ## showcase
 #### Depths of fields
 ![Imgur](https://i.imgur.com/ZvpZmb0.png)
