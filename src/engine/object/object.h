@@ -7,6 +7,12 @@
 
 namespace nerv
 {
+	typedef struct triangles {
+		float v1[4];
+		float v2[4];
+		float v3[4];
+	}triangle;
+
 	class object
 	{
 	private:
@@ -33,6 +39,8 @@ namespace nerv
 		~object();
 
 		void show();
+
+		static std::vector<nerv::triangle> loadObj(std::string path, nerv::object * obj = nullptr);
 
 
 		int getSize();

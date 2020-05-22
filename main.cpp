@@ -2,20 +2,13 @@
 #include "dependencies.h"
 #include "src/engine.h"
 
-#define TINYOBJLOADER_IMPLEMENTATION
-#include "Dependencies/tiny_obj_loader.h"
+
 
  typedef struct spheres {
 	float pos[4];
 	float rmfr[4]; //raduis material fuzz refractionIndex
 	float color[4];
 }sphere;
-
- typedef struct triangles {
-	 float v1[4];
-	 float v2[4];
-	 float v3[4];
- }triangle;
 
  void changeCamPitch(nerv::camera * cam, float newPitch)
  {
@@ -59,106 +52,24 @@ int main()
 
 	//test code for obj loading
 
-	tinyobj::attrib_t attrib;
-	std::vector<tinyobj::shape_t> shape;
-	std::vector<tinyobj::material_t> material;
+	std::vector<nerv::triangle> triangles = nerv::object::loadObj("model/rabbit.obj");
 
-	std::string warn;
-	std::string err;
-	
-	logger.startInit("TINYOBJLOADER");
-	bool ret = tinyobj::LoadObj(&attrib, &shape, &material, &warn, &err, "model/rabbit.obj");
+	size_t ssbo = nerv::shader::createBuffer(sizeof(nerv::triangle) * triangles.size(), triangles.data());
+	size_t colorBuffer = nerv::shader::createBuffer(sizeof(float) * 4 * nerv::window::get().width * nerv::window::get().height, nullptr, 1);
 
-	if (!warn.empty()) {
-		std::cout << std::endl << warn << std::endl;
-	}
-
-	if (!err.empty()) {
-		std::cerr << std::endl << err << std::endl;
-	}
-
-	if (!ret) {
-		exit(1);
-	}
-
-	size_t index_offset = 0;
-	std::vector<triangle> triangles;
-	std::vector<float> obj;
-	int id = 1;
-	for (size_t s = 0; s < shape.size(); s++) {
-		for (size_t f = 0; f < shape[s].mesh.num_face_vertices.size(); f++) {
-			int fv = shape[s].mesh.num_face_vertices[f];
-
-			triangle t;
-
-			tinyobj::index_t idx = shape[s].mesh.indices[index_offset];
-			t.v1[0] = attrib.vertices[3 * idx.vertex_index + 0];
-			t.v1[1] = attrib.vertices[3 * idx.vertex_index + 1];
-			t.v1[2] = attrib.vertices[3 * idx.vertex_index + 2];
-			t.v1[3] = 1.0f;
-			idx = shape[s].mesh.indices[index_offset + 1];
-			t.v2[0] = attrib.vertices[3 * idx.vertex_index + 0];
-			t.v2[1] = attrib.vertices[3 * idx.vertex_index + 1];
-			t.v2[2] = attrib.vertices[3 * idx.vertex_index + 2];
-			t.v2[3] = 1.0f;
-			idx = shape[s].mesh.indices[index_offset + 2];
-			t.v3[0] = attrib.vertices[3 * idx.vertex_index + 0];
-			t.v3[1] = attrib.vertices[3 * idx.vertex_index + 1];
-			t.v3[2] = attrib.vertices[3 * idx.vertex_index + 2];
-			t.v3[3] = 1.0f;
-
-			for (size_t v = 0; v < fv; v++) {
-				// access to vertex
-				tinyobj::index_t idx = shape[s].mesh.indices[index_offset + v];
-				obj.push_back(attrib.vertices[3 * idx.vertex_index + 0]);
-				obj.push_back(attrib.vertices[3 * idx.vertex_index + 1]);
-				obj.push_back(attrib.vertices[3 * idx.vertex_index + 2]);
-				obj.push_back(attrib.normals[3 * idx.normal_index + 0]);
-				obj.push_back(attrib.normals[3 * idx.normal_index + 1]);
-				obj.push_back(attrib.normals[3 * idx.normal_index + 2]);
-				obj.push_back(attrib.texcoords[2 * idx.texcoord_index + 0]);
-				obj.push_back(attrib.texcoords[2 * idx.texcoord_index + 1]);
-			}
-
-			triangles.push_back(t);
-
-			index_offset += fv;
-		}
-	}
-
-	logger.initLog("nb vertices : " + std::to_string(attrib.vertices.size()));
-	logger.initLog("nb indice : " + std::to_string(shape[0].mesh.indices.size()));
-	logger.endInit();
-
-	nerv::object object(obj);
-
-	logger.info("SSBO DATA", "size of data is : " + std::to_string(sizeof(triangle)));
-
-	unsigned int ssbo = nerv::shader::createBuffer(sizeof(triangle) * triangles.size(), triangles.data());
-
-	float arr[] = 
-	{ 
-		0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f 
-	};
 	int i = 0;
 	
+	int ssp = 1;
+	float renderTime = 0.0f;
 
 	while (nerv::window::get().isOpen()) {
 
 		nerv::render::mainpass();
-
 		
 		cam->sendInfo();
 
-		if (nerv::camera::raytraced)
-		{
-			scene.material->shaderprog->setInt("size", triangles.size());
-			scene.show();
-		}
-		else
-		{
-			object.show();
-		}
+		scene.material->shaderprog->setInt("size", triangles.size());
+		if(nerv::camera::raytraced) scene.show();
 
 		nerv::ui::newFrame();
 
@@ -168,31 +79,39 @@ int main()
 			int fps = 1. / nerv::window::get().getDeltaTime();
 			ImGui::Text((std::to_string(fps) + " fps").c_str());
 			ImGui::Text((std::to_string(nerv::window::get().getDeltaTime()) + " time between frame").c_str());
+			if (!cam->isMoving)
+			{
+				renderTime += nerv::window::get().getDeltaTime();
+				ssp += 1;
+			}
+			if (cam->isMoving)
+			{
+				renderTime = 0.0f;
+				ssp = 1;
+			}
+			ImGui::Text(("render time : " + std::to_string(renderTime) + " s").c_str());
+			ImGui::Text(("samples : " + std::to_string(ssp)).c_str());
 
-			arr[i] = nerv::window::get().getDeltaTime();
-
-			i = (i + 1) % 96;
-
-			ImGui::PlotLines("Frame Times", arr, 96);
 		}
 		ImGui::End();
 
 
 		if (ImGui::Begin("Config"))
 		{
+			bool pressed;
 			ImGui::Text("Camera");
 			ImGui::Separator();
-			ImGui::SliderFloat("FOV", &(cam->fov), 0.0, 180.0);
-			ImGui::SliderFloat("focus Distance", &(cam->focusDistance), 0.0001, 50.0);
-			ImGui::SliderFloat("apperture", &(cam->aperture), 0.0, 1.0);
-
+			pressed = ImGui::SliderFloat("FOV", &(cam->fov), 0.0, 180.0);
+			pressed += ImGui::SliderFloat("focus Distance", &(cam->focusDistance), 0.0001, 50.0);
+			pressed += ImGui::SliderFloat("apperture", &(cam->aperture), 0.0, 1.0);
+			if (pressed) cam->isMoving = true;
 			ImGui::Text("rendering");
 			ImGui::Separator();
-			ImGui::SliderInt("Number of sample", &nbSample, 1,150);
 			scene.material->shaderprog->setInt("nbSample", nbSample);
-			bool pressed = ImGui::Checkbox("raytracing", &nerv::camera::raytraced);
-			if (pressed && !nerv::camera::raytraced) changeCamPitch(cam, 90.0f);
-			if (pressed && nerv::camera::raytraced) changeCamPitch(cam, -90.0f);
+			bool pres = ImGui::Checkbox("raytracing", &nerv::camera::raytraced);
+			if (pres && !nerv::camera::raytraced) changeCamPitch(cam, 90.0f);
+			if (pres && nerv::camera::raytraced) changeCamPitch(cam, -90.0f);
+			
 
 		}
 		ImGui::End();

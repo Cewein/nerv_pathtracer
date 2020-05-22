@@ -108,6 +108,10 @@ void nerv::camera::sendInfo()
 		glUniform1fv(28, 1, &this->fov);
 		glUniform1fv(29, 1, &this->aperture);
 		glUniform1fv(30, 1, &this->focusDistance);
+		glUniform1iv(31, 1, &(nerv::window::get().width));
+		glUniform1iv(32, 1, &(nerv::window::get().height));
+		int moving = this->isMoving;
+		glUniform1iv(33, 1, &moving);
 	}
 	else
 		glUniformMatrix4fv(15, 1, GL_FALSE, &glm::mat4(1.0)[0][0]);

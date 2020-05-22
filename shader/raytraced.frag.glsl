@@ -8,6 +8,9 @@ layout (location = 27) uniform vec3 right;
 layout (location = 28) uniform float fov;
 layout (location = 29) uniform float aperture;
 layout (location = 30) uniform float focusDistance;
+layout (location = 31) uniform int screenWidth;
+layout (location = 32) uniform int screenHeight;
+layout (location = 33) uniform bool moving;
 
 
 
@@ -50,8 +53,12 @@ struct triangle {
  };
 
 
-layout (std430,binding=0) buffer testBufer {
+layout (std430,binding=0) buffer triangleBuffer {
 	triangle tris[];
+};
+
+layout (std430,binding=1) buffer colorBuffer {
+	vec4 colorBuf[];
 };
            
 vec3 pointAtParameter(ray r, float t) { return r.origin + t*r.direction; }
@@ -89,9 +96,9 @@ bool hitTriangle(ray r, vec3 v0, vec3 v1, vec3 v2, float tmax, inout hitRecord r
 		rec.t = t;
         rec.p = pointAtParameter(r,rec.t);
         rec.normal = normalize(cross(v1 - v0, v2 - v0));
-		rec.mat = 1;
+		rec.mat = 0;
         rec.color = vec3(0.8, 0.8, 0.0);
-		rec.fuzz = 0.0;
+		rec.fuzz = 0.;
 		rec.refaction = 1.4;
 		return true;
 	}
@@ -313,18 +320,28 @@ void main()
     // Normalized pixel coordinates (from 0 to 1)
     vec2 st = gl_FragCoord.xy/iResolution.y;
 
+	vec4 cbd = colorBuf[screenWidth * int(gl_FragCoord.y) + int(gl_FragCoord.x)];
+
     vec3 col = vec3(0.);
     
-    for( float x = 0.; x < float(nbSample); x++)
-    {
-	ray r = getRay(st + x);
-        col += color(r,st + x);
-		loopCount++;
-    }
-    
-    col = col / float(nbSample);
-    col = sqrt(col);
 
-    // Output to screen
-    fragColor = col;
+	ray r = getRay(st + sin(cbd.w));
+    col = color(r,st + tan(cbd.w) + cbd.w);
+
+	col = pow(col, vec3(0.4545));
+
+
+	if(moving)
+		cbd = vec4(col,1.);
+	else
+	{
+		cbd.xyz = cbd.xyz * cbd.w;
+		cbd.xyz += col;
+		cbd.w += 1;
+		cbd.xyz = cbd.xyz / cbd.w;
+	}
+
+    // Output to screen and buffer
+	colorBuf[screenWidth * int(gl_FragCoord.y) + int(gl_FragCoord.x)] = cbd;
+    fragColor = cbd.xyz;
 }

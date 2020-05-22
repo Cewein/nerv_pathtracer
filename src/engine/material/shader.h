@@ -32,7 +32,7 @@ namespace nerv
 		//is true is set the liveProgram variable to the wanted shader ID
 		//is false (already in use) id do nothing
 		static bool compare(nerv::shader * shader);
-		static int unsigned createBuffer(int size, void* data);
+		static int unsigned createBuffer(int size, void* data, size_t id = 0);
 
 		//juste MANY MANY inline function for adding stuff to the shader
 		inline void setInt(std::string name, int value) { glUniform1i(glGetUniformLocation(shaderProgram, name.c_str()), value); }
