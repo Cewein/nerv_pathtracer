@@ -52,7 +52,7 @@ int main()
 
 	//test code for obj loading
 
-	std::vector<nerv::triangle> triangles = nerv::object::loadObj("model/rabbit.obj");
+	std::vector<nerv::triangle> triangles = nerv::object::loadObj("model/rab3.obj");
 
 	size_t ssbo = nerv::shader::createBuffer(sizeof(nerv::triangle) * triangles.size(), triangles.data());
 	size_t colorBuffer = nerv::shader::createBuffer(sizeof(float) * 4 * nerv::window::get().width * nerv::window::get().height, nullptr, 1);
@@ -64,15 +64,23 @@ int main()
 
 	while (nerv::window::get().isOpen()) {
 
+		//RENDERING 
+
 		nerv::render::mainpass();
 		
 		cam->sendInfo();
-
 		scene.material->shaderprog->setInt("size", triangles.size());
 		if(nerv::camera::raytraced) scene.show();
 
-		nerv::ui::newFrame();
+		//UPDATE I/O
 
+		cam->isMoving = false;
+		nerv::keyboard::updateCameraKeyboard(cam);
+		nerv::mouse::updateCameraMouse(cam);
+
+		//UI
+
+		nerv::ui::newFrame();
 		ImGui::SetNextWindowBgAlpha(0.35f);
 		if (ImGui::Begin("FPS counter"))
 		{
@@ -98,30 +106,27 @@ int main()
 
 		if (ImGui::Begin("Config"))
 		{
-			bool pressed;
+			bool pressed = false;
 			ImGui::Text("Camera");
 			ImGui::Separator();
-			pressed = ImGui::SliderFloat("FOV", &(cam->fov), 0.0, 180.0);
+			pressed += ImGui::SliderFloat("FOV", &(cam->fov), 0.0, 180.0);
 			pressed += ImGui::SliderFloat("focus Distance", &(cam->focusDistance), 0.0001, 50.0);
 			pressed += ImGui::SliderFloat("apperture", &(cam->aperture), 0.0, 1.0);
-			if (pressed) cam->isMoving = true;
 			ImGui::Text("rendering");
 			ImGui::Separator();
 			scene.material->shaderprog->setInt("nbSample", nbSample);
 			bool pres = ImGui::Checkbox("raytracing", &nerv::camera::raytraced);
 			if (pres && !nerv::camera::raytraced) changeCamPitch(cam, 90.0f);
 			if (pres && nerv::camera::raytraced) changeCamPitch(cam, -90.0f);
+			if (pressed) cam->isMoving = true;
 			
 
 		}
 		ImGui::End();
-
 		nerv::ui::draw();
-		nerv::window::get().update();
 
-		cam->isMoving = false;
-		nerv::keyboard::updateCameraKeyboard(cam);
-		nerv::mouse::updateCameraMouse(cam);
+		//SWAP BUFFER
+		nerv::window::get().update();
 	}
 
 	nerv::ui::clean();

@@ -96,8 +96,11 @@ bool hitTriangle(ray r, vec3 v0, vec3 v1, vec3 v2, float tmax, inout hitRecord r
 		rec.t = t;
         rec.p = pointAtParameter(r,rec.t);
         rec.normal = normalize(cross(v1 - v0, v2 - v0));
-		rec.mat = 0;
+		rec.mat = 2;
+		if(rec.p.z < 1.) rec.mat = 0;
+		if(rec.p.z < -1.) rec.mat = 1;
         rec.color = vec3(0.8, 0.8, 0.0);
+		if(rec.p.z < -1.) rec.color = vec3(0.6, 0.6, 0.3);
 		rec.fuzz = 0.;
 		rec.refaction = 1.4;
 		return true;
@@ -260,7 +263,7 @@ void dialetric(in hitRecord rec, in vec3 unitDirection, in vec2 st, inout ray r)
 		niOverNt = 1.0 / refractiveIndex;
 		cosine = -dot(r.direction, rec.normal) / length(r.direction);
 	}
-	if (checkRefract(unitDirection, outwardNormal, niOverNt))
+	if (checkRefract(unitDirection, outwardNormal, niOverNt + sin(iTime)))
 	{
 
 		refProb = schlick(cosine, refractiveIndex);
@@ -323,10 +326,10 @@ void main()
 	vec4 cbd = colorBuf[screenWidth * int(gl_FragCoord.y) + int(gl_FragCoord.x)];
 
     vec3 col = vec3(0.);
-    
+    loopCount = cbd.w;
 
-	ray r = getRay(st + sin(cbd.w));
-    col = color(r,st + tan(cbd.w) + cbd.w);
+	ray r = getRay(st + cos(sin(cbd.w)));
+    col = color(r,st + cbd.w);
 
 	col = pow(col, vec3(0.4545));
 
