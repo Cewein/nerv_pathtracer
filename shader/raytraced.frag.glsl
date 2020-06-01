@@ -21,6 +21,8 @@ uniform int nbSample;
 uniform int size;
 uniform int nbt;
 
+uniform mat3 rotMat;
+
 in vec2 iTexCoord;
 
 //out vec4 fragColor;
@@ -138,7 +140,7 @@ bool hit(in ray r, float tmin, float tmax, inout hitRecord rec)
     float closestSoFar = tmax;
     for(int i = 0; i < size; i++)
     {
-        if(hitTriangle(r, tris[i].v1.xyz, tris[i].v2.xyz, tris[i].v3.xyz, closestSoFar, tempRec))
+        if(hitTriangle(r, rotMat * tris[i].v1.xyz, rotMat * tris[i].v2.xyz, rotMat * tris[i].v3.xyz, closestSoFar, tempRec))
 		{
 			hitAny = true;
 			closestSoFar = tempRec.t;

@@ -61,6 +61,7 @@ int main()
 	
 	int ssp = 1;
 	float renderTime = 0.0f;
+	float angle;
 
 	while (nerv::window::get().isOpen()) {
 
@@ -120,6 +121,28 @@ int main()
 			if (pres && nerv::camera::raytraced) changeCamPitch(cam, -90.0f);
 			if (pressed) cam->isMoving = true;
 			
+
+		}
+		ImGui::End();
+
+		if (ImGui::Begin("Quaternions"))
+		{
+			bool pressed = false;
+			ImGui::Text("Config");
+			ImGui::Separator();
+			
+			pressed += ImGui::SliderFloat("angle", &angle, 0.0, 360.0);
+
+			glm::mat3 rotMat = glm::mat3(1);
+			nerv::Quaternion quat(glm::vec4(1, 1, 1, 1));
+			quat = quat.rotate(glm::radians(angle), glm::vec3(0, 0, 1));
+
+			rotMat *= quat.toRotMat();
+
+			scene.material->shaderprog->setMat3("rotMat", rotMat);
+
+			if (pressed) cam->isMoving = true;
+
 
 		}
 		ImGui::End();

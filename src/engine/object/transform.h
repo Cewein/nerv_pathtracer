@@ -27,4 +27,30 @@ namespace nerv
 		//get transform matrices
 		glm::mat4x4 getTransformMatrix();
 	};
+
+
+	class Quaternion
+	{
+	public:
+
+		glm::vec4 vec;
+
+		glm::mat4x4 toMat4();
+		glm::mat3 toRotMat();
+
+		double norm();
+
+		Quaternion(glm::vec4 vec);
+
+		Quaternion conjugate();
+		float dot(Quaternion q);
+		Quaternion operator+(Quaternion q);
+		Quaternion operator*(Quaternion q);
+		Quaternion rotate(float angle, glm::vec3 axes);
+
+		inline float x() { return vec.x; };
+		inline float y() { return vec.y; };
+		inline float z() { return vec.z; };
+		inline float w() { return vec.w; };
+	};
 }
