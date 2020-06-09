@@ -2,8 +2,6 @@
 #include "dependencies.h"
 #include "src/engine.h"
 
-
-
  typedef struct spheres {
 	float pos[4];
 	float rmfr[4]; //raduis material fuzz refractionIndex
@@ -41,7 +39,9 @@ int main()
 
 	nerv::framebuffer * framebuffer = new nerv::framebuffer();
 
-	nerv::object scene(vertices,indices, new nerv::material(nullptr, new nerv::shader("shader/raytraced.frag.glsl", "shader/static.vert.glsl")));
+	
+
+	nerv::object scene(vertices,indices, new nerv::material(new nerv::texture("resources/greenwich_park_02.jpg"), new nerv::shader("shader/raytraced.frag.glsl", "shader/static.vert.glsl")));
 	nerv::object post(vertices, indices, new nerv::material(framebuffer->frameTexture, new nerv::shader("shader/postprocess.frag.glsl")));
 
 	nerv::camera * cam = new nerv::camera(nerv::camera::projectionType::PERSPECTIVE_PROJECTION, 90.0f);

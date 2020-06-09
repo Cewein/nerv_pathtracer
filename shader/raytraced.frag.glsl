@@ -16,7 +16,7 @@ layout (location = 33) uniform bool moving;
 
 uniform vec2 iResolution;
 uniform float iTime;
-uniform sampler3D hdrCubeMap;
+uniform sampler2D text;
 uniform int nbSample;
 uniform int size;
 uniform int nbt;
@@ -315,7 +315,9 @@ vec3 color(ray r, vec2 st)
     
     unitDirection = normalize(r.direction);
     t =  (unitDirection.y + 1.);
-    return att * (t*vec3(0.6,0.8,1.));
+
+	vec3 col = texture(text, -vec2((atan(unitDirection.z, unitDirection.x) / 6.283185307179586476925286766559) + 0.5, acos(unitDirection.y) / 3.1415926535897932384626433832795)).xyz;
+    return att * col;
 }
 
 void main()
