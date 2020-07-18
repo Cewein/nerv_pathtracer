@@ -160,10 +160,8 @@
     <ClCompile Include="src\engine\material\shader.cpp" />
     <ClCompile Include="src\engine\material\texture.cpp" />
     <ClCompile Include="src\engine\object\camera.cpp" />
-    <ClCompile Include="src\engine\object\framebuffer.cpp" />
     <ClCompile Include="src\engine\object\object.cpp" />
     <ClCompile Include="src\engine\object\transform.cpp" />
-    <ClCompile Include="src\engine\render.cpp" />
     <ClCompile Include="src\engine\scene.cpp" />
     <ClCompile Include="src\engine\ui.cpp" />
     <ClCompile Include="src\env\init\init.cpp" />
@@ -189,10 +187,8 @@
     <ClInclude Include="src\engine\material\shader.h" />
     <ClInclude Include="src\engine\material\texture.h" />
     <ClInclude Include="src\engine\object\camera.h" />
-    <ClInclude Include="src\engine\object\framebuffer.h" />
     <ClInclude Include="src\engine\object\object.h" />
     <ClInclude Include="src\engine\object\transform.h" />
-    <ClInclude Include="src\engine\render.h" />
     <ClInclude Include="src\engine\scene.h" />
     <ClInclude Include="src\engine\ui.h" />
     <ClInclude Include="src\env\init\init.h" />

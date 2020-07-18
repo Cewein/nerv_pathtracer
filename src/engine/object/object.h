@@ -40,7 +40,7 @@ namespace nerv
 
 		void show();
 
-		static std::vector<nerv::triangle> loadObj(std::string path, nerv::object * obj = nullptr);
+		static std::vector<nerv::triangle> loadObj(std::string path);
 
 
 		int getSize();

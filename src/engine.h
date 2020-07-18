@@ -48,7 +48,5 @@
 
 #include "engine/object/object.h"
 #include "engine/object/camera.h"
-#include "engine/object/framebuffer.h"
 
 #include "engine/scene.h"
-#include "engine/render.h"

@@ -66,6 +66,9 @@ void nerv::window::framebufferSizeCallback(GLFWwindow * window, int width, int h
 
 bool nerv::window::isOpen()
 {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+	glEnable(GL_DEPTH_TEST);
 	return !glfwWindowShouldClose(this->glfwDisplay);
 }
 
@@ -77,6 +80,7 @@ void nerv::window::close()
 
 void nerv::window::update()
 {
+	
 	calculateDeltaTime();
 	glfwSwapBuffers(this->glfwDisplay);
 	glfwPollEvents();

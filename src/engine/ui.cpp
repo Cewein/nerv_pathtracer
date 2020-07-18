@@ -30,8 +30,43 @@ void nerv::ui::newFrame()
 	ImGui::NewFrame();
 }
 
-void nerv::ui::draw()
+void nerv::ui::draw(nerv::camera * cam)
 {
+	nerv::ui::newFrame();
+	ImGui::SetNextWindowBgAlpha(0.35f);
+	if (ImGui::Begin("FPS counter"))
+	{
+		int fps = 1. / nerv::window::get().getDeltaTime();
+		ImGui::Text((std::to_string(fps) + " fps").c_str());
+		ImGui::Text((std::to_string(nerv::window::get().getDeltaTime()) + " time between frame").c_str());
+		if (!cam->isMoving)
+		{
+			cam->renderTime += nerv::window::get().getDeltaTime();
+			cam->ssp += 1;
+		}
+		if (cam->isMoving)
+		{
+			cam->renderTime = 0.0f;
+			cam->ssp = 1;
+		}
+		ImGui::Text(("render time : " + std::to_string(cam->renderTime) + " s").c_str());
+		ImGui::Text(("samples : " + std::to_string(cam->ssp)).c_str());
+
+	}
+	ImGui::End();
+
+
+	if (ImGui::Begin("Config"))
+	{
+		bool pressed = false;
+		ImGui::Text("Camera");
+		ImGui::Separator();
+		pressed += ImGui::SliderFloat("FOV", &(cam->fov), 0.0, 180.0);
+		pressed += ImGui::SliderFloat("focus Distance", &(cam->focusDistance), 0.0001, 50.0);
+		pressed += ImGui::SliderFloat("apperture", &(cam->aperture), 0.0, 1.0);
+		if (pressed) cam->isMoving = true;
+	}
+	ImGui::End();
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }

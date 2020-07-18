@@ -39,6 +39,9 @@ namespace nerv
 		glm::vec3 up;
 		glm::vec3 right;
 
+		//render variable and rendering stat
+		int ssp;
+		float renderTime;
 		bool isMoving;
 		inline static bool focusing = true;
 

@@ -123,7 +123,7 @@ bool hitGround(in ray r, float tmax, inout hitRecord rec)
 			rec.mat = 1;
 		else
 			rec.mat = 0;
-        rec.color = vec3(.2);
+        rec.color = vec3(1.0);
 		rec.fuzz = 0.1;
 		rec.refaction = 1.4;
 		return true;
@@ -338,13 +338,11 @@ void main()
 
 	if(moving)
 		cbd = vec4(col,1.);
-	else
-	{
-		cbd.xyz = cbd.xyz * cbd.w;
-		cbd.xyz += col;
-		cbd.w += 1;
-		cbd.xyz = cbd.xyz / cbd.w;
-	}
+	
+	cbd.xyz = cbd.xyz * cbd.w;
+	cbd.xyz += col;
+	cbd.w += 1;
+	cbd.xyz = cbd.xyz / cbd.w;
 
     // Output to screen and buffer
 	colorBuf[screenWidth * int(gl_FragCoord.y) + int(gl_FragCoord.x)] = cbd;

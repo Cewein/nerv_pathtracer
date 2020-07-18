@@ -51,29 +51,6 @@ void nerv::keyboard::updateCameraKeyboard(nerv::camera * camera)
 				camera->isMoving = true;
 			}
 		}
-		else
-		{
-			if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_W) == GLFW_PRESS)
-			{
-				camera->transform->positionVec -= nerv::window::get().getDeltaTime() * camera->speed * camera->front;
-				camera->isMoving = true;
-			}
-			if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_S) == GLFW_PRESS)
-			{
-				camera->transform->positionVec += nerv::window::get().getDeltaTime() * camera->speed * camera->front;
-				camera->isMoving = true;
-			}
-			if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_SPACE) == GLFW_PRESS)
-			{
-				camera->transform->positionVec += nerv::window::get().getDeltaTime() * camera->speed * camera->up;
-				camera->isMoving = true;
-			}
-			if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
-			{
-				camera->transform->positionVec -= nerv::window::get().getDeltaTime() * camera->speed * camera->up;
-				camera->isMoving = true;
-			}
-		}
 		if (glfwGetKey(WINDOW_GLFW_DISPLAY, GLFW_KEY_A) == GLFW_PRESS)
 		{
 			camera->transform->positionVec += nerv::window::get().getDeltaTime() * camera->speed * glm::normalize(glm::cross(camera->front, camera->up));

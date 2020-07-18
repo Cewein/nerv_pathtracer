@@ -19,6 +19,8 @@ nerv::camera::camera()
 	this->fov = 90.0;
 	this->focusDistance = 10.0;
 	this->aperture = 0.0;
+	this->ssp = 1;
+	this->renderTime = 0.0f;
 }
 
 nerv::camera::camera(enum nerv::camera::projectionType projectionType, float fov)
@@ -29,11 +31,11 @@ nerv::camera::camera(enum nerv::camera::projectionType projectionType, float fov
 	logger.info("camera", "setting camera matrix");
 	switch (projectionType)
 	{
-	case 0:
+	case nerv::camera::projectionType::PERSPECTIVE_PROJECTION:
 		logger.info("camera", "Perspective projection selected");
 		this->projection = glm::perspective(glm::radians(fov), (float)window::get().width/ (float)window::get().height, 0.1f, 100.0f);
 		break;
-	case 1:
+	case nerv::camera::projectionType::ORTHOGRAPHIC_PROJECTION:
 		logger.info("camera", "Orthogonal projection selected");
 		this->projection = glm::ortho(0.0f, (float)window::get().width, 0.0f, (float)window::get().height, 0.1f, 100.0f);
 		break;
@@ -58,6 +60,8 @@ nerv::camera::camera(enum nerv::camera::projectionType projectionType, float fov
 	this->front = glm::vec3(0.0f, 0.0f, -1.0f);
 	this->right = glm::vec3(0.);
 	this->isMoving = true;
+	this->ssp = 1;
+	this->renderTime = 0.0f;
 }
 
 nerv::camera::~camera()
