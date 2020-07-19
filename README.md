@@ -1,6 +1,6 @@
 # Nerv engine - physically based rendering
 
-![Imgur](https://i.imgur.com/ignSEsy.png)
+![Imgur](https://i.imgur.com/6vfVbW7.jpeg)
 
 This is a 3D engine for light simulation in mind.<br>
 The goal of this engine is to implement a real-time raytraced physically based renderer with the pixar material model.<br>
