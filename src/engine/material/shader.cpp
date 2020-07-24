@@ -52,8 +52,6 @@ void nerv::shader::programInfo(size_t program)
 
 size_t nerv::shader::createShader(int shaderType, std::string path)
 {
-	
-	
 	size_t shdr;
 
 	switch (shaderType)
@@ -77,13 +75,36 @@ size_t nerv::shader::createShader(int shaderType, std::string path)
 		break;
 	}
 
-	const char * file = file::read(path);
+	std::string file = file::read(path);
 
-	glShaderSource(shdr, 1, &file, NULL);
+	logger.info("SHADER", "Importing include");
+	while (importInclude(&file));
+
+	const char * charPointer = file.c_str();
+
+	glShaderSource(shdr, 1, &charPointer, NULL);
 	glCompileShader(shdr);
 	this->shaderInfo(shdr);
 
 	return shdr;
+}
+
+bool nerv::shader::importInclude(std::string * data)
+{
+	size_t start = data->find("#include");
+	if (start != std::string::npos)
+	{
+		size_t end = data->find('\n', start);
+		std::string include = data->substr(start, end - start);
+		logger.info("INCLUDE", "Include found : " + include);
+		data->erase(start, end - start);
+
+		include.erase(0, include.find('"')+1);
+		include.erase(include.find('"'), include.size()+1);
+		data->insert(start, file::read(include));
+		return true;
+	}
+	return false;
 }
 
 nerv::shader::shader()

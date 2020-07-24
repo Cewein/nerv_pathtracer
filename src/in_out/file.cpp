@@ -1,6 +1,6 @@
 #include "file.h"
 
-char * nerv::file::read(std::string path)
+std::string nerv::file::read(std::string path)
 {
 	logger.warning("FILE", "Openning file at " + path);
 

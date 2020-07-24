@@ -11,7 +11,7 @@ namespace nerv
 {
 	namespace file
 	{
-		char * read(std::string path);
+		std::string read(std::string path);
 		int getSize(FILE * fp);
 	}
 }

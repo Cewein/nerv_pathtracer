@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "ui.h"
 #include "../in_out/windows/windows.h"
 

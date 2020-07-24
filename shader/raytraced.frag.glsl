@@ -1,5 +1,8 @@
 #version 450 core
 #define DOF
+
+// DATA STRUCT
+
 layout (location = 0) out vec3 fragColor;
 layout (location = 20) uniform mat4 cameraTransform;
 layout (location = 25) uniform vec3 up;
@@ -12,8 +15,6 @@ layout (location = 31) uniform int screenWidth;
 layout (location = 32) uniform int screenHeight;
 layout (location = 33) uniform bool moving;
 
-
-
 uniform vec2 iResolution;
 uniform float iTime;
 uniform sampler2D text;
@@ -22,8 +23,6 @@ uniform int size;
 uniform int nbt;
 
 in vec2 iTexCoord;
-
-//out vec4 fragColor;
 
 #define FLT_MAX 3.402823466e+38
 const float PI  = 3.14159265359;
@@ -60,7 +59,9 @@ layout (std430,binding=0) buffer triangleBuffer {
 layout (std430,binding=1) buffer colorBuffer {
 	vec4 colorBuf[];
 };
-           
+          
+//HIT FUNCTION
+
 vec3 pointAtParameter(ray r, float t) { return r.origin + t*r.direction; }
 
 bool hitTriangle(ray r, vec3 v0, vec3 v1, vec3 v2, float tmax, inout hitRecord rec)
@@ -99,7 +100,7 @@ bool hitTriangle(ray r, vec3 v0, vec3 v1, vec3 v2, float tmax, inout hitRecord r
 		rec.mat = 2;
 		if(rec.p.z < 1.) rec.mat = 0;
 		if(rec.p.z < -1.) rec.mat = 1;
-        rec.color = vec3(0.8, 0.8, 0.0);
+        rec.color = vec3(0.4, 0.4, 0.0);
 		if(rec.p.z < -1.) rec.color = vec3(0.6, 0.6, 0.3);
 		rec.fuzz = 0.;
 		rec.refaction = 1.4;
@@ -124,7 +125,7 @@ bool hitGround(in ray r, float tmax, inout hitRecord rec)
 		else
 			rec.mat = 0;
         rec.color = vec3(1.0);
-		rec.fuzz = 0.1;
+		rec.fuzz = 0.0;
 		rec.refaction = 1.4;
 		return true;
 	}
@@ -156,6 +157,8 @@ bool hit(in ray r, float tmin, float tmax, inout hitRecord rec)
     return hitAny;
 }
 
+//PSEUDO RANDOM FUNCTION
+
 float random (vec2 st) {
 	return fract(sin(dot(st, vec2(12.9898, 78.233))) * 43758.5453);
 }
@@ -175,8 +178,6 @@ vec3 randInUnitDisk(vec2 st)
 #ifdef DOF
 ray getRay(vec2 uv) 
 {
-
-	
 	float scale = tan(fov/180.0);
 	vec2 d = (2.0 * iTexCoord - 1.0);
 	d.x *= (iResolution.x / iResolution.y) * scale;
@@ -206,6 +207,8 @@ ray getRay(vec2 uv)
 	return ray(origin,direction); 
 }
 #endif
+
+// RAY MATERIAL INTERACTION
 
 bool checkRefract(vec3 v, vec3 n, float niOverNt)
 {
@@ -284,7 +287,9 @@ void dialetric(in hitRecord rec, in vec3 unitDirection, in vec2 st, inout ray r)
 	}
 }
 
-vec3 color(ray r, vec2 st)
+//TRACER FUNCTION
+
+vec3 trace(ray r, vec2 st)
 {
 	hitRecord rec;
 	vec3 unitDirection;
@@ -331,10 +336,9 @@ void main()
     loopCount = cbd.w;
 
 	ray r = getRay(st + cos(sin(cbd.w)));
-    col = color(r,st + cbd.w);
+    col = trace(r,st + cbd.w);
 
 	col = pow(col, vec3(0.4545));
-
 
 	if(moving)
 		cbd = vec4(col,1.);
