@@ -23,7 +23,7 @@ namespace nerv
 		//read a file into and out put a shader ID
 		//shaderType is juste GL_XXX_SHADER macro
 		size_t createShader(int shaderType, std::string path = std::string());
-		bool importInclude(std::string * data);
+		bool importInclude(std::string &data);
 
 	public:
 		//actual live shader program

@@ -33,6 +33,30 @@ void nerv::ui::draw(nerv::camera * cam)
 {
 	nerv::ui::newFrame();
 	ImGui::SetNextWindowBgAlpha(0.35f);
+	if (ImGui::Begin("Config"))
+	{
+		bool pressed = false;
+		ImGui::Text("Camera");
+		ImGui::Separator();
+		pressed += ImGui::SliderFloat("FOV", &(cam->fov), 0.0, 180.0);
+		pressed += ImGui::SliderFloat("focus Distance", &(cam->focusDistance), 0.0001, 50.0);
+		pressed += ImGui::SliderFloat("apperture", &(cam->aperture), 0.0, 1.0);
+		ImGui::Text("Material");
+		ImGui::Separator();
+		static float metal = 0.0;
+		static float transmission = 0.0;
+		static float roughtness = 0.0;
+		pressed += ImGui::SliderFloat("metal", &metal, 0.0, 1.0);
+		pressed += ImGui::SliderFloat("transmission", &transmission, 0.0, 1.0);
+		pressed += ImGui::SliderFloat("roughtness", &roughtness, 0.0, 1.0);
+		glUniform1fv(34, 1, &metal);
+		glUniform1fv(35, 1, &transmission);
+		glUniform1fv(36, 1, &roughtness);
+
+		if (pressed) cam->isMoving = true;
+	}
+	ImGui::End();
+
 	if (ImGui::Begin("FPS counter"))
 	{
 		int fps = 1. / nerv::window::get().getDeltaTime();
@@ -55,17 +79,6 @@ void nerv::ui::draw(nerv::camera * cam)
 	ImGui::End();
 
 
-	if (ImGui::Begin("Config"))
-	{
-		bool pressed = false;
-		ImGui::Text("Camera");
-		ImGui::Separator();
-		pressed += ImGui::SliderFloat("FOV", &(cam->fov), 0.0, 180.0);
-		pressed += ImGui::SliderFloat("focus Distance", &(cam->focusDistance), 0.0001, 50.0);
-		pressed += ImGui::SliderFloat("apperture", &(cam->aperture), 0.0, 1.0);
-		if (pressed) cam->isMoving = true;
-	}
-	ImGui::End();
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }

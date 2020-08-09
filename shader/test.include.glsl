@@ -1,2 +1,6 @@
 //this is a test
-float var = 0.5;
+//? #version 430
+void prouting(float a)
+{
+	a = a * a;
+}

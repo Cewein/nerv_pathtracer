@@ -17,7 +17,7 @@ void nerv::shader::shaderInfo(size_t shaderId)
 	}
 	else
 	{
-		logger.warning("SHADER", "Shader loaded and compiled proprely");
+		logger.info("SHADER", "Shader loaded and compiled proprely");
 	}
 
 }
@@ -46,7 +46,7 @@ void nerv::shader::programInfo(size_t program)
 	}
 	else
 	{
-		logger.warning("SHADER", "Program loaded and compiled proprely");
+		logger.info("SHADER", "Program loaded and compiled proprely");
 	}
 }
 
@@ -78,7 +78,7 @@ size_t nerv::shader::createShader(int shaderType, std::string path)
 	std::string file = file::read(path);
 
 	logger.info("SHADER", "Importing include");
-	while (importInclude(&file));
+	while (importInclude(file));
 
 	const char * charPointer = file.c_str();
 
@@ -89,19 +89,19 @@ size_t nerv::shader::createShader(int shaderType, std::string path)
 	return shdr;
 }
 
-bool nerv::shader::importInclude(std::string * data)
+bool nerv::shader::importInclude(std::string &data)
 {
-	size_t start = data->find("#include");
+	size_t start = data.find("#include");
 	if (start != std::string::npos)
 	{
-		size_t end = data->find('\n', start);
-		std::string include = data->substr(start, end - start);
+		size_t end = data.find('\n', start);
+		std::string include = data.substr(start, end - start);
 		logger.info("INCLUDE", "Include found : " + include);
-		data->erase(start, end - start);
+		data.erase(start, end - start);
 
 		include.erase(0, include.find('"')+1);
 		include.erase(include.find('"'), include.size()+1);
-		data->insert(start, file::read(include));
+		data.insert(start, file::read(include));
 		return true;
 	}
 	return false;
