@@ -114,7 +114,7 @@ bool hitTriangle(ray r, vec3 v0, vec3 v1, vec3 v2, float tmax, inout hitRecord h
 		material mat;
 
 		mat.transmission = transmission;
-        mat.color = vec3(0.4, 0.4, 0.0);
+        mat.color = vec3(0.8, 0.4, 0.0);
 		mat.roughness = rougthness;
 		mat.refractionIndex = 1.4;
 		mat.metallic = metal;
@@ -190,9 +190,9 @@ float random (vec2 st) {
 	return fract(sin(dot(st, vec2(12.9898, 78.233))) * 43758.5453);
 }
 
-vec3 randInUnitSphere() {
-    float phi = rand * 2.0 * 3.14159265;
-    float theta = rand * 3.14169265;
+vec3 randInUnitSphere(vec2 st) {
+    float phi = random(st.yx) * 2.0 * 3.14159265;
+    float theta = random(st.xy) * 3.14169265;
     
     return vec3(cos(phi) * sin(theta), cos(theta), sin(phi) * sin(theta));
 }
@@ -239,7 +239,7 @@ ray getRay(vec2 uv)
 
 vec3 lambert(in hitRecord rec, in vec2 st, inout ray r)
 {
-	vec3 target = rec.p + rec.normal + randInUnitSphere();
+	vec3 target = rec.p + rec.normal + randInUnitSphere(st);
 	r = ray(rec.p, target - rec.p);
 	return rec.mat.color;
 }
@@ -247,7 +247,7 @@ vec3 lambert(in hitRecord rec, in vec2 st, inout ray r)
 vec3 metalic(in hitRecord rec, in vec3 unitDirection, in vec2 st, inout ray r)
 {
 	vec3 reflected = reflect(unitDirection, rec.normal);
-	r = ray(rec.p, reflected + rec.mat.roughness * randInUnitSphere());
+	r = ray(rec.p, reflected + rec.mat.roughness * randInUnitSphere(st));
 	return rec.mat.color; // if  att *= rec.color * 50; then the shpere become a light source o_O
 }
 
