@@ -46,6 +46,7 @@
 #include "engine/material/shader.h"
 #include "engine/material/texture.h"
 
+#include "engine/object/primitive.h"
 #include "engine/object/object.h"
 #include "engine/object/camera.h"
 

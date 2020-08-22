@@ -239,8 +239,8 @@ ray getRay(vec2 uv)
 
 vec3 lambert(in hitRecord rec, in vec2 st, inout ray r)
 {
-	vec3 target = rec.p + rec.normal + randInUnitSphere(st);
-	r = ray(rec.p, target - rec.p);
+	vec3 target = rec.normal + randInUnitSphere(st);
+	r = ray(rec.p, target);
 	return rec.mat.color;
 }
 
@@ -248,7 +248,7 @@ vec3 metalic(in hitRecord rec, in vec3 unitDirection, in vec2 st, inout ray r)
 {
 	vec3 reflected = reflect(unitDirection, rec.normal);
 	r = ray(rec.p, reflected + rec.mat.roughness * randInUnitSphere(st));
-	return rec.mat.color; // if  att *= rec.color * 50; then the shpere become a light source o_O
+	return rec.mat.color; 
 }
 
 float checkRefract(vec3 v, vec3 n, float niOverNt)

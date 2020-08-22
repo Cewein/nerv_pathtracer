@@ -3,16 +3,11 @@
 
 #include "../../../dependencies.h"
 #include "../material/material.h"
+#include "primitive.h"
 #include "transform.h"
 
 namespace nerv
 {
-	typedef struct triangles {
-		float v1[4];
-		float v2[4];
-		float v3[4];
-	}triangle;
-
 	class object
 	{
 	private:
@@ -40,7 +35,7 @@ namespace nerv
 
 		void show();
 
-		static std::vector<nerv::triangle> loadObj(std::string path);
+		static std::vector<nerv::primitive::triangle> loadObj(std::string path);
 
 
 		int getSize();

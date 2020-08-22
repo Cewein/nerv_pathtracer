@@ -84,7 +84,7 @@ void nerv::object::show()
 	glDrawArrays(GL_TRIANGLES, 0, this->size);
 }
 
-std::vector<nerv::triangle> nerv::object::loadObj(std::string path)
+std::vector<nerv::primitive::triangle> nerv::object::loadObj(std::string path)
 {
 	tinyobj::attrib_t attrib;
 	std::vector<tinyobj::shape_t> shape;
@@ -109,13 +109,13 @@ std::vector<nerv::triangle> nerv::object::loadObj(std::string path)
 	}
 
 	size_t index_offset = 0;
-	std::vector<triangle> triangles;
+	std::vector<primitive::triangle> triangles;
 	int id = 1;
 	for (size_t s = 0; s < shape.size(); s++) {
 		for (size_t f = 0; f < shape[s].mesh.num_face_vertices.size(); f++) {
 			int fv = shape[s].mesh.num_face_vertices[f];
 
-			triangle t;
+			primitive::triangle t;
 
 			tinyobj::index_t idx = shape[s].mesh.indices[index_offset];
 			t.v1[0] = attrib.vertices[3 * idx.vertex_index + 0];
@@ -141,9 +141,10 @@ std::vector<nerv::triangle> nerv::object::loadObj(std::string path)
 
 	logger.initLog("nb vertices : " + std::to_string(attrib.vertices.size()));
 	logger.initLog("nb indice : " + std::to_string(shape[0].mesh.indices.size()));
+	logger.initLog("nb triangle : " + std::to_string(triangles.size()));
 	logger.endInit();
 
-	logger.info("SSBO DATA", "size of data is : " + std::to_string(sizeof(triangle) * triangles.size()));
+	logger.info("SSBO DATA", "size of data is : " + std::to_string(sizeof(primitive::triangle) * triangles.size()));
 
 	return triangles;
 }
