@@ -12,7 +12,5 @@ namespace nerv
 			float v2[4];
 			float v3[4];
 		}triangle;
-
-		/*nerv::BVHBound triangleBoundingInfo(triangle tris, int index);*/
 	};
 };

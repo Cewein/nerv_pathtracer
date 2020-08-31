@@ -156,6 +156,7 @@
     <ClCompile Include="imgui\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\config\config.cpp" />
+    <ClCompile Include="src\engine\BVH.cpp" />
     <ClCompile Include="src\engine\material\material.cpp" />
     <ClCompile Include="src\engine\material\shader.cpp" />
     <ClCompile Include="src\engine\material\texture.cpp" />
@@ -184,6 +185,7 @@
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="src\config\config.h" />
     <ClInclude Include="src\engine.h" />
+    <ClInclude Include="src\engine\BVH.h" />
     <ClInclude Include="src\engine\material\material.h" />
     <ClInclude Include="src\engine\material\shader.h" />
     <ClInclude Include="src\engine\material\texture.h" />

@@ -24,7 +24,13 @@ int main()
 	cam->transform->translate(glm::vec3(0., 1., 3.));
 
 	//test code for obj loading
-	std::vector<nerv::primitive::triangle> triangles = nerv::object::loadObj("model/rabbit.obj");
+	std::vector<nerv::primitive::triangle> triangles = nerv::object::loadObj("model/bunny-heavy.obj");
+
+	nerv::BVHAccel accelStruct(triangles, 128, nerv::BVHAccel::splitMethod::SAH);
+
+	logger.info("BVH COUNT", std::to_string(accelStruct.countNode(accelStruct.root)));
+
+	accelStruct.freeBVHfromMemory(accelStruct.root);
 
 	size_t ssbo = nerv::shader::createBuffer(sizeof(nerv::primitive::triangle) * triangles.size(), triangles.data());
 	size_t colorBuffer = nerv::shader::createBuffer(sizeof(float) * 4 * nerv::window::get().width * nerv::window::get().height, nullptr, 1);
@@ -51,7 +57,6 @@ int main()
 
 	nerv::ui::clean();
 	delete cam;
-	//delete framebuffer;
 
 	nerv::window::get().close();
 	return EXIT_SUCCESS;
