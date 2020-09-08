@@ -24,9 +24,9 @@ int main()
 	cam->transform->translate(glm::vec3(0., 1., 3.));
 
 	//test code for obj loading
-	std::vector<nerv::primitive::triangle> triangles = nerv::object::loadObj("model/bunny-heavy.obj");
+	std::vector<nerv::primitive::triangle> triangles = nerv::object::loadObj("model/rabbit.obj");
 
-	nerv::BVHAccel accelStruct(triangles, 128, nerv::BVHAccel::splitMethod::SAH);
+	nerv::BVHAccel accelStruct(triangles, 1, nerv::BVHAccel::splitMethod::SAH);
 
 	logger.info("BVH COUNT", std::to_string(accelStruct.countNode(accelStruct.root)));
 

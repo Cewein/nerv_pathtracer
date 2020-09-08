@@ -12,79 +12,33 @@ void nerv::BVHnodes::initInterior(int axis, BVHnodes * a, BVHnodes * b)
 {
 	children[0] = a;
 	children[1] = b;
-	bounds = nerv::BVHbound::uni(a->bounds, b->bounds);
+	nerv::primitive::bound bound = nerv::primitive::bound::uni(a->bounds.bound, b->bounds.bound);
+	bounds = nerv::BVHbounds::creatyeBVHBounds(bound);
 	splitAxis = axis;
 	nPrimitives = 0;
 }
 
-nerv::BVHbounds nerv::BVHbounds::uni(BVHbounds a, BVHbounds b)
-{
-	BVHbounds bound;
-	bound.LLC = glm::vec3(std::min(a.LLC.x, b.LLC.x), std::min(a.LLC.y, b.LLC.y), std::min(a.LLC.z, b.LLC.z));
-	bound.URC = glm::vec3(std::max(a.URC.x, b.URC.x), std::max(a.URC.y, b.URC.y), std::max(a.URC.z, b.URC.z));
-	bound.centroid = glm::vec3(0.5f * bound.LLC + 0.5f * bound.URC);
-	return bound;
-}
-
-nerv::BVHbounds nerv::BVHbounds::uni(BVHbounds a, glm::vec3 b)
-{
-	BVHbounds bound;
-	bound.LLC = glm::vec3(std::min(a.LLC.x, b.x), std::min(a.LLC.y, b.y), std::min(a.LLC.z, b.z));
-	bound.URC = glm::vec3(std::max(a.URC.x, b.x), std::max(a.URC.y, b.y), std::max(a.URC.z, b.z));
-	bound.centroid = glm::vec3(0.5f * bound.LLC + 0.5f * bound.URC);
-	return bound;
-}
-
-nerv::BVHbounds nerv::BVHbounds::triangleBoundingInfo(nerv::primitive::triangle tris, int index)
-{
-	float sx1 = tris.v1[0];
-	float sx2 = tris.v2[1];
-	float sx3 = tris.v3[2];
-
-	float sy1 = tris.v1[0];
-	float sy2 = tris.v2[1];
-	float sy3 = tris.v3[2];
-
-	float sz1 = tris.v1[0];
-	float sz2 = tris.v2[1];
-	float sz3 = tris.v3[2];
-
-	float xmax = sx1 > sx2 ? (sx1 > sx3 ? sx1 : sx3) : (sx2 > sx3 ? sx2 : sx3);
-	float ymax = sy1 > sy2 ? (sy1 > sy3 ? sy1 : sy3) : (sy2 > sy3 ? sy2 : sy3);
-	float zmax = sz1 > sz2 ? (sz1 > sz3 ? sz1 : sz3) : (sz2 > sz3 ? sz2 : sz3);
-
-	float xmin = sx1 < sx2 ? (sx1 < sx3 ? sx1 : sx3) : (sx2 < sx3 ? sx2 : sx3);
-	float ymin = sy1 < sy2 ? (sy1 < sy3 ? sy1 : sy3) : (sy2 < sy3 ? sy2 : sy3);
-	float zmin = sz1 < sz2 ? (sz1 < sz3 ? sz1 : sz3) : (sz2 < sz3 ? sz2 : sz3);
-
-	glm::vec3 LLC(xmin, ymin, zmin);
-	glm::vec3 URC(xmax, ymax, zmax);
-
-	nerv::BVHbounds info{
-		index,
-		LLC,
-		URC,
-		glm::vec3(0.5f * LLC + 0.5f * URC)
-	};
-
-	return info;
-}
-
 glm::vec3 nerv::BVHbounds::offset(glm::vec3 point) const
 {
-	glm::vec3 o = point - LLC;
+	glm::vec3 o = point - bound.LLC;
 
-	if (URC.x > LLC.x) o.x /= URC.x - LLC.x;
-	if (URC.y > LLC.y) o.y /= URC.y - LLC.y;
-	if (URC.z > LLC.z) o.z /= URC.z - LLC.z;
+	if (bound.URC.x > bound.LLC.x) o.x /= bound.URC.x - bound.LLC.x;
+	if (bound.URC.y > bound.LLC.y) o.y /= bound.URC.y - bound.LLC.y;
+	if (bound.URC.z > bound.LLC.z) o.z /= bound.URC.z - bound.LLC.z;
 
 	return o;
 }
 
-float nerv::BVHbounds::surfaceArea()
+nerv::BVHbounds nerv::BVHbounds::creatyeBVHBounds(nerv::primitive::bound bnd, int index)
 {
-	glm::vec3  d = URC - LLC;
-	return 2 * (d.x * d.y + d.x * d.z + d.y * d.z);
+	nerv::BVHbounds info{
+	index,
+	bnd.LLC,
+	bnd.URC,
+	glm::vec3(0.5f * bnd.LLC + 0.5f * bnd.URC)
+	};
+
+	return info;
 }
 
 nerv::BVHAccel::BVHAccel(std::vector<nerv::primitive::triangle>& p, int maxPrimsInNode, splitMethod method) : maxPrimsInNode(std::min(255, maxPrimsInNode)), primitives(p), method(method)
@@ -96,7 +50,7 @@ nerv::BVHAccel::BVHAccel(std::vector<nerv::primitive::triangle>& p, int maxPrims
 	std::vector<BVHbounds> primInfo(primitives.size());
 	for (int i = 0; i < primitives.size(); i++)
 	{
-		primInfo[i] = BVHbound::triangleBoundingInfo(primitives[i], i);
+		primInfo[i] = nerv::BVHbounds::creatyeBVHBounds(nerv::primitive::bound::triangleBoundingInfo(primitives[i]),i);
 	}
 	logger.initLog("calculated all the primitives bounds");
 
@@ -123,7 +77,7 @@ nerv::BVHnode * nerv::BVHAccel::recursiveBuild(std::vector<BVHbound>& primInfo, 
 	BVHbound bounds;
 	for (int i = start; i < end; i++)
 	{
-		bounds = BVHbound::uni(bounds, primInfo[i]);
+		bounds = nerv::BVHbounds::creatyeBVHBounds(nerv::primitive::bound::uni(bounds.bound, primInfo[i].bound));
 	}
 	int nPrimitives = end - start;
 
@@ -143,10 +97,10 @@ nerv::BVHnode * nerv::BVHAccel::recursiveBuild(std::vector<BVHbound>& primInfo, 
 	{
 		BVHbound centroidBounds;
 		for (int i = start; i < end; i++)
-			centroidBounds = BVHbound::uni(centroidBounds, primInfo[i].centroid);
+			centroidBounds = nerv::BVHbounds::creatyeBVHBounds(nerv::primitive::bound::uni(centroidBounds.bound, primInfo[i].centroid));
 
 		//get bounding volume diagonal and find the longest axis
-		glm::vec diag = centroidBounds.URC - centroidBounds.LLC;
+		glm::vec diag = centroidBounds.bound.URC - centroidBounds.bound.LLC;
 		int dim = 2;
 		if (diag.x > diag.y && diag.x > diag.z)
 			dim = 0;
@@ -156,7 +110,7 @@ nerv::BVHnode * nerv::BVHAccel::recursiveBuild(std::vector<BVHbound>& primInfo, 
 		int mid = (start + end) / 2;
 
 		//if volume is null create the node and exit
-		if (centroidBounds.URC[dim] == centroidBounds.LLC[dim])
+		if (centroidBounds.bound.URC[dim] == centroidBounds.bound.LLC[dim])
 		{
 			int firstPrimOffset = orderedPrims.size();
 			for (int i = start; i < end; i++)
@@ -193,7 +147,7 @@ nerv::BVHnode * nerv::BVHAccel::recursiveBuild(std::vector<BVHbound>& primInfo, 
 					int b = nBucket * centroidBounds.offset(primInfo[i].centroid)[dim];
 					if (b == nBucket) b = nBucket - 1;
 					buckets[b].count++;
-					buckets[b].bounds = BVHbound::uni(buckets[b].bounds, primInfo[i]);
+					buckets[b].bounds = nerv::BVHbounds::creatyeBVHBounds(nerv::primitive::bound::uni(buckets[b].bounds.bound, primInfo[i].bound));
 				}
 
 				float cost[nBucket - 1];
@@ -204,16 +158,16 @@ nerv::BVHnode * nerv::BVHAccel::recursiveBuild(std::vector<BVHbound>& primInfo, 
 					count0 = count1 = 0;
 					for (int j = 0; j <= i; j++)
 					{
-						b0 = BVHbound::uni(b0, buckets[j].bounds);
+						b0 = nerv::BVHbounds::creatyeBVHBounds(nerv::primitive::bound::uni(b0.bound, buckets[j].bounds.bound));
 						count0 += buckets[j].count;
 					}
 					for (int j = i + 1; j < nBucket; j++)
 					{
-						b1 = BVHbound::uni(b1, buckets[j].bounds);
+						b1 = nerv::BVHbounds::creatyeBVHBounds(nerv::primitive::bound::uni(b1.bound, buckets[j].bounds.bound));
 						count1 += buckets[j].count;
 					}
 
-					cost[i] = 0.125f + (count0 * b0.surfaceArea() + count1 * b1.surfaceArea()) / bounds.surfaceArea();
+					cost[i] = 0.125f + (count0 * b0.bound.surfaceArea() + count1 * b1.bound.surfaceArea()) / bounds.bound.surfaceArea();
 				}
 
 				float minCost = cost[0];

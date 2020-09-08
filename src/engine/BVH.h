@@ -4,7 +4,6 @@
 #include "../engine/object/primitive.h"
 #include <cmath>
 #include <algorithm>
-#include <limits>
 #include <vector>
 
 namespace nerv {
@@ -12,16 +11,11 @@ namespace nerv {
 	typedef struct BVHbounds
 	{
 		int index = 0;
-		glm::vec3 LLC = glm::vec3(std::numeric_limits<float>::max());
-		glm::vec3 URC = glm::vec3(std::numeric_limits<float>::lowest());
-		glm::vec3 centroid = glm::vec3(0);
+		primitive::bound bound;
 
-		static BVHbounds uni(BVHbounds a, BVHbounds b);
-		static BVHbounds uni(BVHbounds a, glm::vec3 b);
-		static nerv::BVHbounds triangleBoundingInfo(nerv::primitive::triangle tris, int index = 0);
-
+		glm::vec3 centroid = glm::vec3(0.5f * bound.LLC + 0.5f * bound.URC);
 		glm::vec3 offset(glm::vec3 point) const;
-		float surfaceArea();
+		static BVHbounds creatyeBVHBounds(nerv::primitive::bound bnd, int index = 0);
 
 	} BVHbound;
 
