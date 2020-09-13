@@ -30,6 +30,19 @@ namespace nerv {
 
 	} BVHnode;
 
+	typedef struct linearBVHNode {
+		nerv::primitive::bound bounds;
+		union {
+			int primitiveOffset;
+			int secondChildOffset;
+		};
+
+		uint16_t nPrimitives;
+		uint8_t axis;
+		uint8_t pad[1];
+
+	};
+
 	class BVHAccel
 	{
 	public:
@@ -37,11 +50,13 @@ namespace nerv {
 		int maxPrimsInNode;
 		splitMethod method;
 		std::vector<nerv::primitive::triangle> primitives;
-		BVHnode * root;
+		nerv::linearBVHNode * nodes = nullptr;
 
+		~BVHAccel();
 		BVHAccel(std::vector<nerv::primitive::triangle> &p, int maxPrimsInNode, splitMethod method);
 		BVHnode * recursiveBuild(std::vector<BVHbound> &primInfo, int start, int end, int *totalNodes, std::vector<nerv::primitive::triangle> &orderedPrims);
 		static void freeBVHfromMemory(BVHnode * node);
 		int countNode(BVHnode * node);
+		int flattenBVH(BVHnode * node, int * offset);
 	};
 }

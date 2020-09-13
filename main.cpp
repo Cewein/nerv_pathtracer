@@ -28,10 +28,6 @@ int main()
 
 	nerv::BVHAccel accelStruct(triangles, 1, nerv::BVHAccel::splitMethod::SAH);
 
-	logger.info("BVH COUNT", std::to_string(accelStruct.countNode(accelStruct.root)));
-
-	accelStruct.freeBVHfromMemory(accelStruct.root);
-
 	size_t ssbo = nerv::shader::createBuffer(sizeof(nerv::primitive::triangle) * triangles.size(), triangles.data());
 	size_t colorBuffer = nerv::shader::createBuffer(sizeof(float) * 4 * nerv::window::get().width * nerv::window::get().height, nullptr, 1);
 
