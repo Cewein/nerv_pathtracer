@@ -43,7 +43,6 @@ nerv::BVHbounds nerv::BVHbounds::creatyeBVHBounds(nerv::primitive::bound bnd, in
 
 nerv::BVHAccel::~BVHAccel()
 {
-	delete[] nodes;
 }
 
 nerv::BVHAccel::BVHAccel(std::vector<nerv::primitive::triangle>& p, int maxPrimsInNode, splitMethod method) : maxPrimsInNode(std::min(255, maxPrimsInNode)), primitives(p), method(method)
@@ -69,11 +68,12 @@ nerv::BVHAccel::BVHAccel(std::vector<nerv::primitive::triangle>& p, int maxPrims
 
 	nodes = std::vector<linearBVHNode>(countNode(root));
 	int offset = 0;
-	logger.endInit();
 	flattenBVH(root, &offset);
-	//logger.initLog("BVH Flattened");
+	logger.initLog("BVH Flattened");
 	freeBVHfromMemory(root);
-	//logger.initLog("removed BVH tree from memory");
+	logger.initLog("removed BVH tree from memory");
+	logger.endInit();
+	logger.info("BVH", "Final size : " + std::to_string(nodes.size()));
 }
 
 nerv::BVHnode * nerv::BVHAccel::recursiveBuild(std::vector<BVHbound>& primInfo, int start, int end, int * totalNodes, std::vector<nerv::primitive::triangle>& orderedPrims)
@@ -247,7 +247,8 @@ int nerv::BVHAccel::countNode(BVHnode * node)
 int nerv::BVHAccel::flattenBVH(BVHnode * node, int * offset)
 {
 	linearBVHNode * linear = &nodes[*offset];
-	linear->bounds = node->bounds.bound;
+	linear->llc = glm::vec4(node->bounds.bound.LLC, 0.);
+	linear->urc = glm::vec4(node->bounds.bound.URC, 0.);
 	int myOffset = (*offset)++;
 	if (node->nPrimitives > 0)
 	{

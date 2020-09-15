@@ -60,6 +60,14 @@ struct triangle {
 	 vec4 v3;
  };
 
+ struct linearBVHNode {
+	vec4 llc;
+	vec4 urc;
+	int primitiveOffset;
+	int secondChildOffset;
+	int nPrimitives;
+	int axis;
+};
 
 layout (std430,binding=0) buffer triangleBuffer {
 	triangle tris[];
@@ -67,6 +75,10 @@ layout (std430,binding=0) buffer triangleBuffer {
 
 layout (std430,binding=1) buffer colorBuffer {
 	vec4 colorBuf[];
+};
+
+layout (std430,binding=2) buffer bvhBuffer {
+	linearBVHNode bvh[];
 };
           
 //HIT FUNCTION

@@ -32,12 +32,12 @@ namespace nerv {
 	} BVHnode;
 
 	typedef struct linearBVHNode {
-		nerv::primitive::bound bounds;
-		int primitiveOffset;
-		int secondChildOffset;
-		uint16_t nPrimitives;
-		uint8_t axis;
-
+		glm::vec4 llc = glm::vec4();
+		glm::vec4 urc = glm::vec4();
+		int primitiveOffset = 0;
+		int secondChildOffset = 0;
+		int nPrimitives = 0 ;
+		int axis = 0;
 	};
 
 	class BVHAccel

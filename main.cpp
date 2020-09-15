@@ -25,11 +25,14 @@ int main()
 
 	//test code for obj loading
 	std::vector<nerv::primitive::triangle> triangles = nerv::object::loadObj("model/rabbit.obj");
+	
 
 	nerv::BVHAccel accelStruct(triangles, 1, nerv::BVHAccel::splitMethod::SAH);
+	logger.info("BVH", "size of the flatten BVH : " + std::to_string(accelStruct.nodes.size() * sizeof(nerv::linearBVHNode)));
 
 	size_t ssbo = nerv::shader::createBuffer(sizeof(nerv::primitive::triangle) * triangles.size(), triangles.data());
 	size_t colorBuffer = nerv::shader::createBuffer(sizeof(float) * 4 * nerv::window::get().width * nerv::window::get().height, nullptr, 1);
+	size_t bvh = nerv::shader::createBuffer(sizeof(nerv::linearBVHNode) * accelStruct.nodes.size(), accelStruct.nodes.data(), 2);
 
 	while (nerv::window::get().isOpen()) {
 
