@@ -5,6 +5,7 @@
 #include <cmath>
 #include <algorithm>
 #include <vector>
+#include <string>
 
 namespace nerv {
 
@@ -32,14 +33,10 @@ namespace nerv {
 
 	typedef struct linearBVHNode {
 		nerv::primitive::bound bounds;
-		union {
-			int primitiveOffset;
-			int secondChildOffset;
-		};
-
+		int primitiveOffset;
+		int secondChildOffset;
 		uint16_t nPrimitives;
 		uint8_t axis;
-		uint8_t pad[1];
 
 	};
 
@@ -50,7 +47,7 @@ namespace nerv {
 		int maxPrimsInNode;
 		splitMethod method;
 		std::vector<nerv::primitive::triangle> primitives;
-		nerv::linearBVHNode * nodes = nullptr;
+		std::vector<linearBVHNode> nodes;
 
 		~BVHAccel();
 		BVHAccel(std::vector<nerv::primitive::triangle> &p, int maxPrimsInNode, splitMethod method);
