@@ -182,7 +182,7 @@ nerv::BVHnode * nerv::BVHAccel::recursiveBuild(std::vector<BVHbound>& primInfo, 
 				int minCostSplitBucket = 0;
 				for (int i = 1; i < nBucket - 1; i++)
 				{
-					if (cost[0] < minCost)
+					if (cost[i] < minCost)
 					{
 						minCost = cost[i];
 						minCostSplitBucket = i;
@@ -198,6 +198,7 @@ nerv::BVHnode * nerv::BVHAccel::recursiveBuild(std::vector<BVHbound>& primInfo, 
 						if (b == nBucket) b = nBucket - 1;
 						return b <= minCostSplitBucket;
 					});
+					mid = pmid - &primInfo[0];
 				}
 				else
 				{
