@@ -176,16 +176,36 @@ bool hit(in ray r, float tmin, float tmax, inout hitRecord hit)
     hitRecord tempHit;
     bool hitAny = false;
     float closestSoFar = tmax;
-    for(int i = 0; i < size; i++)
-    {
-        if(hitTriangle(r, tris[i].v1.xyz, tris[i].v2.xyz, tris[i].v3.xyz, closestSoFar, tempHit))
-		{
-			hitAny = true;
-			closestSoFar = tempHit.t;
-			hit = tempHit;
-		}
-    }
 
+	//stack traversal without pointer
+	linearBVHNode bvhNode;
+
+	int stack[64];
+	int stackAdrr = 0;
+	int currentAdrr = 0;
+
+	while(true)
+	{
+		bvhNode = bvh[currentAdrr];
+		if(bvhNode.nPrimitives > 0)
+		{
+			int i = bvhNode.primitiveOffset;
+			if(hitTriangle(r, tris[i].v1.xyz, tris[i].v2.xyz, tris[i].v3.xyz, closestSoFar, tempHit))
+			{
+				hitAny = true;
+				closestSoFar = tempHit.t;
+				hit = tempHit;
+			}
+			
+			currentAdrr = stack[--stackAdrr];
+		}
+		else
+		{
+			stack[stackAdrr++] =  bvhNode.secondChildOffset;
+			currentAdrr = currentAdrr + 1;
+		}
+	}
+		
 	if(hitGround(r, closestSoFar, tempHit))
 	{
 		hitAny = true;

@@ -1,0 +1,241 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Fichiers sources">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Fichiers de ressources">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="file">
+      <UniqueIdentifier>{9ee6c8bb-ec4c-4042-96cf-be1413db44fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="file\config">
+      <UniqueIdentifier>{eeb2cd75-dbf9-4d13-9814-d92e5ff9b38e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{8e57b36e-f212-4a90-9f1b-af74c1b25000}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\in/out">
+      <UniqueIdentifier>{df4b90be-43ef-4743-b866-f42d119a8288}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\in/out\windows">
+      <UniqueIdentifier>{ff6a9b41-c5c1-43a7-90f9-b3512f2d443b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\in/out\input">
+      <UniqueIdentifier>{3a92f050-b9bd-4a14-b7ac-0de64caeb88d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\config">
+      <UniqueIdentifier>{aeb02960-71fd-46aa-98d8-9e552e21626c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\env">
+      <UniqueIdentifier>{2166aad1-9730-45d7-ac1e-6fdd7dc06b44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\env\init">
+      <UniqueIdentifier>{f18710c0-681f-428f-8db5-e9d7fd237953}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\engine">
+      <UniqueIdentifier>{d642e636-2cfe-4d0e-912b-918eaf6e1ff6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\engine\object">
+      <UniqueIdentifier>{2c70ceb0-5f79-4cd0-b20a-701e0064bc04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="file\shader">
+      <UniqueIdentifier>{69891a97-087c-4848-bf5e-d9e2cbf1359d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\engine\material">
+      <UniqueIdentifier>{17fd7d17-e368-44c4-8410-a91696b6667a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="imgui">
+      <UniqueIdentifier>{8b7f7a11-f822-4232-8ed1-fc4e733afacb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\in/out\loader">
+      <UniqueIdentifier>{2268e5eb-80a2-4eeb-8b0a-98e9aea60dd7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\in_out\windows\windows.cpp">
+      <Filter>src\in/out\windows</Filter>
+    </ClCompile>
+    <ClCompile Include="src\in_out\input\keyboard.cpp">
+      <Filter>src\in/out\input</Filter>
+    </ClCompile>
+    <ClCompile Include="src\env\init\init.cpp">
+      <Filter>src\env\init</Filter>
+    </ClCompile>
+    <ClCompile Include="src\config\config.cpp">
+      <Filter>src\config</Filter>
+    </ClCompile>
+    <ClCompile Include="Dependencies\openGL\src\glad.c">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\in_out\file.cpp">
+      <Filter>src\in/out</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\scene.cpp">
+      <Filter>src\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\material\texture.cpp">
+      <Filter>src\engine\material</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\material\shader.cpp">
+      <Filter>src\engine\material</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\object\transform.cpp">
+      <Filter>src\engine\object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\object\camera.cpp">
+      <Filter>src\engine\object</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_widgets.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\imgui_draw.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\examples\imgui_impl_glfw.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui\examples\imgui_impl_opengl3.cpp">
+      <Filter>imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\ui.cpp">
+      <Filter>src\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\material\material.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\object\object.cpp">
+      <Filter>src\engine\object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\object\primitive.cpp">
+      <Filter>src\engine\object</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\BVH.cpp">
+      <Filter>src\engine</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="dependencies.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="src\in_out\windows\windows.h">
+      <Filter>src\in/out\windows</Filter>
+    </ClInclude>
+    <ClInclude Include="src\in_out\input\keyboard.h">
+      <Filter>src\in/out\input</Filter>
+    </ClInclude>
+    <ClInclude Include="src\config\config.h">
+      <Filter>src\config</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\env\init\init.h">
+      <Filter>src\env\init</Filter>
+    </ClInclude>
+    <ClInclude Include="src\in_out\file.h">
+      <Filter>src\in/out</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\scene.h">
+      <Filter>src\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\stb_image.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\material\texture.h">
+      <Filter>src\engine\material</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\material\shader.h">
+      <Filter>src\engine\material</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\object\transform.h">
+      <Filter>src\engine\object</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\object\camera.h">
+      <Filter>src\engine\object</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\examples\imgui_impl_glfw.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\examples\imgui_impl_opengl3.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imconfig.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imgui_internal.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imstb_rectpack.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imstb_textedit.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui\imstb_truetype.h">
+      <Filter>imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\ui.h">
+      <Filter>src\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Dependencies\tiny_obj_loader.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\material\material.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\object\object.h">
+      <Filter>src\engine\object</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\object\primitive.h">
+      <Filter>src\engine\object</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\BVH.h">
+      <Filter>src\engine</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="config.ini">
+      <Filter>file\config</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shader\basic.frag.glsl">
+      <Filter>file\shader</Filter>
+    </None>
+    <None Include="shader\basic.vert.glsl">
+      <Filter>file\shader</Filter>
+    </None>
+    <None Include="shader\blue.frag.glsl">
+      <Filter>file\shader</Filter>
+    </None>
+    <None Include="shader\raytraced.frag.glsl">
+      <Filter>file\shader</Filter>
+    </None>
+    <None Include="shader\postprocess.frag.glsl">
+      <Filter>file\shader</Filter>
+    </None>
+    <None Include="shader\static.vert.glsl">
+      <Filter>file\shader</Filter>
+    </None>
+    <None Include="shader\test.include.glsl">
+      <Filter>file\shader</Filter>
+    </None>
+  </ItemGroup>
+</Project>
