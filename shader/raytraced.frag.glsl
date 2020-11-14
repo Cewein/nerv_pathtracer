@@ -197,6 +197,7 @@ bool hit(in ray r, float tmin, float tmax, inout hitRecord hit)
 				hit = tempHit;
 			}
 			
+			if(stackAdrr == 0) break;
 			currentAdrr = stack[--stackAdrr];
 		}
 		else
