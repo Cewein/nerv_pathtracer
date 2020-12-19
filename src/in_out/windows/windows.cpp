@@ -80,7 +80,8 @@ void nerv::window::close()
 
 void nerv::window::update()
 {
-	
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 	calculateDeltaTime();
 	glfwSwapBuffers(this->glfwDisplay);
 	glfwPollEvents();

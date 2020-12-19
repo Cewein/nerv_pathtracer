@@ -34,6 +34,9 @@ int main()
 	size_t colorBuffer = nerv::shader::createBuffer(sizeof(float) * 4 * nerv::window::get().width * nerv::window::get().height, nullptr, 1);
 	size_t bvh = nerv::shader::createBuffer(sizeof(nerv::linearBVHNode) * accelStruct.nodes.size(), accelStruct.nodes.data(), 2);
 
+	int depth = 0;
+	bool toogleDebug = false;
+
 	while (nerv::window::get().isOpen()) {
 
 		//RENDERING 
@@ -49,6 +52,19 @@ int main()
 
 		//UI
 		nerv::ui::draw(cam);
+		if (ImGui::Begin("BVH Debug"))
+		{
+			bool pressed = false;
+			pressed += ImGui::SliderInt("Depth", &depth, 0, 20);
+			bool debug = ImGui::Checkbox("Show debug",&toogleDebug);
+			pressed += debug;
+
+			scene.material->shaderprog->setInt("debug", int(toogleDebug));
+			scene.material->shaderprog->setInt("depth", depth);
+
+			if (pressed) cam->isMoving = true;
+		}
+		ImGui::End();
 
 		//SWAP BUFFER
 		nerv::window::get().update();

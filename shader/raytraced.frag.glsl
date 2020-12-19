@@ -24,6 +24,8 @@ uniform sampler2D text;
 uniform int nbSample;
 uniform int size;
 uniform int nbt;
+uniform int debug;
+uniform int depth;
 
 in vec2 iTexCoord;
 
@@ -171,6 +173,15 @@ bool hitGround(in ray r, float tmax, inout hitRecord hit)
 	return false;
 } 
 
+bool slabs(in vec3 p0,in  vec3 p1,in  vec3 rayOrigin,in  vec3 invRaydir) {
+	vec3 t0 = (p0 - rayOrigin) * invRaydir;
+	vec3 t1 = (p1 - rayOrigin) * invRaydir;
+	vec3 tmin = min(t0,t1), tmax = max(t0,t1);
+	return max(tmin.x,max(tmin.y,tmin.z)) <= min(tmax.x,min(tmax.y,tmax.z));
+}
+
+bool tmpRed = false;
+
 bool hit(in ray r, float tmin, float tmax, inout hitRecord hit)
 {
     hitRecord tempHit;
@@ -180,31 +191,47 @@ bool hit(in ray r, float tmin, float tmax, inout hitRecord hit)
 	//stack traversal without pointer
 	linearBVHNode bvhNode;
 
-	int stack[64];
-	int stackAdrr = 0;
+	int stack[64];	
+	int stackAdrr = 0;	
 	int currentAdrr = 0;
+
+	vec3 invDir = 1/r.direction;
 
 	while(true)
 	{
 		bvhNode = bvh[currentAdrr];
-		if(bvhNode.nPrimitives > 0)
+
+		if(slabs(bvhNode.llc.xyz, bvhNode.urc.xyz, r.origin, invDir))
 		{
-			int i = bvhNode.primitiveOffset;
-			if(hitTriangle(r, tris[i].v1.xyz, tris[i].v2.xyz, tris[i].v3.xyz, closestSoFar, tempHit))
+			//debug
+			if(bvhNode.llc.w == depth && debug == 1)
+				tmpRed = true;
+
+			if(bvhNode.nPrimitives != 0)
 			{
-				hitAny = true;
-				closestSoFar = tempHit.t;
-				hit = tempHit;
-			}
+				int i = bvhNode.primitiveOffset;
+				if(hitTriangle(r, tris[i].v1.xyz, tris[i].v2.xyz, tris[i].v3.xyz, closestSoFar, tempHit))
+				{
+					hitAny = true;
+					closestSoFar = tempHit.t;
+					hit = tempHit;
+				}
 			
-			if(stackAdrr == 0) break;
-			currentAdrr = stack[--stackAdrr];
+				if(stackAdrr == 0) break;
+				currentAdrr = stack[--stackAdrr];
+			}
+			else
+			{
+				stack[stackAdrr++] =  bvhNode.secondChildOffset;
+				currentAdrr = currentAdrr + 1;
+			}
 		}
 		else
 		{
-			stack[stackAdrr++] =  bvhNode.secondChildOffset;
-			currentAdrr = currentAdrr + 1;
+			if(stackAdrr == 0) break;
+			currentAdrr = stack[--stackAdrr];
 		}
+
 	}
 		
 	if(hitGround(r, closestSoFar, tempHit))
@@ -401,6 +428,8 @@ void main()
 	ray r = getRay(st + sin(cbd.w));
     col = trace(r,st + cbd.w);
 	col = pow(col, vec3(0.4545));
+
+	if(tmpRed) col = vec3(1,0,0);
 
 	if(moving)
 		cbd = vec4(col,1.);

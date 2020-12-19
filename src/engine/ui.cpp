@@ -79,8 +79,7 @@ void nerv::ui::draw(nerv::camera * cam)
 	ImGui::End();
 
 
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+	
 }
 
 void nerv::ui::clean()

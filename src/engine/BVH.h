@@ -54,6 +54,6 @@ namespace nerv {
 		BVHnode * recursiveBuild(std::vector<BVHbound> &primInfo, int start, int end, int *totalNodes, std::vector<nerv::primitive::triangle> &orderedPrims);
 		static void freeBVHfromMemory(BVHnode * node);
 		int countNode(BVHnode * node);
-		int flattenBVH(BVHnode * node, int * offset);
+		int flattenBVH(BVHnode * node, int * offset, int depth);
 	};
 }
