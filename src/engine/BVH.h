@@ -14,9 +14,9 @@ namespace nerv {
 		int index = 0;
 		primitive::bound bound;
 
-		glm::vec3 centroid = glm::vec3(0.5f * bound.LLC + 0.5f * bound.URC);
+		glm::vec3 centroid = glm::vec3(0.5f * bound.pMin + 0.5f * bound.pMax);
 		glm::vec3 offset(glm::vec3 point) const;
-		static BVHbounds creatyeBVHBounds(nerv::primitive::bound bnd, int index = 0);
+		static BVHbounds createBVHBounds(nerv::primitive::bound bnd, int index = 0);
 
 	} BVHbound;
 
@@ -32,8 +32,8 @@ namespace nerv {
 	} BVHnode;
 
 	typedef struct linearBVHNode {
-		glm::vec4 llc = glm::vec4();
-		glm::vec4 urc = glm::vec4();
+		glm::vec4 pMin = glm::vec4();
+		glm::vec4 pMax = glm::vec4();
 		int primitiveOffset = 0;
 		int secondChildOffset = 0;
 		int nPrimitives = 0 ;

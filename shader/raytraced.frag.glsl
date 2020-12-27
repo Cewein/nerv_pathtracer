@@ -178,7 +178,7 @@ bool slabs(in vec3 p0,in  vec3 p1,in  vec3 rayOrigin,in  vec3 invRaydir) {
 	vec3 t1 = (p1 - rayOrigin) * invRaydir;
 	vec3 tmin = min(t0,t1), tmax = max(t0,t1);
 	return max(tmin.x,max(tmin.y,tmin.z)) <= min(tmax.x,min(tmax.y,tmax.z));
-}
+}
 
 bool tmpRed = false;
 
@@ -191,11 +191,11 @@ bool hit(in ray r, float tmin, float tmax, inout hitRecord hit)
 	//stack traversal without pointer
 	linearBVHNode bvhNode;
 
-	int stack[64];	
+	int stack[32];	
 	int stackAdrr = 0;	
 	int currentAdrr = 0;
 
-	vec3 invDir = 1/r.direction;
+	vec3 invDir = normalize(1/r.direction);
 
 	while(true)
 	{
@@ -216,14 +216,14 @@ bool hit(in ray r, float tmin, float tmax, inout hitRecord hit)
 					closestSoFar = tempHit.t;
 					hit = tempHit;
 				}
-			
+
 				if(stackAdrr == 0) break;
 				currentAdrr = stack[--stackAdrr];
 			}
 			else
 			{
-				stack[stackAdrr++] =  bvhNode.secondChildOffset;
-				currentAdrr = currentAdrr + 1;
+                stack[stackAdrr++] = bvhNode.secondChildOffset;
+                currentAdrr = currentAdrr + 1;
 			}
 		}
 		else

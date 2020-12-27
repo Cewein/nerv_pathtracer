@@ -3,16 +3,16 @@
 nerv::primitive::bounds nerv::primitive::bounds::uni(nerv::primitive::bounds a, nerv::primitive::bounds b)
 {
 	nerv::primitive::bounds bound;
-	bound.LLC = glm::vec3(std::min(a.LLC.x, b.LLC.x), std::min(a.LLC.y, b.LLC.y), std::min(a.LLC.z, b.LLC.z));
-	bound.URC = glm::vec3(std::max(a.URC.x, b.URC.x), std::max(a.URC.y, b.URC.y), std::max(a.URC.z, b.URC.z));
+	bound.pMin = glm::min(a.pMin, b.pMin);
+	bound.pMax = glm::max(a.pMax, b.pMax);
 	return bound;
 }
 
 nerv::primitive::bounds nerv::primitive::bounds::uni(nerv::primitive::bounds a, glm::vec3 b)
 {
 	nerv::primitive::bounds bound;
-	bound.LLC = glm::vec3(std::min(a.LLC.x, b.x), std::min(a.LLC.y, b.y), std::min(a.LLC.z, b.z));
-	bound.URC = glm::vec3(std::max(a.URC.x, b.x), std::max(a.URC.y, b.y), std::max(a.URC.z, b.z));
+	bound.pMin = glm::min(a.pMin, b);
+	bound.pMax = glm::max(a.pMax, b);
 	return bound;
 }
 
@@ -22,16 +22,16 @@ nerv::primitive::bounds nerv::primitive::bounds::triangleBoundingInfo(nerv::prim
 	glm::vec3 b(tris.v2[0], tris.v2[1], tris.v2[2]);
 	glm::vec3 c(tris.v3[0], tris.v3[1], tris.v3[2]);
 
-	glm::vec3 llc(std::min(a.x, b.x), std::min(a.y, b.y), std::min(a.z, b.z));
-	glm::vec3 urc(std::max(a.x, b.x), std::max(a.y, b.y), std::max(a.z, b.z));
+	glm::vec3 pMin = glm::min(a, b);
+	glm::vec3 pMax = glm::max(a, b);
 
-	bounds tmp = { llc, urc };
+	bounds tmp = { pMin, pMax };
 
 	return uni(tmp, c);
 }
 
 float nerv::primitive::bounds::surfaceArea()
 {
-	glm::vec3  d = URC - LLC;
+	glm::vec3  d = pMax - pMin;
 	return 2 * (d.x * d.y + d.x * d.z + d.y * d.z);
 }

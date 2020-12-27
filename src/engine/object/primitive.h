@@ -17,8 +17,8 @@ namespace nerv
 
 		typedef struct bounds
 		{
-			glm::vec3 LLC = glm::vec3(std::numeric_limits<float>::max());;
-			glm::vec3 URC = glm::vec3(std::numeric_limits<float>::lowest());
+			glm::vec3 pMin = glm::vec3(std::numeric_limits<float>::max());;
+			glm::vec3 pMax = glm::vec3(std::numeric_limits<float>::lowest());
 
 			static bounds uni(bounds a, bounds b);
 			static bounds uni(bounds a, glm::vec3 b);
