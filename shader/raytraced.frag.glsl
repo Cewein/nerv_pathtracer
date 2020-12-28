@@ -63,8 +63,8 @@ struct triangle {
  };
 
  struct linearBVHNode {
-	vec4 llc;
-	vec4 urc;
+	vec4 pMin;
+	vec4 pMax;
 	int primitiveOffset;
 	int secondChildOffset;
 	int nPrimitives;
@@ -102,7 +102,7 @@ bool hitTriangle(ray r, vec3 v0, vec3 v1, vec3 v2, float tmax, inout hitRecord h
     // use backface culling
     if (det < 0.00001)
         return false;
-    float inv_det = 1.0f / det;
+    float inv_det = 1.0 / det;
     // calculate distance from vert0 to ray origin
     vec3 tvec = r.origin - v0;
     // calculate U parameter and test bounds
@@ -113,7 +113,7 @@ bool hitTriangle(ray r, vec3 v0, vec3 v1, vec3 v2, float tmax, inout hitRecord h
     vec3 qvec = cross(tvec, edge1);
     // calculate V parameter and test bounds
     float v = dot(r.direction, qvec) * inv_det;
-    if (v < 0.0 || u + v > 1.0f)
+    if (v < 0.0 || u + v > 1.0)
         return false;
     // calculate t, ray intersects triangle
     float t = dot(edge2, qvec) * inv_det;
@@ -149,7 +149,7 @@ bool hitGround(in ray r, float tmax, inout hitRecord hit)
 
 		hit.t = t;
         hit.p = pointAtParameter(r,hit.t);
-		hit.normal = vec3(0.f, 1.f, 0.f);
+		hit.normal = vec3(0., 1., 0.);
 
 		material mat;
 
@@ -173,18 +173,19 @@ bool hitGround(in ray r, float tmax, inout hitRecord hit)
 	return false;
 } 
 
-bool slabs(in vec3 p0,in  vec3 p1,in  vec3 rayOrigin,in  vec3 invRaydir) {
+bool slabs(in vec3 p0,in  vec3 p1,in  vec3 rayOrigin,in  vec3 invRaydir, float closestSoFar) {
 	vec3 t0 = (p0 - rayOrigin) * invRaydir;
 	vec3 t1 = (p1 - rayOrigin) * invRaydir;
 	vec3 tmin = min(t0,t1), tmax = max(t0,t1);
-	return max(tmin.x,max(tmin.y,tmin.z)) <= min(tmax.x,min(tmax.y,tmax.z));
+	return max(tmin.x,max(tmin.y,tmin.z)) <= min(tmax.x,min(tmax.y,min(tmax.z,closestSoFar)));
 }
 
-bool tmpRed = false;
+
+bool tempRed = false;
 
 bool hit(in ray r, float tmin, float tmax, inout hitRecord hit)
 {
-    hitRecord tempHit;
+    
     bool hitAny = false;
     float closestSoFar = tmax;
 
@@ -193,47 +194,45 @@ bool hit(in ray r, float tmin, float tmax, inout hitRecord hit)
 
 	int stack[32];	
 	int stackAdrr = 0;	
-	int currentAdrr = 0;
+	stack[stackAdrr] = 0;
 
-	vec3 invDir = normalize(1/r.direction);
+	vec3 invDir = 1.0/normalize(r.direction);
 
-	while(true)
+	while(stackAdrr >= 0) 
 	{
-		bvhNode = bvh[currentAdrr];
+		linearBVHNode bvhNode = bvh[stack[stackAdrr]];
+		stackAdrr -= 1;
 
-		if(slabs(bvhNode.llc.xyz, bvhNode.urc.xyz, r.origin, invDir))
+		if(slabs(bvhNode.pMin.xyz, bvhNode.pMax.xyz, r.origin, invDir, closestSoFar))
 		{
-			//debug
-			if(bvhNode.llc.w == depth && debug == 1)
-				tmpRed = true;
-
-			if(bvhNode.nPrimitives != 0)
+			if(bvhNode.pMin.w == -1.0 && bvhNode.pMax.w == -1.0)
 			{
+				if(debug == 1) tempRed = true;
 				int i = bvhNode.primitiveOffset;
+				hitRecord tempHit;
 				if(hitTriangle(r, tris[i].v1.xyz, tris[i].v2.xyz, tris[i].v3.xyz, closestSoFar, tempHit))
 				{
 					hitAny = true;
 					closestSoFar = tempHit.t;
 					hit = tempHit;
 				}
-
-				if(stackAdrr == 0) break;
-				currentAdrr = stack[--stackAdrr];
+				continue;
 			}
-			else
+
+			if(bvhNode.pMin.w != -1.0)
 			{
-                stack[stackAdrr++] = bvhNode.secondChildOffset;
-                currentAdrr = currentAdrr + 1;
+				stackAdrr += 1;
+				stack[stackAdrr] = int(bvhNode.pMin.w);
+			}
+			if(bvhNode.pMax.w != -1.0)
+			{
+				stackAdrr += 1;
+				stack[stackAdrr] = int(bvhNode.pMax.w);
 			}
 		}
-		else
-		{
-			if(stackAdrr == 0) break;
-			currentAdrr = stack[--stackAdrr];
-		}
-
 	}
-		
+
+	hitRecord tempHit;
 	if(hitGround(r, closestSoFar, tempHit))
 	{
 		hitAny = true;
@@ -429,7 +428,7 @@ void main()
     col = trace(r,st + cbd.w);
 	col = pow(col, vec3(0.4545));
 
-	if(tmpRed) col = vec3(1,0,0);
+	if(tempRed) col = vec3(1.0,0.0,0.0);
 
 	if(moving)
 		cbd = vec4(col,1.);

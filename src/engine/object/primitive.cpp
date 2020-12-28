@@ -24,10 +24,12 @@ nerv::primitive::bounds nerv::primitive::bounds::triangleBoundingInfo(nerv::prim
 
 	glm::vec3 pMin = glm::min(a, b);
 	glm::vec3 pMax = glm::max(a, b);
+	pMin = glm::min(pMin, c);
+	pMax = glm::max(pMax, c);
 
 	bounds tmp = { pMin, pMax };
 
-	return uni(tmp, c);
+	return tmp;
 }
 
 float nerv::primitive::bounds::surfaceArea()

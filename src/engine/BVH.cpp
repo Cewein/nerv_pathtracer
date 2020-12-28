@@ -248,8 +248,8 @@ int nerv::BVHAccel::countNode(BVHnode * node)
 int nerv::BVHAccel::flattenBVH(BVHnode * node, int * offset, int depth)
 {
 	linearBVHNode * linear = &nodes[*offset];
-	linear->pMin = glm::vec4(node->bounds.bound.pMin, depth);
-	linear->pMax = glm::vec4(node->bounds.bound.pMax, depth);
+	linear->pMin = glm::vec4(node->bounds.bound.pMin, -1);
+	linear->pMax = glm::vec4(node->bounds.bound.pMax, -1);
 	int myOffset = (*offset)++;
 	if (node->nPrimitives > 0)
 	{
@@ -260,8 +260,11 @@ int nerv::BVHAccel::flattenBVH(BVHnode * node, int * offset, int depth)
 	{
 		linear->axis = node->splitAxis;
 		linear->nPrimitives = 0;
-		flattenBVH(node->children[0], offset, depth + 1);
+		int ost = flattenBVH(node->children[0], offset, depth + 1);
+		linear->pMin.w = ost;
 		linear->secondChildOffset = flattenBVH(node->children[1], offset, depth + 1);
+		linear->pMax.w = linear->secondChildOffset;
+
 	}
 	return myOffset;
 }
