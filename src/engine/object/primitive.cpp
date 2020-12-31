@@ -1,22 +1,33 @@
 #include "primitive.h"
 
-nerv::primitive::bounds nerv::primitive::bounds::uni(nerv::primitive::bounds a, nerv::primitive::bounds b)
+nerv::primitive::aabbs nerv::primitive::aabbs::uni(nerv::primitive::aabbs a, nerv::primitive::aabbs b)
 {
-	nerv::primitive::bounds bound;
+	nerv::primitive::aabbs bound;
 	bound.pMin = glm::min(a.pMin, b.pMin);
 	bound.pMax = glm::max(a.pMax, b.pMax);
 	return bound;
 }
 
-nerv::primitive::bounds nerv::primitive::bounds::uni(nerv::primitive::bounds a, glm::vec3 b)
+nerv::primitive::aabbs nerv::primitive::aabbs::uni(nerv::primitive::aabbs a, glm::vec3 b)
 {
-	nerv::primitive::bounds bound;
+	nerv::primitive::aabbs bound;
 	bound.pMin = glm::min(a.pMin, b);
 	bound.pMax = glm::max(a.pMax, b);
 	return bound;
 }
 
-nerv::primitive::bounds nerv::primitive::bounds::triangleBoundingInfo(nerv::primitive::triangle tris)
+glm::vec3 nerv::primitive::aabbs::offset(glm::vec3 point) const
+{
+	glm::vec3 o = point - pMin;
+
+	if (pMax.x > pMin.x) o.x /= pMax.x - pMin.x;
+	if (pMax.y > pMin.y) o.y /= pMax.y - pMin.y;
+	if (pMax.z > pMin.z) o.z /= pMax.z - pMin.z;
+
+	return o;
+}
+
+nerv::primitive::aabbs nerv::primitive::aabbs::triangleBoundingInfo(nerv::primitive::triangle tris)
 {
 	glm::vec3 a(tris.v1[0], tris.v1[1], tris.v1[2]);
 	glm::vec3 b(tris.v2[0], tris.v2[1], tris.v2[2]);
@@ -27,12 +38,12 @@ nerv::primitive::bounds nerv::primitive::bounds::triangleBoundingInfo(nerv::prim
 	pMin = glm::min(pMin, c);
 	pMax = glm::max(pMax, c);
 
-	bounds tmp = { pMin, pMax };
+	aabbs tmp = { pMin, pMax };
 
 	return tmp;
 }
 
-float nerv::primitive::bounds::surfaceArea()
+float nerv::primitive::aabbs::surfaceArea()
 {
 	glm::vec3  d = pMax - pMin;
 	return 2 * (d.x * d.y + d.x * d.z + d.y * d.z);

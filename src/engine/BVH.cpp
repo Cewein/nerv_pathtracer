@@ -1,44 +1,21 @@
 #include "BVH.h"
 
-void nerv::BVHnodes::initLeaf(int first, int n, BVHbound & b)
+void nerv::BVHnodes::initLeaf(int first, int n, primitive::aabb & b)
 {
-	firstPrimOffset = first;
+	primitiveOffset = first;
 	nPrimitives = n;
-	bounds = b;
+	box = b;
 	children[0] = children[1] = nullptr;
 }
 
-void nerv::BVHnodes::initInterior(int axis, BVHnodes * a, BVHnodes * b)
+void nerv::BVHnodes::initInterior(int axis, BVHnodes * a, BVHnodes *b)
 {
 	children[0] = a;
 	children[1] = b;
-	nerv::primitive::bound bound = nerv::primitive::bound::uni(a->bounds.bound, b->bounds.bound);
-	bounds = nerv::BVHbounds::createBVHBounds(bound);
+	box = nerv::primitive::aabb::uni(a->box, b->box);
+	primitiveOffset = -1;
 	splitAxis = axis;
 	nPrimitives = 0;
-}
-
-glm::vec3 nerv::BVHbounds::offset(glm::vec3 point) const
-{
-	glm::vec3 o = point - bound.pMin;
-
-	if (bound.pMax.x > bound.pMin.x) o.x /= bound.pMax.x - bound.pMin.x;
-	if (bound.pMax.y > bound.pMin.y) o.y /= bound.pMax.y - bound.pMin.y;
-	if (bound.pMax.z > bound.pMin.z) o.z /= bound.pMax.z - bound.pMin.z;
-
-	return o;
-}
-
-nerv::BVHbounds nerv::BVHbounds::createBVHBounds(nerv::primitive::bound bnd, int index)
-{
-	nerv::BVHbounds info{
-	index,
-	bnd.pMin,
-	bnd.pMax,
-	glm::vec3(0.5f * bnd.pMin + 0.5f * bnd.pMax)
-	};
-
-	return info;
 }
 
 nerv::BVHAccel::~BVHAccel()
@@ -51,10 +28,11 @@ nerv::BVHAccel::BVHAccel(std::vector<nerv::primitive::triangle>& p, int maxPrims
 	if (primitives.size() == 0)
 		return;
 
-	std::vector<BVHbounds> primInfo(primitives.size());
+	std::vector<BVHnode> primInfo(primitives.size());
 	for (int i = 0; i < primitives.size(); i++)
 	{
-		primInfo[i] = nerv::BVHbounds::createBVHBounds(nerv::primitive::bound::triangleBoundingInfo(primitives[i]),i);
+		primInfo[i].box = nerv::primitive::aabb::triangleBoundingInfo(primitives[i]);
+		primInfo[i].primitiveOffset = i;
 	}
 	logger.initLog("calculated all the primitives bounds");
 
@@ -76,16 +54,16 @@ nerv::BVHAccel::BVHAccel(std::vector<nerv::primitive::triangle>& p, int maxPrims
 	logger.info("BVH", "Final size : " + std::to_string(nodes.size()));
 }
 
-nerv::BVHnode * nerv::BVHAccel::recursiveBuild(std::vector<BVHbound>& primInfo, int start, int end, int * totalNodes, std::vector<nerv::primitive::triangle>& orderedPrims)
+nerv::BVHnode * nerv::BVHAccel::recursiveBuild(std::vector<BVHnode>& primInfo, int start, int end, int * totalNodes, std::vector<nerv::primitive::triangle>& orderedPrims)
 {
 
 	BVHnode * node = new BVHnode();
 
 	//compute all the bounding volume of children primitives bounds
-	BVHbound bounds;
+	primitive::aabb box;
 	for (int i = start; i < end; i++)
 	{
-		bounds = nerv::BVHbounds::createBVHBounds(nerv::primitive::bound::uni(bounds.bound, primInfo[i].bound));
+		box = nerv::primitive::aabb::uni(box, primInfo[i].box);
 	}
 	int nPrimitives = end - start;
 
@@ -94,21 +72,21 @@ nerv::BVHnode * nerv::BVHAccel::recursiveBuild(std::vector<BVHbound>& primInfo, 
 		int firstPrimOffset = orderedPrims.size();
 		for (int i = start; i < end; i++)
 		{
-			int primNum = primInfo[i].index;
+			int primNum = primInfo[i].primitiveOffset;
 			orderedPrims.push_back(primitives[primNum]);
 		}
 
-		node->initLeaf(firstPrimOffset, nPrimitives, bounds);
+		node->initLeaf(firstPrimOffset, nPrimitives, box);
 		return node;
 	}
 	else
 	{
-		BVHbound centroidBounds;
+		primitive::aabb centroidBounds;
 		for (int i = start; i < end; i++)
-			centroidBounds = nerv::BVHbounds::createBVHBounds(nerv::primitive::bound::uni(centroidBounds.bound, primInfo[i].centroid));
+			centroidBounds = nerv::primitive::aabb::uni(centroidBounds, primInfo[i].box.centroid);
 
 		//get bounding volume diagonal and find the longest axis
-		glm::vec diag = centroidBounds.bound.pMax - centroidBounds.bound.pMin;
+		glm::vec diag = centroidBounds.pMax - centroidBounds.pMin;
 		int dim = 2;
 		if (diag.x > diag.y && diag.x > diag.z)
 			dim = 0;
@@ -118,16 +96,16 @@ nerv::BVHnode * nerv::BVHAccel::recursiveBuild(std::vector<BVHbound>& primInfo, 
 		int mid = (start + end) / 2;
 
 		//if volume is null create the node and exit
-		if (centroidBounds.bound.pMax[dim] == centroidBounds.bound.pMin[dim])
+		if (centroidBounds.pMax[dim] == centroidBounds.pMin[dim])
 		{
 			int firstPrimOffset = orderedPrims.size();
 			for (int i = start; i < end; i++)
 			{
-				int primNum = primInfo[i].index;
+				int primNum = primInfo[i].primitiveOffset;
 				orderedPrims.push_back(primitives[primNum]);
 			}
 
-			node->initLeaf(firstPrimOffset, nPrimitives, bounds);
+			node->initLeaf(firstPrimOffset, nPrimitives, box);
 			return node;
 		}
 		else
@@ -135,9 +113,9 @@ nerv::BVHnode * nerv::BVHAccel::recursiveBuild(std::vector<BVHbound>& primInfo, 
 			if (nPrimitives <= 2)
 			{
 				mid = (start + end) / 2;
-				std::nth_element(&primInfo[start], &primInfo[mid], &primInfo[end - 1] + 1, [dim](const BVHbound &a, const BVHbound &b)
+				std::nth_element(&primInfo[start], &primInfo[mid], &primInfo[end - 1] + 1, [dim](const BVHnode &a, const BVHnode &b)
 				{
-					return a.centroid[dim] < b.centroid[dim];
+					return a.box.centroid[dim] < b.box.centroid[dim];
 				});
 			}
 			else
@@ -146,36 +124,36 @@ nerv::BVHnode * nerv::BVHAccel::recursiveBuild(std::vector<BVHbound>& primInfo, 
 				struct bucketInfo
 				{
 					int count = 0;
-					BVHbound bounds;
+					primitive::aabb box;
 				};
 				bucketInfo buckets[nBucket];
 
 				for (int i = start; i < end; i++)
 				{
-					int b = nBucket * centroidBounds.offset(primInfo[i].centroid)[dim];
+					int b = nBucket * centroidBounds.offset(primInfo[i].box.centroid)[dim];
 					if (b == nBucket) b = nBucket - 1;
 					buckets[b].count++;
-					buckets[b].bounds = nerv::BVHbounds::createBVHBounds(nerv::primitive::bound::uni(buckets[b].bounds.bound, primInfo[i].bound));
+					buckets[b].box = nerv::primitive::aabb::uni(buckets[b].box, primInfo[i].box);
 				}
 
 				float cost[nBucket - 1];
 				for (int i = 0; i < nBucket - 1; i++)
 				{
-					BVHbound b0, b1;
+					primitive::aabb b0, b1;
 					int count0, count1;
 					count0 = count1 = 0;
 					for (int j = 0; j <= i; j++)
 					{
-						b0 = nerv::BVHbounds::createBVHBounds(nerv::primitive::bound::uni(b0.bound, buckets[j].bounds.bound));
+						b0 = nerv::primitive::aabb::uni(b0, buckets[j].box);
 						count0 += buckets[j].count;
 					}
 					for (int j = i + 1; j < nBucket; j++)
 					{
-						b1 = nerv::BVHbounds::createBVHBounds(nerv::primitive::bound::uni(b1.bound, buckets[j].bounds.bound));
+						b1 = nerv::primitive::aabb::uni(b1, buckets[j].box);
 						count1 += buckets[j].count;
 					}
 
-					cost[i] = 1 + (count0 * b0.bound.surfaceArea() + count1 * b1.bound.surfaceArea()) / bounds.bound.surfaceArea();
+					cost[i] = 1 + (count0 * b0.surfaceArea() + count1 * b1.surfaceArea()) / box.surfaceArea();
 				}
 
 				float minCost = cost[0];
@@ -192,9 +170,9 @@ nerv::BVHnode * nerv::BVHAccel::recursiveBuild(std::vector<BVHbound>& primInfo, 
 				float leafCost = nPrimitives;
 				if (nPrimitives > maxPrimsInNode || minCost < leafCost)
 				{
-					BVHbound * pmid = std::partition(&primInfo[start], &primInfo[end - 1] + 1, [=](const nerv::BVHbound &pi)
+					nerv::BVHnode * pmid = std::partition(&primInfo[start], &primInfo[end - 1] + 1, [=](const nerv::BVHnode &pi)
 					{
-						int b = nBucket * centroidBounds.offset(pi.centroid)[dim];
+						int b = nBucket * centroidBounds.offset(pi.box.centroid)[dim];
 						if (b == nBucket) b = nBucket - 1;
 						return b <= minCostSplitBucket;
 					});
@@ -205,11 +183,11 @@ nerv::BVHnode * nerv::BVHAccel::recursiveBuild(std::vector<BVHbound>& primInfo, 
 					int firstPrimOffset = orderedPrims.size();
 					for (int i = start; i < end; i++)
 					{
-						int primNum = primInfo[i].index;
+						int primNum = primInfo[i].primitiveOffset;
 						orderedPrims.push_back(primitives[primNum]);
 					}
 
-					node->initLeaf(firstPrimOffset, nPrimitives, bounds);
+					node->initLeaf(firstPrimOffset, nPrimitives, box);
 					return node;
 				}
 			}
@@ -248,12 +226,12 @@ int nerv::BVHAccel::countNode(BVHnode * node)
 int nerv::BVHAccel::flattenBVH(BVHnode * node, int * offset, int depth)
 {
 	linearBVHNode * linear = &nodes[*offset];
-	linear->pMin = glm::vec4(node->bounds.bound.pMin, -1);
-	linear->pMax = glm::vec4(node->bounds.bound.pMax, -1);
+	linear->pMin = glm::vec4(node->box.pMin, -1);
+	linear->pMax = glm::vec4(node->box.pMax, -1);
 	int myOffset = (*offset)++;
 	if (node->nPrimitives > 0)
 	{
-		linear->primitiveOffset = node->firstPrimOffset;
+		linear->primitiveOffset = node->primitiveOffset;
 		linear->nPrimitives = node->nPrimitives;
 	}
 	else

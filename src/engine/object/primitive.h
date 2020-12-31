@@ -15,16 +15,20 @@ namespace nerv
 			float v3[4];
 		}triangle;
 
-		typedef struct bounds
+		typedef struct aabbs
 		{
 			glm::vec3 pMin = glm::vec3(std::numeric_limits<float>::max());;
 			glm::vec3 pMax = glm::vec3(std::numeric_limits<float>::lowest());
 
-			static bounds uni(bounds a, bounds b);
-			static bounds uni(bounds a, glm::vec3 b);
-			static nerv::primitive::bounds triangleBoundingInfo(nerv::primitive::triangle tris);
+			static aabbs uni(aabbs a, aabbs b);
+			static aabbs uni(aabbs a, glm::vec3 b);
+
+			glm::vec3 centroid = glm::vec3(0.5f * (pMin + pMax));
+			glm::vec3 offset(glm::vec3 point) const;
+
+			static nerv::primitive::aabbs triangleBoundingInfo(nerv::primitive::triangle tris);
 			float surfaceArea();
 
-		} bound;
+		} aabb;
 	};
 };

@@ -9,24 +9,24 @@
 
 namespace nerv {
 
-	typedef struct BVHbounds
-	{
-		int index = 0;
-		primitive::bound bound;
+	//typedef struct BVHbounds
+	//{
+	//	int index = 0;
+	//	
 
-		glm::vec3 centroid = glm::vec3(0.5f * bound.pMin + 0.5f * bound.pMax);
-		glm::vec3 offset(glm::vec3 point) const;
-		static BVHbounds createBVHBounds(nerv::primitive::bound bnd, int index = 0);
+	//	glm::vec3 centroid = glm::vec3(0.5f * bound.pMin + 0.5f * bound.pMax);
+	//	glm::vec3 offset(glm::vec3 point) const;
+	//	static BVHbounds createBVHBounds(nerv::primitive::aabb bnd, int index = 0);
 
-	} BVHbound;
+	//} BVHbound;
 
 	typedef struct BVHnodes
 	{
-		BVHbound bounds;
+		primitive::aabb box;
 		BVHnodes * children[2];
-		int splitAxis, firstPrimOffset, nPrimitives;
+		int splitAxis, primitiveOffset, nPrimitives;
 
-		void initLeaf(int first, int n, BVHbound & b);
+		void initLeaf(int first, int n, primitive::aabb & b);
 		void initInterior(int axis, BVHnodes * a, BVHnodes * b);
 
 	} BVHnode;
@@ -51,7 +51,7 @@ namespace nerv {
 
 		~BVHAccel();
 		BVHAccel(std::vector<nerv::primitive::triangle> &p, int maxPrimsInNode, splitMethod method);
-		BVHnode * recursiveBuild(std::vector<BVHbound> &primInfo, int start, int end, int *totalNodes, std::vector<nerv::primitive::triangle> &orderedPrims);
+		BVHnode * recursiveBuild(std::vector<BVHnode> &primInfo, int start, int end, int *totalNodes, std::vector<nerv::primitive::triangle> &orderedPrims);
 		static void freeBVHfromMemory(BVHnode * node);
 		int countNode(BVHnode * node);
 		int flattenBVH(BVHnode * node, int * offset, int depth);
