@@ -51,3 +51,4 @@
 #include "engine/object/camera.h"
 
 #include "engine/scene.h"
+#include "engine/BVH.h"

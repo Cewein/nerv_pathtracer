@@ -1,36 +1,50 @@
-//#include "primitive.h"
-//
-//nerv::BVHBound nerv::primitive::triangleBoundingInfo(triangle tris, int index)
-//{
-//	float sx1 = tris.v1[0];
-//	float sx2 = tris.v2[1];
-//	float sx3 = tris.v3[2];
-//
-//	float sy1 = tris.v1[0];
-//	float sy2 = tris.v2[1];
-//	float sy3 = tris.v3[2];
-//
-//	float sz1 = tris.v1[0];
-//	float sz2 = tris.v2[1];
-//	float sz3 = tris.v3[2];
-//
-//	float xmax = sx1 > sx2 ? (sx1 > sx3 ? sx1 : sx3) : (sx2 > sx3 ? sx2 : sx3);
-//	float ymax = sy1 > sy2 ? (sy1 > sy3 ? sy1 : sy3) : (sy2 > sy3 ? sy2 : sy3);
-//	float zmax = sz1 > sz2 ? (sz1 > sz3 ? sz1 : sz3) : (sz2 > sz3 ? sz2 : sz3);
-//
-//	float xmin = sx1 < sx2 ? (sx1 < sx3 ? sx1 : sx3) : (sx2 < sx3 ? sx2 : sx3);
-//	float ymin = sy1 < sy2 ? (sy1 < sy3 ? sy1 : sy3) : (sy2 < sy3 ? sy2 : sy3);
-//	float zmin = sz1 < sz2 ? (sz1 < sz3 ? sz1 : sz3) : (sz2 < sz3 ? sz2 : sz3);
-//	
-//	glm::vec3 LLC(xmin, ymin, zmin);
-//	glm::vec3 URC(xmax, ymax, zmax);
-//
-//	BVHBound info{
-//		index,
-//		LLC,
-//		URC,
-//		glm::vec3(0.5f * LLC + 0.5f * URC)
-//	};
-//
-//	return info;
-//}
+#include "primitive.h"
+
+nerv::primitive::aabbs nerv::primitive::aabbs::uni(nerv::primitive::aabbs a, nerv::primitive::aabbs b)
+{
+	nerv::primitive::aabbs bound;
+	bound.pMin = glm::min(a.pMin, b.pMin);
+	bound.pMax = glm::max(a.pMax, b.pMax);
+	return bound;
+}
+
+nerv::primitive::aabbs nerv::primitive::aabbs::uni(nerv::primitive::aabbs a, glm::vec3 b)
+{
+	nerv::primitive::aabbs bound;
+	bound.pMin = glm::min(a.pMin, b);
+	bound.pMax = glm::max(a.pMax, b);
+	return bound;
+}
+
+glm::vec3 nerv::primitive::aabbs::offset(glm::vec3 point) const
+{
+	glm::vec3 o = point - pMin;
+
+	if (pMax.x > pMin.x) o.x /= pMax.x - pMin.x;
+	if (pMax.y > pMin.y) o.y /= pMax.y - pMin.y;
+	if (pMax.z > pMin.z) o.z /= pMax.z - pMin.z;
+
+	return o;
+}
+
+nerv::primitive::aabbs nerv::primitive::aabbs::triangleBoundingInfo(nerv::primitive::triangle tris)
+{
+	glm::vec3 a(tris.v1[0], tris.v1[1], tris.v1[2]);
+	glm::vec3 b(tris.v2[0], tris.v2[1], tris.v2[2]);
+	glm::vec3 c(tris.v3[0], tris.v3[1], tris.v3[2]);
+
+	glm::vec3 pMin = glm::min(a, b);
+	glm::vec3 pMax = glm::max(a, b);
+	pMin = glm::min(pMin, c);
+	pMax = glm::max(pMax, c);
+
+	aabbs tmp = { pMin, pMax };
+
+	return tmp;
+}
+
+float nerv::primitive::aabbs::surfaceArea()
+{
+	glm::vec3  d = pMax - pMin;
+	return 2 * (d.x * d.y + d.x * d.z + d.y * d.z);
+}
