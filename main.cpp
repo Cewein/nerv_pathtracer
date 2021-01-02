@@ -52,15 +52,13 @@ int main()
 
 		//UI
 		nerv::ui::draw(cam);
-		if (ImGui::Begin("BVH Debug"))
+		if (ImGui::Begin("Optimisation"))
 		{
 			bool pressed = false;
-			pressed += ImGui::SliderInt("Depth", &depth, 0, 20);
-			bool debug = ImGui::Checkbox("Show debug",&toogleDebug);
+			bool debug = ImGui::Checkbox("Use BVH",&toogleDebug);
 			pressed += debug;
 
-			scene.material->shaderprog->setInt("debug", int(toogleDebug));
-			scene.material->shaderprog->setInt("depth", depth);
+			scene.material->shaderprog->setInt("bvhRendering", int(toogleDebug));
 
 			if (pressed) cam->isMoving = true;
 		}

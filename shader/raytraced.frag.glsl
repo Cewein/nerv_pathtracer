@@ -3,7 +3,7 @@
 
 // DATA STRUCT
 
-layout (location = 0) out vec3 fragColor;
+layout (location = 0) out vec4 fragColor;
 layout (location = 20) uniform mat4 cameraTransform;
 layout (location = 25) uniform vec3 up;
 layout (location = 26) uniform vec3 front;
@@ -24,8 +24,7 @@ uniform sampler2D text;
 uniform int nbSample;
 uniform int size;
 uniform int nbt;
-uniform int debug;
-uniform int depth;
+uniform int bvhRendering;
 
 in vec2 iTexCoord;
 
@@ -92,38 +91,41 @@ vec3 pointAtParameter(ray r, float t)
 
 bool hitTriangle(ray r, vec3 v0, vec3 v1, vec3 v2, float tmax, inout hitRecord hit)
 {
-	 // find vectors for two edges sharing vert0
+	//find vectors for two edges sharing vert0
     vec3 edge1 = v1 - v0;
     vec3 edge2 = v2 - v0;
-    // begin calculating determinant - also used to calculate U parameter
-    vec3 pvec = cross(r.direction, edge2);
-    // if determinant is near zero, ray lies in plane of triangle
-    float det = dot(edge1, pvec);
-    // use backface culling
-    if (det < 0.00001)
-        return false;
-    float inv_det = 1.0 / det;
-    // calculate distance from vert0 to ray origin
-    vec3 tvec = r.origin - v0;
-    // calculate U parameter and test bounds
-    float u = dot(tvec, pvec) * inv_det;
-    if (u < 0.0 || u > 1.0f)
-        return false;
-    // prepare to test V parameter
-    vec3 qvec = cross(tvec, edge1);
-    // calculate V parameter and test bounds
-    float v = dot(r.direction, qvec) * inv_det;
-    if (v < 0.0 || u + v > 1.0)
-        return false;
-    // calculate t, ray intersects triangle
-    float t = dot(edge2, qvec) * inv_det;
+
+	vec3 normal = normalize(cross(edge1, edge2));
+	float b = dot(normal, r.direction);
+
+	vec3 w0 = r.origin - v0;
+	float a = -dot(normal,w0);
+	float t = a/b;
+
+	vec3 p =  pointAtParameter(r,t);
+	float uu,uv,vv,wu,wv,invDir;
+	uu = dot(edge1,edge1);
+	uv = dot(edge1,edge2);
+	vv = dot(edge2,edge2);
+
+	vec3 w = p - v0;
+	wu = dot(w,edge1);
+	wv = dot(w,edge2);
+	invDir = uv * uv - uu*vv;
+	invDir = 1.0/invDir;
+
+	float u = (uv * wv - vv *wu) * invDir;
+	if(u < 0.0 || u > 1.0) return false;
+
+	float v = (uv * wu - uu *wv) * invDir;
+	if(v < 0.0 || (u+v) > 1.0) return false;
 
 	// ray intersection
 	if (t > 0.00001 && t < tmax) 
 	{
 		hit.t = t;
-        hit.p = pointAtParameter(r,hit.t);
-        hit.normal = normalize(cross(v1 - v0, v2 - v0));
+        hit.p = p;
+        hit.normal = normal;
 
 		material mat;
 
@@ -173,42 +175,37 @@ bool hitGround(in ray r, float tmax, inout hitRecord hit)
 	return false;
 } 
 
-bool slabs(in vec3 p0,in  vec3 p1,in  vec3 rayOrigin,in  vec3 invRaydir, float closestSoFar) {
-	vec3 t0 = (p0 - rayOrigin) * invRaydir;
-	vec3 t1 = (p1 - rayOrigin) * invRaydir;
+bool slabs(in vec3 p0,in  vec3 p1,in ray r,in float tmini,in float tmaxi) {
+	vec3 invRaydir = 1.0/r.direction;
+	vec3 t0 = (p0 - r.origin) * invRaydir;
+	vec3 t1 = (p1 - r.origin) * invRaydir;
 	vec3 tmin = min(t0,t1), tmax = max(t0,t1);
-	return max(tmin.x,max(tmin.y,tmin.z)) <= min(tmax.x,min(tmax.y,min(tmax.z,closestSoFar)));
+	tmini = max(tmin.x,max(tmin.y,max(tmin.z,tmini)));
+	tmaxi = min(tmax.x,min(tmax.y,min(tmax.z,tmaxi)));
+	return tmini <= tmaxi;
 }
 
-
-bool tempRed = false;
-
-bool hit(in ray r, float tmin, float tmax, inout hitRecord hit)
+float bvhTraversal(in ray r, float tmin,float tmax, inout hitRecord hit, inout bool hitAny)
 {
-    
-    bool hitAny = false;
-    float closestSoFar = tmax;
-
 	//stack traversal without pointer
-	linearBVHNode bvhNode;
-
 	int stack[32];	
 	int stackAdrr = 0;	
 	stack[stackAdrr] = 0;
 
-	vec3 invDir = 1.0/normalize(r.direction);
+	float closestSoFar = tmax;
+
+	vec3 invDir = 1.0/r.direction;
 
 	while(stackAdrr >= 0) 
 	{
-		linearBVHNode bvhNode = bvh[stack[stackAdrr]];
+		linearBVHNode node = bvh[stack[stackAdrr]];
 		stackAdrr -= 1;
 
-		if(slabs(bvhNode.pMin.xyz, bvhNode.pMax.xyz, r.origin, invDir, closestSoFar))
+		if(slabs(node.pMin.xyz, node.pMax.xyz, r, tmin, closestSoFar))
 		{
-			if(bvhNode.pMin.w == -1.0 && bvhNode.pMax.w == -1.0)
+			if(node.pMin.w == -1.0 || node.pMax.w == -1.0)
 			{
-				if(debug == 1) tempRed = true;
-				int i = bvhNode.primitiveOffset;
+				int i = node.primitiveOffset;
 				hitRecord tempHit;
 				if(hitTriangle(r, tris[i].v1.xyz, tris[i].v2.xyz, tris[i].v3.xyz, closestSoFar, tempHit))
 				{
@@ -216,18 +213,43 @@ bool hit(in ray r, float tmin, float tmax, inout hitRecord hit)
 					closestSoFar = tempHit.t;
 					hit = tempHit;
 				}
-				continue;
 			}
 
-			if(bvhNode.pMin.w != -1.0)
+			if(node.pMin.w != -1.0)
 			{
 				stackAdrr += 1;
-				stack[stackAdrr] = int(bvhNode.pMin.w);
+				stack[stackAdrr] = int(node.pMin.w);
 			}
-			if(bvhNode.pMax.w != -1.0)
+			if(node.pMax.w != -1.0)
 			{
 				stackAdrr += 1;
-				stack[stackAdrr] = int(bvhNode.pMax.w);
+				stack[stackAdrr] = int(node.pMax.w);
+			}
+		}
+	}
+
+	return closestSoFar;
+}
+bool hit(in ray r, float tmin, float tmax, inout hitRecord hit)
+{
+    
+    bool hitAny = false;
+    float closestSoFar = tmax;
+
+	if(bvhRendering == 1)
+	{
+		 closestSoFar = bvhTraversal(r, tmin, closestSoFar, hit, hitAny);
+	}
+	else
+	{
+		for(int i = 0; i < size; i++)
+		{
+			hitRecord tempHit;
+			if(hitTriangle(r, tris[i].v1.xyz, tris[i].v2.xyz, tris[i].v3.xyz, closestSoFar, tempHit))
+			{
+				hitAny = true;
+				closestSoFar = tempHit.t;
+				hit = tempHit;
 			}
 		}
 	}
@@ -428,8 +450,6 @@ void main()
     col = trace(r,st + cbd.w);
 	col = pow(col, vec3(0.4545));
 
-	if(tempRed) col = vec3(1.0,0.0,0.0);
-
 	if(moving)
 		cbd = vec4(col,1.);
 	
@@ -441,5 +461,5 @@ void main()
 
     // Output to screen and buffer
 	colorBuf[screenWidth * int(gl_FragCoord.y) + int(gl_FragCoord.x)] = cbd;
-    fragColor = cbd.xyz;
+    fragColor = vec4(cbd.xyz,0);
 }
