@@ -44,6 +44,8 @@ nerv::BVHAccel::BVHAccel(std::vector<nerv::primitive::triangle>& p, int maxPrims
 	 
 	primitives.swap(orderedPrims);
 
+	p = primitives;
+
 	nodes = std::vector<linearBVHNode>(countNode(root));
 	int offset = 0;
 	flattenBVH(root, &offset,0);

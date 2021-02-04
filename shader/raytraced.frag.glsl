@@ -95,37 +95,35 @@ bool hitTriangle(ray r, vec3 v0, vec3 v1, vec3 v2, float tmax, inout hitRecord h
     vec3 edge1 = v1 - v0;
     vec3 edge2 = v2 - v0;
 
-	vec3 normal = normalize(cross(edge1, edge2));
-	float b = dot(normal, r.direction);
-
-	vec3 w0 = r.origin - v0;
-	float a = -dot(normal,w0);
-	float t = a/b;
-
-	vec3 p =  pointAtParameter(r,t);
-	float uu,uv,vv,wu,wv,invDir;
-	uu = dot(edge1,edge1);
-	uv = dot(edge1,edge2);
-	vv = dot(edge2,edge2);
-
-	vec3 w = p - v0;
-	wu = dot(w,edge1);
-	wv = dot(w,edge2);
-	invDir = uv * uv - uu*vv;
-	invDir = 1.0/invDir;
-
-	float u = (uv * wv - vv *wu) * invDir;
-	if(u < 0.0 || u > 1.0) return false;
-
-	float v = (uv * wu - uu *wv) * invDir;
-	if(v < 0.0 || (u+v) > 1.0) return false;
+	// begin calculating determinant - also used to calculate U parameter
+    vec3 pvec = cross(r.direction, edge2);
+    // if determinant is near zero, ray lies in plane of triangle
+    float det = dot(edge1, pvec);
+    // use backface culling
+    if (det < 0.00001)
+        return false;
+    float inv_det = 1.0 / det;
+    // calculate distance from vert0 to ray origin
+    vec3 tvec = r.origin - v0;
+    // calculate U parameter and test bounds
+    float u = dot(tvec, pvec) * inv_det;
+    if (u < 0.0 || u > 1.0f)
+        return false;
+    // prepare to test V parameter
+    vec3 qvec = cross(tvec, edge1);
+    // calculate V parameter and test bounds
+    float v = dot(r.direction, qvec) * inv_det;
+    if (v < 0.0 || u + v > 1.0)
+        return false;
+    // calculate t, ray intersects triangle
+    float t = dot(edge2, qvec) * inv_det;
 
 	// ray intersection
 	if (t > 0.00001 && t < tmax) 
 	{
 		hit.t = t;
-        hit.p = p;
-        hit.normal = normal;
+        hit.p = pointAtParameter(r,hit.t);
+        hit.normal = normalize(cross(v1 - v0, v2 - v0));
 
 		material mat;
 

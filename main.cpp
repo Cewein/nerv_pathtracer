@@ -24,7 +24,8 @@ int main()
 	cam->transform->translate(glm::vec3(0., 1., 3.));
 
 	//test code for obj loading
-	std::vector<nerv::primitive::triangle> triangles = nerv::object::loadObj("model/rabbit.obj");
+	std::vector<nerv::primitive::triangle> triangles = nerv::object::loadObj("model/bunny-heavy.obj");
+	//std::vector<nerv::primitive::triangle> triangles = nerv::object::loadObj("model/cube.obj");
 	
 
 	nerv::BVHAccel accelStruct(triangles, 1, nerv::BVHAccel::splitMethod::SAH);
@@ -35,7 +36,7 @@ int main()
 	size_t bvh = nerv::shader::createBuffer(sizeof(nerv::linearBVHNode) * accelStruct.nodes.size(), accelStruct.nodes.data(), 2);
 
 	int depth = 0;
-	bool toogleDebug = false;
+	bool toogleDebug = true;
 
 	while (nerv::window::get().isOpen()) {
 
@@ -45,7 +46,6 @@ int main()
 		if(nerv::camera::raytraced) scene.show();
 
 		//UPDATE I/O
-
 		cam->isMoving = false;
 		nerv::keyboard::updateCameraKeyboard(cam);
 		nerv::mouse::updateCameraMouse(cam);
