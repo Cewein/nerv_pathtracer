@@ -9,11 +9,11 @@ namespace nerv
 {
 	namespace primitive
 	{
-		typedef struct triangles {
+		struct triangle {
 			float v1[4];
 			float v2[4];
 			float v3[4];
-		}triangle;
+		};
 
 		typedef struct aabbs
 		{

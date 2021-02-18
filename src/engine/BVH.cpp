@@ -1,6 +1,6 @@
 #include "BVH.h"
 
-void nerv::BVHnodes::initLeaf(int first, int n, primitive::aabb & b)
+void nerv::BVHnode::initLeaf(int first, int n, primitive::aabb & b)
 {
 	primitiveOffset = first;
 	nPrimitives = n;
@@ -8,7 +8,7 @@ void nerv::BVHnodes::initLeaf(int first, int n, primitive::aabb & b)
 	children[0] = children[1] = nullptr;
 }
 
-void nerv::BVHnodes::initInterior(int axis, BVHnodes * a, BVHnodes *b)
+void nerv::BVHnode::initInterior(int axis, BVHnode* a, BVHnode*b)
 {
 	children[0] = a;
 	children[1] = b;

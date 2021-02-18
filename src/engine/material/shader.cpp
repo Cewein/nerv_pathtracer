@@ -136,6 +136,7 @@ void nerv::shader::use()
 
 	this->setVec2("screenResolution", nerv::window::get().width, nerv::window::get().height);
 	this->setFloat("iTime", glfwGetTime());
+	this->setFloat("iDeltaTime", nerv::window::get().getDeltaTime());
 }
 
 bool nerv::shader::compare(nerv::shader * shader)

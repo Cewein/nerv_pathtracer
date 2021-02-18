@@ -2,7 +2,6 @@
 #define DOF
 
 // DATA STRUCT
-
 layout (location = 0) out vec4 fragColor;
 layout (location = 20) uniform mat4 cameraTransform;
 layout (location = 25) uniform vec3 up;
@@ -20,10 +19,8 @@ layout (location = 36) uniform float rougthness;
 
 uniform vec2 iResolution;
 uniform float iTime;
+uniform float iDeltaTime;
 uniform sampler2D text;
-uniform int nbSample;
-uniform int size;
-uniform int nbt;
 uniform int bvhRendering;
 
 in vec2 iTexCoord;
@@ -42,11 +39,20 @@ struct ray {
     
 struct material {
 	vec3 color;
+	//todo add emitted color
 	float roughness;
 	float metallic;
 	float refractionIndex;
 	float transmission;
 };
+
+material matArr[] = material[6]( material(vec3(0.75,0.25,0.25),0.0,1.0,1.2,0.0),
+	material(vec3(0.25,0.75,0.25),0.0,0.0,1.2,0.0),
+	material(vec3(0.75,0.25,0.75),0.05,0.2,1.2,0.95),
+	material(vec3(0.75,0.25,0.25),0.0,0.0,1.2,1.0),
+	material(vec3(20.0,10.0,1.0),0.0,0.0,1.2,0.0),
+	material(vec3(5.0,5.0,20.0),0.0,0.0,1.2,0.0)
+);
 
 struct hitRecord {
     float t;
@@ -60,6 +66,28 @@ struct triangle {
 	 vec4 v2;
 	 vec4 v3;
  };
+
+
+ struct rectangle
+ {
+	vec2 x;
+	vec2 y;
+	float k;
+	int mat;
+ };
+
+ struct sphere 
+{
+    vec3 center;
+    float radius;
+    int mat;
+};
+
+sphere sphereArr[] = sphere[4](sphere(vec3(3.0,1.5,0.0),1.5,0),
+	sphere(vec3(-3.0,1.5,0.0),1.5,1),
+	sphere(vec3(0.0,1.5,3.0),1.5,2),
+	sphere(vec3(0.0,1.5,-3.0),1.5,3)
+);
 
  struct linearBVHNode {
 	vec4 pMin;
@@ -87,6 +115,44 @@ layout (std430,binding=2) buffer bvhBuffer {
 vec3 pointAtParameter(ray r, float t) 
 {
 	return r.origin + t*r.direction; 
+}
+
+bool hitSphere(in ray r, float tmin, float tmax, inout hitRecord hit, sphere s)
+{
+	vec3 oc = r.origin - s.center;
+    float a = dot(r.direction,r.direction);
+    float b = dot(oc, r.direction);
+    float c = dot(oc,oc)-s.radius*s.radius;
+    float d = b*b - a*c;
+    if (d > 0.) 
+    {
+        float temp = (-b - sqrt(b*b-a*c))/a;
+        if(temp < tmax && temp > tmin)
+        {
+            hit.t = temp;
+            hit.p = pointAtParameter(r,hit.t);
+            hit.normal = (hit.p - s.center) / s.radius;
+            hit.mat = matArr[s.mat];
+            return true;
+        }
+    }
+    return false;
+}
+
+bool hitRectangle(ray r, float tmin, float tmax, inout hitRecord hit, rectangle rect)
+{
+	float t = (rect.k-r.origin.z)/r.direction.z;
+	if(t < tmin || t > tmax)
+		return false;
+	float x = r.origin.x + t*r.direction.x;
+	float y = r.origin.y + t*r.direction.y;
+	if(x < rect.x.x || x > rect.x.y || y < rect.y.x || y > rect.y.y)
+		return false;
+	hit.t = t;
+	hit.normal = vec3(0.0,0.0,1.0);
+	hit.p = pointAtParameter(r,hit.t);
+	hit.mat = matArr[rect.mat];
+	return true;
 }
 
 bool hitTriangle(ray r, vec3 v0, vec3 v1, vec3 v2, float tmax, inout hitRecord hit)
@@ -143,7 +209,7 @@ bool hitTriangle(ray r, vec3 v0, vec3 v1, vec3 v2, float tmax, inout hitRecord h
 
 bool hitGround(in ray r, float tmax, inout hitRecord hit) 
 { 
-    float t = -(r.origin.y) / r.direction.y;
+    float t = -(r.origin.y-0.1) / r.direction.y;
 	if (t > 0.0001 && t < tmax)
 	{
 
@@ -161,7 +227,7 @@ bool hitGround(in ray r, float tmax, inout hitRecord hit)
 		else
 		{
 			mat.transmission = 0.0;
-			mat.metallic = 1.0;
+			mat.metallic = 0.0;
 		}
         mat.color = vec3(1.0);
 		mat.roughness = 0.0;
@@ -183,7 +249,7 @@ bool slabs(in vec3 p0,in  vec3 p1,in ray r,in float tmini,in float tmaxi) {
 	return tmini <= tmaxi;
 }
 
-float bvhTraversal(in ray r, float tmin,float tmax, inout hitRecord hit, inout bool hitAny)
+float bvhTraversal(in ray r, float tmin, float tmax, inout hitRecord hit, inout bool hitAny)
 {
 	//stack traversal without pointer
 	int stack[32];	
@@ -228,6 +294,9 @@ float bvhTraversal(in ray r, float tmin,float tmax, inout hitRecord hit, inout b
 
 	return closestSoFar;
 }
+
+bool noScatter = false;
+
 bool hit(in ray r, float tmin, float tmax, inout hitRecord hit)
 {
     
@@ -238,19 +307,6 @@ bool hit(in ray r, float tmin, float tmax, inout hitRecord hit)
 	{
 		 closestSoFar = bvhTraversal(r, tmin, closestSoFar, hit, hitAny);
 	}
-	else
-	{
-		for(int i = 0; i < size; i++)
-		{
-			hitRecord tempHit;
-			if(hitTriangle(r, tris[i].v1.xyz, tris[i].v2.xyz, tris[i].v3.xyz, closestSoFar, tempHit))
-			{
-				hitAny = true;
-				closestSoFar = tempHit.t;
-				hit = tempHit;
-			}
-		}
-	}
 
 	hitRecord tempHit;
 	if(hitGround(r, closestSoFar, tempHit))
@@ -259,6 +315,17 @@ bool hit(in ray r, float tmin, float tmax, inout hitRecord hit)
 		closestSoFar = tempHit.t;
 		hit = tempHit;
 	}
+
+	rectangle rect = rectangle(vec2(-0.5, 0.5), vec2(0.0, 3.0), -2.0, 4);
+
+	if(hitRectangle(r, tmin, closestSoFar, tempHit, rect))
+	{
+		hitAny = true;
+		closestSoFar = tempHit.t;
+		hit = tempHit;
+		noScatter = true;
+	}
+
 
     return hitAny;
 }
@@ -270,15 +337,15 @@ float random (vec2 st) {
 }
 
 vec3 randInUnitSphere(vec2 st) {
-    float phi = random(st.yx) * 2.0 * 3.14159265;
-    float theta = random(st.xy) * 3.14169265;
+    float phi = random(st.yx + sin(iTime) + cos(iDeltaTime)) * 2.0 * 3.14159265;
+    float theta = random(st.xy + cos(iTime) + sin(iDeltaTime)) * 3.14169265;
     
     return vec3(cos(phi) * sin(theta), cos(theta), sin(phi) * sin(theta));
 }
 
 vec3 randInUnitDisk(vec2 st)
 {
-	return vec3(random(st.yx),random(st.xy),0.) * 2.0 - 1.0; 
+	return vec3(random(st.yx + sin(iTime) + cos(iDeltaTime)) ,random(st.xy + cos(iTime) + sin(iDeltaTime)),0.) * 2.0 - 1.0; 
 }
 
 #ifdef DOF
@@ -318,7 +385,7 @@ ray getRay(vec2 uv)
 
 vec3 lambert(in hitRecord rec, in vec2 st, inout ray r)
 {
-	vec3 target = rec.normal + randInUnitSphere(st);
+	vec3 target = rec.normal + randInUnitSphere(st + r.direction.xy);
 	r = ray(rec.p, target);
 	return rec.mat.color;
 }
@@ -326,7 +393,7 @@ vec3 lambert(in hitRecord rec, in vec2 st, inout ray r)
 vec3 metalic(in hitRecord rec, in vec3 unitDirection, in vec2 st, inout ray r)
 {
 	vec3 reflected = reflect(unitDirection, rec.normal);
-	r = ray(rec.p, reflected + rec.mat.roughness * randInUnitSphere(st));
+	r = ray(rec.p, reflected + rec.mat.roughness * randInUnitSphere(st + r.direction.xy));
 	return rec.mat.color; 
 }
 
@@ -391,9 +458,18 @@ vec3 trace(ray r, vec2 st)
 	ray tmp;
 	ray glass;
 
-	while (hit(r, 0.0001, FLT_MAX, hitRec) && bounce < bounceSize)
+	while (bounce < bounceSize && !noScatter)
 	{
 		unitDirection = normalize(r.direction);
+
+		if(hit(r, 0.00001, FLT_MAX, hitRec))
+			bounce++;
+		else
+		{
+			vec3 col = vec3(0.0);
+			att *= col;
+			break;
+		}
 
 		glass = dieletric(hitRec, unitDirection, st, r);
 		tmp = r;
@@ -422,16 +498,13 @@ vec3 trace(ray r, vec2 st)
 			hitRec.mat.transmission
 		);
 
-		bounce++;
+		
 	}
-    
-    unitDirection = normalize(r.direction);
+
     t =  (unitDirection.y + 1.);
 
 	//skybox
-	//todo reference the shader found on shader toy
-	vec3 col = texture(text, -vec2((atan(unitDirection.z, unitDirection.x) / 6.283185307179586476925286766559) + 0.5, acos(unitDirection.y) / 3.1415926535897932384626433832795)).xyz;
-    return att * col;
+    return att;
 }
 
 void main()

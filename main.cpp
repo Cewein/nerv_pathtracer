@@ -19,7 +19,7 @@ int main()
 		1, 2, 3    // second triangle
 	};
 
-	nerv::object scene(vertices,indices, new nerv::material(new nerv::texture("resources/cape_hill.jpg"), new nerv::shader("shader/raytraced.frag.glsl", "shader/static.vert.glsl")));
+	nerv::object scene(vertices,indices, new nerv::material(new nerv::texture("resources/moonless_golf.jpg"), new nerv::shader("shader/raytraced.frag.glsl", "shader/static.vert.glsl")));
 	nerv::camera * cam = new nerv::camera(nerv::camera::projectionType::PERSPECTIVE_PROJECTION, 90.0f);
 	cam->transform->translate(glm::vec3(0., 1., 3.));
 
@@ -58,7 +58,7 @@ int main()
 			bool debug = ImGui::Checkbox("Use BVH",&toogleDebug);
 			pressed += debug;
 
-			scene.material->shaderprog->setInt("bvhRendering", int(toogleDebug));
+			scene.material->shaderprog->setInt("bvhRendering", 1);
 
 			if (pressed) cam->isMoving = true;
 		}

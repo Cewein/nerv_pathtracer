@@ -9,29 +9,18 @@
 
 namespace nerv {
 
-	//typedef struct BVHbounds
-	//{
-	//	int index = 0;
-	//	
-
-	//	glm::vec3 centroid = glm::vec3(0.5f * bound.pMin + 0.5f * bound.pMax);
-	//	glm::vec3 offset(glm::vec3 point) const;
-	//	static BVHbounds createBVHBounds(nerv::primitive::aabb bnd, int index = 0);
-
-	//} BVHbound;
-
-	typedef struct BVHnodes
+	struct BVHnode
 	{
 		primitive::aabb box;
-		BVHnodes * children[2];
+		BVHnode* children[2];
 		int splitAxis, primitiveOffset, nPrimitives;
 
 		void initLeaf(int first, int n, primitive::aabb & b);
-		void initInterior(int axis, BVHnodes * a, BVHnodes * b);
+		void initInterior(int axis, BVHnode* a, BVHnode* b);
 
-	} BVHnode;
+	};
 
-	typedef struct linearBVHNode {
+	struct linearBVHNode {
 		glm::vec4 pMin = glm::vec4();
 		glm::vec4 pMax = glm::vec4();
 		int primitiveOffset = 0;
