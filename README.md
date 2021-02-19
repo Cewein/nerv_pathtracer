@@ -1,6 +1,6 @@
 # Nerv engine - physically based rendering
 
-![Imgur](https://i.imgur.com/6vfVbW7.jpeg)
+![Github](https://github.com/Cewein/nerv_pathtracer/blob/master/Render/glass%20bunny%20light.PNG)
 
 This is a 3D engine for light simulation in mind.<br>
 The goal of this engine is to implement a real-time raytraced physically based renderer with the pixar material model.<br>
@@ -9,6 +9,7 @@ The engine use OpenGL, GLFW and GLM, but in the future we plan to remove the nee
 Nerv's core is generalist and can render object in a rastered way but heavly use shaders and a single quad to make "realtime ray based application".
 ## showcase
 #### Depths of fields
+![Github](https://github.com/Cewein/nerv_pathtracer/blob/master/Render/rabbit%20sphere.png)
 ![Imgur](https://i.imgur.com/ZvpZmb0.png)
 
 ## Nerv engine status
@@ -25,10 +26,11 @@ Nerv's core is generalist and can render object in a rastered way but heavly use
  - [x] FPS camera
  - [x] basic objects
  - [x] textures (kinda)
- - [ ] glTF loader
- - [ ] frame buffer
+ - [ ] USD loader
  - [x] GUI
- - [ ] BVH
+ - [x] BVH
+ - [ ] material model
+ - [ ] scene descriptor
  
  ### rendering
  
@@ -37,7 +39,7 @@ Nerv's core is generalist and can render object in a rastered way but heavly use
   - [X] refraction mat
   - [x] lambert mat
   - [x] camera lens (Depths of fields)
-  - [ ] shadow
-  - [ ] light
+  - [x] shadow
+  - [x] light
   - [ ] Pixar BSDF model
-  - [ ] progressive sampleling
+  - [x] progressive sampleling
