@@ -1,12 +1,12 @@
 [submodule "glfw"]
-	path = glfw
+	path = dependencies/glfw
 	url = https://github.com/glfw/glfw
 [submodule "Logarsh"]
-	path = Logarsh
+	path = dependencies/Logarsh
 	url = https://github.com/cewein/Logarsh
 [submodule "glm"]
-	path = glm
+	path = dependencies/glm
 	url = git://github.com/g-truc/glm.git
 [submodule "imgui"]
-	path = imgui
+	path = dependencies/imgui
 	url = https://github.com/ocornut/imgui.git
