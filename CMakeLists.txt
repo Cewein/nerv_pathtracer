@@ -8,16 +8,19 @@ project(nerv_pathtracer)
 
 add_executable(
 	nerv_pathtracer
-	main.cpp)
+	main.cpp "src/config.h" "src/config.cpp")
 
 add_subdirectory(dependencies/openGL)
 target_link_libraries(${PROJECT_NAME} PRIVATE glad)
 
-#add_subdirectory(dependencies/glfw)
-#target_link_libraries(${PROJECT_NAME} PRIVATE glfw)
+add_subdirectory(dependencies/glfw)
+target_link_libraries(${PROJECT_NAME} PRIVATE glfw)
 
 #add_subdirectory(dependencies/glm)
 #target_link_libraries(${PROJECT_NAME} PRIVATE glm)
+
+set(IMGUI_DIR dependencies/imgui)
+include_directories(${IMGUI_DIR} ${IMGUI_DIR}/backends ..)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_DL_LIBS})
 
