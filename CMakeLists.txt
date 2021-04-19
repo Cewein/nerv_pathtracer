@@ -8,7 +8,7 @@ project(nerv_pathtracer)
 
 add_executable(
 	nerv_pathtracer
-	main.cpp "src/config.h" "src/config.cpp")
+	main.cpp "src/config.h" "src/config.cpp" "src/window.h" "src/window.cpp")
 
 add_subdirectory(dependencies/openGL)
 target_link_libraries(${PROJECT_NAME} PRIVATE glad)

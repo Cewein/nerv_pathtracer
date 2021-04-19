@@ -69,7 +69,7 @@ std::vector<int> nerv::readConfigSubsector(config* conf, int subsectorStart)
 		if (line.find('[') != std::string::npos)
 			break;
 		
-		//we add on so we skip the "=" sign in the string
+		//we add one so we skip the "=" sign in the string
 		size_t pos = line.find("=")+1;
 
 		std::string strVal = line.substr(pos);

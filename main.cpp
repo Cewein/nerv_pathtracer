@@ -1,15 +1,19 @@
 #include <iostream>
 #include <glad/glad.h>
-#include "src/config.h"
+#include "src/window.h"
 
 int main()
 {
 	std::cout << "loading config\n";
 	nerv::config conf = nerv::loadConfig("E:\\nerv_engine\\nerv_pathtracer\\config.ini");
 
-	int key = nerv::findConfigSubsector(&conf, "window");
-	std::vector<int> winConfig = nerv::readConfigSubsector(&conf, key);
+	GLFWwindow* win = nerv::createWindow(&conf);
 
-	//should output 768
-	std::cout << winConfig[1] << std::endl;
+	while (!glfwWindowShouldClose(win))
+	{
+		glfwSwapBuffers(win);
+		glfwPollEvents();
+	}
+
+	return EXIT_SUCCESS;
 }
