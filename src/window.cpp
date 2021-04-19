@@ -15,8 +15,13 @@
 */
 GLFWwindow * nerv::createWindow(nerv::config* conf)
 {
+	//read config file
 	int sector = nerv::findConfigSubsector(conf, "window");
 	std::vector<int> winConf = nerv::readConfigSubsector(conf, sector);
+
+	//set keybind global data
+	sector = nerv::findConfigSubsector(conf, "key");
+	gWindowsKeybind = nerv::readConfigSubsector(conf, sector);
 
 	if (!glfwInit())
 		exit(EXIT_FAILURE);
@@ -66,19 +71,32 @@ GLFWwindow * nerv::createWindow(nerv::config* conf)
 	return win;
 }
 
-void nerv::windowSizeCallback(GLFWwindow* window, int width, int height)
-{
-	glfwSetWindowSize(window, width, height);
-}
 
+/*
+	this use a global buffer that hold evey keybind set in the config file
+	this is setup on the glfw key value spreadsheet
+
+	0: forward
+	1: backward
+	2: left
+	3: right
+	4: up
+	5: down
+	6: freeMouse
+	7: closeWindow
+*/
 void nerv::windowKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+	if (key == gWindowsKeybind[7] && action == GLFW_PRESS)
 	{
 		glfwSetWindowShouldClose(window, GLFW_TRUE);
 	}
 }
 
+void nerv::windowSizeCallback(GLFWwindow* window, int width, int height)
+{
+	glfwSetWindowSize(window, width, height);
+}
 void nerv::windowCloseCallback(GLFWwindow* window)
 {
 

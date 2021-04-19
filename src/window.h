@@ -7,6 +7,9 @@
 namespace nerv {
 	//create a window with from a given config file
 	GLFWwindow * createWindow(nerv::config* conf);
+
+	//gobal vector that hold keybind see windowKeyCallback for more info
+	inline std::vector<int> gWindowsKeybind;
 	
 	//resize window callback function
 	void windowSizeCallback(GLFWwindow* window, int width, int height);
