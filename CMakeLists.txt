@@ -1,28 +1,24 @@
 cmake_minimum_required (VERSION 3.8)
 
-SET(CMAKE_EXPORT_COMPILE_COMMANDS 1)
-SET(CMAKE_CXX_STANDARD 17)
-SET(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-project(nerv_pathtracer)
+project(nerv_pathtracer CXX)
 
 add_executable(
 	nerv_pathtracer
-	main.cpp "src/config.h" "src/config.cpp" "src/window.h" "src/window.cpp")
+	main.cpp "src/config.h" "src/config.cpp" "src/window.h" "src/window.cpp" "src/shader.cpp" "src/shader.h")
 
 add_subdirectory(dependencies/openGL)
-target_link_libraries(${PROJECT_NAME} PRIVATE glad)
+target_link_libraries(${PROJECT_NAME} PUBLIC glad)
 
 add_subdirectory(dependencies/glfw)
-target_link_libraries(${PROJECT_NAME} PRIVATE glfw)
+target_link_libraries(${PROJECT_NAME} PUBLIC glfw)
 
-#add_subdirectory(dependencies/glm)
-#target_link_libraries(${PROJECT_NAME} PRIVATE glm)
+set(GLM_DIR dependencies/glm)
+include_directories(${GLM_DIR} ..)
 
 set(IMGUI_DIR dependencies/imgui)
 include_directories(${IMGUI_DIR} ${IMGUI_DIR}/backends ..)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_DL_LIBS})
+#target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_DL_LIBS})
 
 add_custom_command(TARGET nerv_pathtracer
   POST_BUILD

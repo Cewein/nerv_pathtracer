@@ -36,13 +36,9 @@ GLFWwindow * nerv::createWindow(nerv::config* conf)
 
 	//check if fullscreen
 	if (winConf[2])
-	{
 		win = glfwCreateWindow(winConf[0], winConf[1], "Nerv: Neutral Environement for Ray Visialisation", glfwGetPrimaryMonitor(), NULL);
-	}
 	else
-	{
 		win = glfwCreateWindow(winConf[0], winConf[1], "Nerv: Neutral Environement for Ray Visialisation", NULL, NULL);
-	}
 
 	if (!win)
 	{
@@ -60,7 +56,7 @@ GLFWwindow * nerv::createWindow(nerv::config* conf)
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		exit(EXIT_FAILURE);
 
-	//get windows size and set the glviewport
+	//get windows framebuffer size and set the glviewport
 	int width;
 	int height;
 	glfwGetFramebufferSize(win, &width, &height);

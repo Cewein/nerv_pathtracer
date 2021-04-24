@@ -11,7 +11,7 @@ namespace nerv {
 	//gobal vector that hold keybind see windowKeyCallback for more info
 	inline std::vector<int> gWindowsKeybind;
 	
-	//resize window callback function
+	//window callback function
 	void windowSizeCallback(GLFWwindow* window, int width, int height);
 	void windowKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	void windowCloseCallback(GLFWwindow* window);
