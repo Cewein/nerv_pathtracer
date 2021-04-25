@@ -1,5 +1,6 @@
 #pragma once
 #include "config.h"
+
 #include <glfw/glfw3.h>
 #include <vector>
 

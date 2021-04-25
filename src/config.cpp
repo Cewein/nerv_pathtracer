@@ -3,7 +3,7 @@
 #include <string>
 #include <cstring>
 
-nerv::config nerv::loadConfig(char* path)
+nerv::config nerv::loadConfig(char * path)
 {
 	nerv::config conf;
 

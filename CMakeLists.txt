@@ -1,10 +1,14 @@
-cmake_minimum_required (VERSION 3.8)
+cmake_minimum_required (VERSION 3.11)
 
-project(nerv_pathtracer CXX)
+SET(CMAKE_EXPORT_COMPILE_COMMANDS 1)
+SET(CMAKE_CXX_STANDARD 17)
+SET(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+project(nerv_pathtracer)
 
 add_executable(
 	nerv_pathtracer
-	main.cpp "src/config.h" "src/config.cpp" "src/window.h" "src/window.cpp" "src/shader.cpp" "src/shader.h")
+	main.cpp "src/config.h" "src/config.cpp" "src/window.h" "src/window.cpp" "src/shader.cpp" "src/shader.h" "src/commun.h" "src/commun.cpp")
 
 add_subdirectory(dependencies/openGL)
 target_link_libraries(${PROJECT_NAME} PUBLIC glad)

@@ -3,7 +3,7 @@
     {
       "buildCommandArgs": "",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
-      "cmakeCommandArgs": "",
+      "cmakeCommandArgs": "/std:c++17",
       "configurationType": "Release",
       "ctestCommandArgs": "",
       "generator": "Ninja",

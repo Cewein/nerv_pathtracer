@@ -10,10 +10,7 @@ namespace nerv
 	class shader {
 
 		//shader id
-		int id;
-
-		//shader type (see GL_xxx_SHADER)
-		int type;
+		size_t id;
 
 		size_t createShader(std::string path, int type);
 		bool importInclude(std::string& data);
