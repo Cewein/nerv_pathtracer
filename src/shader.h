@@ -12,8 +12,14 @@ namespace nerv
 		//shader id
 		size_t id;
 
+		//given a path and a shader type you can load a create a shader
 		size_t createShader(std::string path, int type);
+
+		//import include for a shader file
 		bool importInclude(std::string& data);
+
+		//ouput shader error when compiling
+		void programInfo(size_t id);
 
 		//juste MANY MANY inline function for adding stuff to the shader
 		inline void setInt(std::string name, int value) { glUniform1i(glGetUniformLocation(id, name.c_str()), value); }

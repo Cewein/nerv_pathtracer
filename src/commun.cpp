@@ -2,11 +2,15 @@
 
 #include <iostream>
 
+
 std::string nerv::read(std::string path)
 {
+	//load file
 	std::string filestr;
 	std::fstream file;
 	file.open(path);
+
+	//if file open, read it and put it into filestr
 	if (file.is_open())
 	{
 		std::string line;
@@ -17,5 +21,6 @@ std::string nerv::read(std::string path)
 		file.close();
 	}
 
+	//return file as a string
 	return filestr;
 }
