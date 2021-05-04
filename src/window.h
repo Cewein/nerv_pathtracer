@@ -16,4 +16,5 @@ namespace nerv {
 	void windowSizeCallback(GLFWwindow* window, int width, int height);
 	void windowKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
 	void windowCloseCallback(GLFWwindow* window);
+	void windowframebufferSizeCallback(GLFWwindow* window, int width, int height);
 }

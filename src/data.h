@@ -15,18 +15,14 @@ namespace nerv
 		int height;
 		int nbChannel;
 	};
-	//create a SSBO buffer with a given size, a data pointer, and the id reference
+	//create a buffer with a given size, a data pointer, and the id reference
 	//we will have to use in the shader to call him
-
 	size_t createBuffer(int size, void* data, int id, int bufferType);
 
-
 	//texture stuff
-
 	texture loadImage(const char* path);
-	texture createImage(int width, int heigh, int nbChannel);
 
-	void activateImage(texture* img, shader* prog, int textureNumber);
-
+	//load .ob file
+	int * loadObj(const char* objPath, const char* matPath = "./");
 	
 }

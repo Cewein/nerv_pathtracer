@@ -8,7 +8,7 @@ project(nerv_pathtracer)
 
 add_executable(
 	nerv_pathtracer
-	main.cpp "src/config.h" "src/config.cpp" "src/window.h" "src/window.cpp" "src/shader.cpp" "src/shader.h" "src/commun.h" "src/commun.cpp" "src/data.h")
+	main.cpp "src/config.h" "src/config.cpp" "src/window.h" "src/window.cpp" "src/shader.cpp" "src/shader.h" "src/commun.h" "src/commun.cpp" "src/data.h" "src/primitive.h" "src/primitive.cpp" "src/bvh.h" "src/bvh.cpp"  "src/camera.h" "src/camera.cpp")
 
 add_subdirectory(dependencies/openGL)
 target_link_libraries(${PROJECT_NAME} PUBLIC glad)
@@ -23,6 +23,9 @@ set(IMGUI_DIR dependencies/imgui)
 include_directories(${IMGUI_DIR} ${IMGUI_DIR}/backends ..)
 
 include_directories("dependencies/thirdParty" ..)
+include_directories("dependencies/logrash" ..)
+
+file(COPY shader DESTINATION ${CMAKE_BINARY_DIR})
 
 #target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_DL_LIBS})
 

@@ -49,6 +49,7 @@ GLFWwindow * nerv::createWindow(nerv::config* conf)
 	//setup window callback
 	//TODO add size and framebuffer size callback
 	glfwSetKeyCallback(win, windowKeyCallback);
+	glfwSetFramebufferSizeCallback(win, windowframebufferSizeCallback);
 
 	//make the windows the actual context
 	glfwMakeContextCurrent(win);
@@ -87,6 +88,11 @@ void nerv::windowKeyCallback(GLFWwindow* window, int key, int scancode, int acti
 	{
 		glfwSetWindowShouldClose(window, GLFW_TRUE);
 	}
+}
+
+void nerv::windowframebufferSizeCallback(GLFWwindow* window, int width, int height)
+{
+	glViewport(0, 0, width, height);
 }
 
 void nerv::windowSizeCallback(GLFWwindow* window, int width, int height)

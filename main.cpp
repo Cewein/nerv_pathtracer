@@ -11,8 +11,15 @@ int main()
 
 	GLFWwindow* win = nerv::createWindow(&conf);
 
+	nerv::shader mainShader("shader/basic.frag.glsl", "shader/static.vert.glsl");
+
 	while (!glfwWindowShouldClose(win))
 	{
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+
+        mainShader.use();
+
 		glfwSwapBuffers(win);
 		glfwPollEvents();
 	}
