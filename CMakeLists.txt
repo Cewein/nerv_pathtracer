@@ -25,10 +25,15 @@ include_directories(${IMGUI_DIR} ${IMGUI_DIR}/backends ..)
 include_directories("dependencies/thirdParty" ..)
 include_directories("dependencies/logrash" ..)
 
-file(COPY shader DESTINATION ${CMAKE_BINARY_DIR})
-
 #target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_DL_LIBS})
 
-add_custom_command(TARGET nerv_pathtracer
-  POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:nerv_pathtracer> ${CMAKE_CURRENT_SOURCE_DIR})
+#add_custom_command(TARGET nerv_pathtracer
+#  POST_BUILD
+#  COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:nerv_pathtracer> ${CMAKE_CURRENT_SOURCE_DIR})
+
+add_custom_command(
+         TARGET nerv_pathtracer POST_BUILD
+         COMMAND ${CMAKE_COMMAND} -E copy_directory              
+             ${CMAKE_SOURCE_DIR}/shader $<TARGET_FILE_DIR:nerv_pathtracer>/shader
+         COMMENT "Copying shaders" VERBATIM
+         )

@@ -29,6 +29,8 @@ namespace nerv
 		GLuint VAO;
 		GLuint EBO;
 
+		std::vector<std::string> filePath;
+
 		//only for vert+frag shader
 		void bindFullquad();
 		void showQuad();
@@ -42,6 +44,9 @@ namespace nerv
 
 		//given a path and a shader type you can load a create a shader
 		size_t createShader(std::string path, int type);
+
+		size_t createComputeProgram(size_t computeShader);
+		size_t createMainProgram(size_t vertShader, size_t fragShader);	
 
 		//import include for a shader file
 		bool importInclude(std::string& data);
@@ -60,7 +65,7 @@ namespace nerv
 		inline void setMat3(std::string name, glm::mat3 value) { glUniformMatrix3fv(glGetUniformLocation(id, name.c_str()), 1, GL_FALSE, &value[0][0]); }
 		inline void setMat4(std::string name, glm::mat4 value) { glUniformMatrix4fv(glGetUniformLocation(id, name.c_str()), 1, GL_FALSE, &value[0][0]); }
 
-		void activateImage(texture * img, char * name, int textureNumber);
+		void activateImage(texture* img, char* name, int textureNumber);
 
 		//create a compute shader
 		shader(std::string path);
@@ -69,5 +74,6 @@ namespace nerv
 		shader(std::string frag, std::string vert);
 
 		void use();
+		void reload();
 	};
 }

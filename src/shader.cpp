@@ -5,6 +5,40 @@
 #include "shader.h"
 #include "commun.h"
 
+size_t nerv::shader::createComputeProgram(size_t computeShader)
+{
+	size_t id = glCreateProgram();
+
+	glAttachShader(id, computeShader);
+	glLinkProgram(id);
+
+	programInfo(id);
+
+	glDeleteShader(computeShader);
+
+	return id;
+}
+
+size_t nerv::shader::createMainProgram(size_t vertShader, size_t fragShader)
+{
+	logger.info("SHADER", "Creating shader program");
+	size_t id = glCreateProgram();
+
+	glAttachShader(id, vertShader);
+	glAttachShader(id, fragShader);
+	glLinkProgram(id);
+
+	programInfo(id);
+
+	logger.info("SHADER", "Cleaning shader instance");
+	glDeleteShader(fragShader);
+	glDeleteShader(vertShader);
+
+	isCompute = false;
+
+	return id;
+}
+
 //since this program is only for raytracing there is no need of a proper
 //rather way to bind vertices so the is the only function that will be use to bind
 //a full quad to the gpu that will serv as a canvas for rendering
@@ -138,40 +172,27 @@ void nerv::shader::activateImage(texture* img, char* name, int textureNumber)
 
 nerv::shader::shader(std::string path)
 {
+
+	filePath.push_back(path);
+
+	logger.info("SHADER", "Creating compute shader");
 	size_t computeShader = createShader(path, GL_COMPUTE_SHADER);
 
-	this->id = glCreateProgram();
-
-	glAttachShader(this->id, computeShader);
-	glLinkProgram(this->id);
-
-	programInfo(this->id);
-
-	glDeleteShader(computeShader);
+	id = createComputeProgram(computeShader);
 
 	isCompute = true;
 }
 
 nerv::shader::shader(std::string frag, std::string vert)
 {
+	filePath.push_back(frag);
+	filePath.push_back(vert);
+
 	logger.info("SHADER", "Creating frag and vertex shaders");
 	size_t fragShader = createShader(frag, GL_FRAGMENT_SHADER);
 	size_t vertShader = createShader(vert, GL_VERTEX_SHADER);
 
-	logger.info("SHADER", "Creating shader program");
-	this->id = glCreateProgram();
-
-	glAttachShader(this->id, vertShader);
-	glAttachShader(this->id, fragShader);
-	glLinkProgram(this->id);
-
-	programInfo(this->id);
-
-	logger.info("SHADER", "Cleaning shader instance");
-	glDeleteShader(fragShader);
-	glDeleteShader(vertShader);
-
-	isCompute = false;
+	id = createMainProgram(vertShader, fragShader);
 
 	logger.info("SHADER", "Binding full quad");
 	bindFullquad();
@@ -188,5 +209,22 @@ void nerv::shader::use()
 		glUseProgram(id);
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+	}
+}
+
+void nerv::shader::reload()
+{
+	logger.warning("SHADER", "Reloading shader");
+	glDeleteProgram(id);
+	if (isCompute)
+	{
+		size_t compute = createShader(filePath[0],GL_COMPUTE_SHADER);
+		id = createComputeProgram(compute);
+	}
+	else
+	{
+		size_t frag = createShader(filePath[0], GL_FRAGMENT_SHADER);
+		size_t vert = createShader(filePath[1], GL_VERTEX_SHADER);
+		id = createMainProgram(frag,vert);
 	}
 }
