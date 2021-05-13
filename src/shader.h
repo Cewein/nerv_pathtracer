@@ -23,7 +23,7 @@ namespace nerv
 	};
 
 	class shader {
-	private:
+	private: 
 
 		//stuff for rendering the quad
 		GLuint VBO;

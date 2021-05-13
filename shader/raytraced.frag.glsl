@@ -2,23 +2,26 @@
 #define DOF
 
 // DATA STRUCT
-layout (location = 0) out vec4 fragColor;
-layout (location = 15) out mat4 cameraView;
-layout (location = 20) uniform vec3 cameraPosition;
-layout (location = 28) uniform float fov;
-layout (location = 29) uniform float aperture;
-layout (location = 30) uniform float focusDistance;
-layout (location = 31) uniform int screenWidth;
-layout (location = 32) uniform int screenHeight;
-layout (location = 33) uniform bool moving;
+layout (location = 0) out vec4 fragColor; //ok
+layout (location = 20) uniform vec3 cameraTransform; //ok
+layout (location = 25) uniform vec3 up; //ok
+layout (location = 26) uniform vec3 front; //ok
+layout (location = 27) uniform vec3 right; //ok
+layout (location = 28) uniform float fov; //ok
+layout (location = 29) uniform float aperture; //ok
+layout (location = 30) uniform float focusDistance; //ok
+layout (location = 31) uniform int screenWidth; //ok
+layout (location = 32) uniform int screenHeight; //ok
+layout (location = 33) uniform bool moving; //ok
+layout (location = 34) uniform float metal;
+layout (location = 35) uniform float transmission;
+layout (location = 36) uniform float rougthness;
 
-//layout (location = 34) uniform float metal;
-//layout (location = 35) uniform float transmission;
-//layout (location = 36) uniform float rougthness;
-
-uniform vec2 iResolution;
-uniform float iTime;
-uniform sampler2D text;
+uniform vec2 iResolution;//ok
+uniform float iTime; //ok
+uniform float iDeltaTime; //ok
+uniform sampler2D text; //ok
+uniform int bvhRendering; //ok
 
 in vec2 iTexCoord;
 
@@ -190,11 +193,11 @@ bool hitTriangle(ray r, vec3 v0, vec3 v1, vec3 v2, float tmax, inout hitRecord h
 
 		material mat;
 
-		mat.transmission = 0.2;
+		mat.transmission = transmission;
         mat.color = vec3(0.8, 0.4, 0.0);
-		mat.roughness = 0.6;
+		mat.roughness = rougthness;
 		mat.refractionIndex = 1.4;
-		mat.metallic = 0.1;
+		mat.metallic = metal;
 
 		hit.mat = mat;
 		return true;
@@ -300,7 +303,10 @@ bool hit(in ray r, float tmin, float tmax, inout hitRecord hit)
     bool hitAny = false;
     float closestSoFar = tmax;
 
-	//closestSoFar = bvhTraversal(r, tmin, closestSoFar, hit, hitAny);
+	if(bvhRendering == 1)
+	{
+		 closestSoFar = bvhTraversal(r, tmin, closestSoFar, hit, hitAny);
+	}
 
 	hitRecord tempHit;
 	if(hitGround(r, closestSoFar, tempHit))
@@ -331,30 +337,26 @@ float random (vec2 st) {
 }
 
 vec3 randInUnitSphere(vec2 st) {
-    float phi = random(st.yx + sin(iTime) + cos(iTime)) * 2.0 * 3.14159265;
-    float theta = random(st.xy + cos(iTime) + sin(iTime)) * 3.14169265;
+    float phi = random(st.yx + sin(iTime) + cos(iDeltaTime)) * 2.0 * 3.14159265;
+    float theta = random(st.xy + cos(iTime) + sin(iDeltaTime)) * 3.14169265;
     
     return vec3(cos(phi) * sin(theta), cos(theta), sin(phi) * sin(theta));
 }
 
 vec3 randInUnitDisk(vec2 st)
 {
-	return vec3(random(st.yx + sin(iTime) + cos(iTime)) ,random(st.xy + cos(iTime) + sin(iTime)),0.) * 2.0 - 1.0; 
+	return vec3(random(st.yx + sin(iTime) + cos(iDeltaTime)) ,random(st.xy + cos(iTime) + sin(iDeltaTime)),0.) * 2.0 - 1.0; 
 }
 
 #ifdef DOF
 ray getRay(vec2 uv) 
 {
-
-	vec3 right =	vec3(cameraView[0].x, cameraView[1].x, cameraView[2].x);
-	vec3 up =		vec3(cameraView[0].y, cameraView[1].y, cameraView[2].y);
-	vec3 front =	vec3(cameraView[0].z, cameraView[1].z, cameraView[2].z);
 	float scale = tan(fov/180.0);
 	vec2 d = (2.0 * iTexCoord - 1.0);
 	d.x *= (iResolution.x / iResolution.y) * scale;
 	d.y *= scale;
 
-	vec3 origin = cameraPosition; 
+	vec3 origin = (cameraTransform).xyz;
 	float lensRaduis = aperture/2.0;
 	vec3 rd = lensRaduis * randInUnitDisk(uv);
 	vec3 offset = up * rd.x + right * rd.y;
@@ -372,7 +374,7 @@ ray getRay(vec2 uv)
 	d.x *= (iResolution.x / iResolution.y) * scale;
 	d.y *= scale;
 
-	vec3 origin = cameraPosition;
+	vec3 origin = (cameraTransform * vec4(0.,0.,0.,1.)).xyz;
 
 	vec3 direction = normalize(d.x * right + d.y * up + front);
 	return ray(origin,direction); 

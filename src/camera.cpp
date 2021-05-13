@@ -31,6 +31,9 @@ nerv::camera nerv::createCamera(nerv::config* conf)
 		//position value
 		glm::vec3(0.0),
 		glm::mat4(1.0f),
+		glm::vec3(0.0),
+		glm::vec3(0.0),
+		glm::vec3(0.0),
 		0.0,
 		-90.0,
 
@@ -63,9 +66,9 @@ void nerv::updateFPSView(camera* cam)
 	glm::vec3 up = { sinYaw * sinPitch, cosPitch, cosYaw * sinPitch };
 	glm::vec3 front = { sinYaw * cosPitch, -sinPitch, cosPitch * cosYaw };
 
-	right = glm::normalize(right);
-	up = glm::normalize(up);
-	front = glm::normalize(front);
+	cam->right = glm::normalize(right);
+	cam->up = glm::normalize(up);
+	cam->front = glm::normalize(front);
 
 	cam->view = {
 		glm::vec4(right.x,            up.x,            front.x,      0),
@@ -144,6 +147,9 @@ void nerv::sendCameraInfo(camera* cam)
 {
 		glUniformMatrix4fv(15, 1, GL_FALSE, &cam->view[0][0]);
 		glUniform3fv(20, 1, &cam->position[0]);
+		glUniform3fv(25, 1, &cam->front[0]);
+		glUniform3fv(26, 1, &cam->up[0]);
+		glUniform3fv(27, 1, &cam->right[0]);
 		glUniform1fv(28, 1, &cam->fov);
 		glUniform1fv(29, 1, &cam->aperture);
 		glUniform1fv(30, 1, &cam->focusDistance);
