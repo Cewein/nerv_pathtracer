@@ -4,6 +4,7 @@
 #include "src/window.h"
 #include "src/camera.h"
 #include "src/shader.h"
+#include "src/data.h"
 
 int main()
 {
@@ -13,17 +14,33 @@ int main()
 	GLFWwindow* win = nerv::createWindow(&conf);
 	nerv::camera cam = nerv::createCamera(&conf);
 
-	nerv::shader mainShader("shader/basic.frag.glsl", "shader/static.vert.glsl");
+	nerv::renderData render = {
+		0,
+		5,
+		false,
+		0.0
+	};
 
+	nerv::shader mainShader("shader/raytraced.frag.glsl", "shader/static.vert.glsl");
+
+	int width;
+	int height;
+	glfwGetFramebufferSize(win, &width, &height);
+
+	size_t colorBuffer = nerv::createBuffer(sizeof(float) * 4 * width * height, nullptr, 1, GL_SHADER_STORAGE_BUFFER);
+	nerv::texture background = nerv::loadImage("resources/evening_road_01.jpg");
 
 	while (!glfwWindowShouldClose(win))
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
-         mainShader.use();
+		nerv::sendCameraInfo(&cam);
+		glUniform1iv(33, 1, &(render.isMoving));
 
-		 nerv::updateCamera(&cam, win);
+        mainShader.use();
+
+		render.isMoving = nerv::updateCamera(&cam, win);
 
 		glfwSwapBuffers(win);
 		glfwPollEvents();

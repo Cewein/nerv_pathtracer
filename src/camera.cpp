@@ -1,4 +1,9 @@
+#pragma once
+#include "glad/glad.h"
+
 #include "camera.h"
+
+
 /*
 	read the config file and look at the subsecor for
 	camera option, we provide the follow option array
@@ -70,9 +75,9 @@ void nerv::updateFPSView(camera* cam)
 	};
 }
 
-void nerv::updateCamera(camera* cam, GLFWwindow* win)
+bool nerv::updateCamera(camera* cam, GLFWwindow* win)
 {
-
+	bool moving = false;
 	float deltaTime = cam->LastFrameTime - glfwGetTime();
 	cam->LastFrameTime = glfwGetTime();
 
@@ -83,18 +88,22 @@ void nerv::updateCamera(camera* cam, GLFWwindow* win)
 	if (glfwGetKey(win, GLFW_KEY_W) == GLFW_PRESS)
 	{
 		cam->position += deltaTime * cam->speed * up;
+		moving = true;
 	}
 	if (glfwGetKey(win, GLFW_KEY_S) == GLFW_PRESS)
 	{
 		cam->position -= deltaTime * cam->speed * up;
+		moving = true;
 	}
 	if (glfwGetKey(win, GLFW_KEY_SPACE) == GLFW_PRESS)
 	{
 		cam->position += deltaTime  * cam->speed * front;
+		moving = true;
 	}
 	if (glfwGetKey(win, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
 	{
 		cam->position -= deltaTime * cam->speed * front;
+		moving = true;
 	}
 
 	double xpos, ypos;
@@ -122,7 +131,20 @@ void nerv::updateCamera(camera* cam, GLFWwindow* win)
 			cam->pitch = (-89.9f - 90.f);
 		else if (cam->pitch < -89.9f)
 			cam->pitch = -89.9f;
+
+		moving = true;
 	}
 
 	updateFPSView(cam);
+
+	return moving;
+}
+
+void nerv::sendCameraInfo(camera* cam)
+{
+		glUniformMatrix4fv(15, 1, GL_FALSE, &cam->view[0][0]);
+		glUniform3fv(20, 1, &cam->position[0]);
+		glUniform1fv(28, 1, &cam->fov);
+		glUniform1fv(29, 1, &cam->aperture);
+		glUniform1fv(30, 1, &cam->focusDistance);
 }

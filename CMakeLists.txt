@@ -8,7 +8,7 @@ project(nerv_pathtracer)
 
 add_executable(
 	nerv_pathtracer
-	main.cpp "src/config.h" "src/config.cpp" "src/window.h" "src/window.cpp" "src/shader.cpp" "src/shader.h" "src/commun.h" "src/commun.cpp" "src/data.h" "src/primitive.h" "src/primitive.cpp" "src/bvh.h" "src/bvh.cpp"  "src/camera.h" "src/camera.cpp")
+	main.cpp "src/config.h" "src/config.cpp" "src/window.h" "src/window.cpp" "src/shader.cpp" "src/shader.h" "src/commun.h" "src/commun.cpp" "src/data.h" "src/primitive.h" "src/primitive.cpp" "src/camera.h" "src/camera.cpp" "src/data.h" "src/data.cpp")
 
 add_subdirectory(dependencies/openGL)
 target_link_libraries(${PROJECT_NAME} PUBLIC glad)
@@ -25,15 +25,22 @@ include_directories(${IMGUI_DIR} ${IMGUI_DIR}/backends ..)
 include_directories("dependencies/thirdParty" ..)
 include_directories("dependencies/logrash" ..)
 
-#target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_DL_LIBS})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_DL_LIBS})
 
-#add_custom_command(TARGET nerv_pathtracer
-#  POST_BUILD
-#  COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:nerv_pathtracer> ${CMAKE_CURRENT_SOURCE_DIR})
+add_custom_command(TARGET nerv_pathtracer
+  POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:nerv_pathtracer> ${CMAKE_CURRENT_SOURCE_DIR})
 
 add_custom_command(
          TARGET nerv_pathtracer POST_BUILD
          COMMAND ${CMAKE_COMMAND} -E copy_directory              
              ${CMAKE_SOURCE_DIR}/shader $<TARGET_FILE_DIR:nerv_pathtracer>/shader
          COMMENT "Copying shaders" VERBATIM
+         )
+
+add_custom_command(
+         TARGET nerv_pathtracer POST_BUILD
+         COMMAND ${CMAKE_COMMAND} -E copy_directory              
+             ${CMAKE_SOURCE_DIR}/resources $<TARGET_FILE_DIR:nerv_pathtracer>/resources
+         COMMENT "Copying resources" VERBATIM
          )

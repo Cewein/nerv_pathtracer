@@ -61,6 +61,9 @@ GLFWwindow * nerv::createWindow(nerv::config* conf)
 	int width;
 	int height;
 	glfwGetFramebufferSize(win, &width, &height);
+
+	glUniform1iv(31, 1, &width);
+	glUniform1iv(32, 1, &height);
 	glViewport(0, 0, width, height);
 
 	glfwSwapInterval(1);
@@ -92,6 +95,8 @@ void nerv::windowKeyCallback(GLFWwindow* window, int key, int scancode, int acti
 
 void nerv::windowframebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
+	glUniform1iv(31, 1, &width);
+	glUniform1iv(32, 1, &height);
 	glViewport(0, 0, width, height);
 }
 

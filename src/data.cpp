@@ -2,7 +2,13 @@
 #include "data.h"
 
 #define TINYOBJLOADER_IMPLEMENTATION // define this in only *one* .cc
-#include "tiny_obj_loader.h"
+#include <tiny_obj_loader.h>
+
+#include <logarsh.h>
+#include <glad/glad.h>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
 
 size_t nerv::createBuffer(int size, void* data, int id, int bufferType)
 {
@@ -16,7 +22,7 @@ size_t nerv::createBuffer(int size, void* data, int id, int bufferType)
 	return buffer;
 }
 
-nerv::texture nerv::loadImage(const char* path)
+nerv::texture nerv::loadImage(const char* path) 
 {
 
 	texture img;
@@ -25,35 +31,33 @@ nerv::texture nerv::loadImage(const char* path)
 
 	if (data)
 	{
-		glGenTextures(1, &(this->id));
-		glBindTexture(GL_TEXTURE_2D, this->id);
+		glGenTextures(1, &(img.id));
+		glBindTexture(GL_TEXTURE_2D, img.id);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		switch (this->nbChannels)
+		switch (img.nbChannel)
 		{
 		case 3:
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->width, this->height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, img.width, img.height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 			break;
 		case 4:
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this->width, this->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img.width, img.height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 			break;
 		default:
 			break;
 		}
 	
-		logger.initLog("uploaded texture to GC");
 		stbi_image_free(data);
-		logger.initLog("cleaned texture's data");
+		logger.info("TEXUTRE", "succesfully loaded the texture located at " + std::string(path));
 	}
 	else
 	{
-		logger.initLog("error while openning the texture");
+		logger.info("TEXUTRE", "error while openning the texture located at " + std::string(path));
 	}
-	logger.endInit();
 }
 
 int* nerv::loadObj(const char* objPath, const char * matPath)
