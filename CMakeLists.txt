@@ -6,16 +6,6 @@ SET(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 project(nerv_pathtracer)
 
-add_executable(
-	nerv_pathtracer
-	main.cpp "src/config.h" "src/config.cpp" "src/window.h" "src/window.cpp" "src/shader.cpp" "src/shader.h" "src/commun.h" "src/commun.cpp" "src/data.h" "src/primitive.h" "src/primitive.cpp" "src/camera.h" "src/camera.cpp" "src/data.h" "src/data.cpp")
-
-add_subdirectory(dependencies/openGL)
-target_link_libraries(${PROJECT_NAME} PUBLIC glad)
-
-add_subdirectory(dependencies/glfw)
-target_link_libraries(${PROJECT_NAME} PUBLIC glfw)
-
 set(GLM_DIR dependencies/glm)
 include_directories(${GLM_DIR} ..)
 
@@ -24,6 +14,18 @@ include_directories(${IMGUI_DIR} ${IMGUI_DIR}/backends ..)
 
 include_directories("dependencies/thirdParty" ..)
 include_directories("dependencies/logrash" ..)
+
+add_executable(
+	nerv_pathtracer
+	main.cpp "src/config.h" "src/config.cpp" "src/window.h" "src/window.cpp" "src/shader.cpp" "src/shader.h" "src/commun.h" "src/commun.cpp" "src/data.h" "src/primitive.h" "src/primitive.cpp" "src/camera.h" "src/camera.cpp" "src/data.h" "src/data.cpp" "src/ui.h" "src/ui.cpp" ${IMGUI_DIR}/backends/imgui_impl_glfw.cpp ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp ${IMGUI_DIR}/imgui.cpp ${IMGUI_DIR}/imgui_draw.cpp ${IMGUI_DIR}/imgui_demo.cpp ${IMGUI_DIR}/imgui_tables.cpp ${IMGUI_DIR}/imgui_widgets.cpp)
+
+add_subdirectory(dependencies/openGL)
+target_link_libraries(${PROJECT_NAME} PUBLIC glad)
+
+add_subdirectory(dependencies/glfw)
+target_link_libraries(${PROJECT_NAME} PUBLIC glfw)
+
+target_link_libraries(${PROJECT_NAME} PUBLIC opengl32)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_DL_LIBS})
 

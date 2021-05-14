@@ -5,15 +5,17 @@
 #include <tiny_obj_loader.h>
 
 #include <logarsh.h>
-#include <glad/glad.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
+#include <cstdlib>
+#include <ctime>
+
 size_t nerv::createBuffer(int size, void* data, int id, int bufferType)
 {
 	unsigned int buffer = 0;
-	glGenBuffers(1, &buffer);
+	glGenBuffers(1, &buffer); 
 	glBindBuffer(bufferType, buffer);
 
 	glBufferData(bufferType, size, data, GL_DYNAMIC_DRAW);
@@ -121,4 +123,78 @@ int* nerv::loadObj(const char* objPath, const char * matPath)
 			shapes[s].mesh.material_ids[f];
 		}
 	}
+}
+
+//https://stackoverflow.com/questions/686353/random-float-number-generation
+float nerv::randomFloat()
+{
+	return static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+}
+
+float nerv::randomFloat(float max)
+{
+	return static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / max));
+}
+
+float nerv::randomFloat(float min, float max)
+{
+	return min + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (max - min)));
+}
+
+nerv::material* nerv::genRandomMaterial(int numberOfMat)
+{
+	srand(static_cast <unsigned> (time(0)));
+
+	material* matArr = new material[numberOfMat];
+	for (int i = 0; i < numberOfMat-1;i++)
+	{ 
+		matArr[i].color.x = randomFloat();
+		matArr[i].color.y = randomFloat();
+		matArr[i].color.z = randomFloat();
+		matArr[i].color.w = randomFloat(2.0, 3.0);
+		matArr[i].metallic = 0.0;
+		matArr[i].refractionIndex = randomFloat(1.2, 2.0);
+		matArr[i].roughness = 0.0;
+		matArr[i].transmission = 0.0;
+	}
+
+	matArr[numberOfMat - 1].color.x = randomFloat();
+	matArr[numberOfMat - 1].color.y = randomFloat();
+	matArr[numberOfMat - 1].color.z = randomFloat();
+	matArr[numberOfMat - 1].color.w = 1.0;
+	matArr[numberOfMat - 1].metallic = 0.0;
+	matArr[numberOfMat - 1].refractionIndex = randomFloat(1.2, 2.0);
+	matArr[numberOfMat - 1].roughness = 1.0;
+	matArr[numberOfMat - 1].transmission = 0.0;
+
+	return matArr;
+}
+
+nerv::sphere* nerv::genRandomSphere(int numberOfSphere, int numberOfMat)
+{
+	srand(static_cast <unsigned> (time(0)));
+	sphere* sphereArr = new sphere[numberOfSphere];
+
+	//display the sphere in a circle
+	for (int i = 0; i < numberOfSphere-20; i++)
+	{
+		float angle = i * 3.14159265359 * 2.0 / (numberOfSphere-20.0);
+		sphereArr[i].pos.x = glm::cos(angle) * 5;
+		sphereArr[i].pos.y = 0.4;
+		sphereArr[i].pos.z = glm::sin(angle) * 5;
+		sphereArr[i].pos.w = 0.2;
+		sphereArr[i].mat = glm::vec4(rand() / (RAND_MAX / numberOfMat));
+	}
+
+	for (int i = numberOfSphere - 20; i < numberOfSphere; i++)
+	{
+		float angle = i * 3.14159265359 * 2.0 / 20;
+		sphereArr[i].pos.x = glm::cos(angle) * 3;
+		sphereArr[i].pos.y = 0.4;
+		sphereArr[i].pos.z = glm::sin(angle) * 3;
+		sphereArr[i].pos.w = 0.4;
+		sphereArr[i].mat = glm::vec4(numberOfMat);
+	}
+
+	return sphereArr;
 }

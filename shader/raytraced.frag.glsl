@@ -3,25 +3,26 @@
 
 // DATA STRUCT
 layout (location = 0) out vec4 fragColor; //ok
+layout (location = 15) uniform mat4 viewMatrix;
 layout (location = 20) uniform vec3 cameraTransform; //ok
+
+//can be remove if we properly use the viewMatrix
 layout (location = 25) uniform vec3 up; //ok
 layout (location = 26) uniform vec3 front; //ok
 layout (location = 27) uniform vec3 right; //ok
+
 layout (location = 28) uniform float fov; //ok
 layout (location = 29) uniform float aperture; //ok
 layout (location = 30) uniform float focusDistance; //ok
-layout (location = 31) uniform int screenWidth; //ok
-layout (location = 32) uniform int screenHeight; //ok
+layout (location = 31) uniform ivec2 iResolution;
 layout (location = 33) uniform bool moving; //ok
 layout (location = 34) uniform float metal;
 layout (location = 35) uniform float transmission;
 layout (location = 36) uniform float rougthness;
 
-uniform vec2 iResolution;//ok
 uniform float iTime; //ok
-uniform float iDeltaTime; //ok
 uniform sampler2D text; //ok
-uniform int bvhRendering; //ok
+uniform int nbSphere;
 
 in vec2 iTexCoord;
 
@@ -38,20 +39,19 @@ struct ray {
 };
     
 struct material {
-	vec3 color;
-	//todo add emitted color
+	vec4 color;
 	float roughness;
 	float metallic;
 	float refractionIndex;
 	float transmission;
 };
 
-material matArr[] = material[6]( material(vec3(0.75,0.25,0.25),0.0,1.0,1.2,0.0),
-	material(vec3(0.25,0.75,0.25),0.0,0.0,1.2,0.0),
-	material(vec3(0.75,0.25,0.75),0.05,0.2,1.2,0.95),
-	material(vec3(0.75,0.25,0.25),0.0,0.0,1.2,1.0),
-	material(vec3(20.0,10.0,1.0),0.0,0.0,1.2,0.0),
-	material(vec3(5.0,5.0,20.0),0.0,0.0,1.2,0.0)
+material matArr[] = material[6]( material(vec4(0.75,0.25,0.25,1.0),0.0,1.0,1.2,0.0),
+	material(vec4(0.25,0.75,0.25,1.0),0.0,0.0,1.2,0.0),
+	material(vec4(0.75,0.25,0.75,1.0),0.05,0.2,1.2,0.95),
+	material(vec4(0.75,0.25,0.25,1.0),0.0,0.0,1.2,1.0),
+	material(vec4(1.0,.1,0.5,50.0),0.0,0.0,1.2,0.0),
+	material(vec4(5.0,5.0,20.0,1.0),0.0,0.0,1.2,0.0)
 );
 
 struct hitRecord {
@@ -78,15 +78,14 @@ struct triangle {
 
  struct sphere 
 {
-    vec3 center;
-    float radius;
-    int mat;
+    vec4 pos;
+	vec4 mat;
 };
 
-sphere sphereArr[] = sphere[4](sphere(vec3(3.0,1.5,0.0),1.5,0),
-	sphere(vec3(-3.0,1.5,0.0),1.5,1),
-	sphere(vec3(0.0,1.5,3.0),1.5,2),
-	sphere(vec3(0.0,1.5,-3.0),1.5,3)
+sphere sphereArr[] = sphere[4](sphere(vec4(3.0,1.5,0.0,1.5),vec4(0)),
+	sphere(vec4(-3.0,1.5,0.0,1.5),vec4(1)),
+	sphere(vec4(0.0,1.5,3.0,1.5), vec4(2)),
+	sphere(vec4(0.0,1.5,-3.0,1.5),vec4(3))
 );
 
  struct linearBVHNode {
@@ -109,6 +108,14 @@ layout (std430,binding=1) buffer colorBuffer {
 layout (std430,binding=2) buffer bvhBuffer {
 	linearBVHNode bvh[];
 };
+
+layout (std430,binding=4) buffer sphereBuffer {
+	sphere sphereBuf[];
+};
+
+layout (std430,binding=3) buffer materialBuffer {
+	material matBuf[];
+};
           
 //HIT FUNCTION
 
@@ -119,10 +126,10 @@ vec3 pointAtParameter(ray r, float t)
 
 bool hitSphere(in ray r, float tmin, float tmax, inout hitRecord hit, sphere s)
 {
-	vec3 oc = r.origin - s.center;
+	vec3 oc = r.origin - s.pos.xyz;
     float a = dot(r.direction,r.direction);
     float b = dot(oc, r.direction);
-    float c = dot(oc,oc)-s.radius*s.radius;
+    float c = dot(oc,oc)-s.pos.w*s.pos.w;
     float d = b*b - a*c;
     if (d > 0.) 
     {
@@ -131,8 +138,8 @@ bool hitSphere(in ray r, float tmin, float tmax, inout hitRecord hit, sphere s)
         {
             hit.t = temp;
             hit.p = pointAtParameter(r,hit.t);
-            hit.normal = (hit.p - s.center) / s.radius;
-            hit.mat = matArr[s.mat];
+            hit.normal = (hit.p - s.pos.xyz) / s.pos.w;
+            hit.mat = matBuf[int(s.mat.x)];
             return true;
         }
     }
@@ -194,7 +201,7 @@ bool hitTriangle(ray r, vec3 v0, vec3 v1, vec3 v2, float tmax, inout hitRecord h
 		material mat;
 
 		mat.transmission = transmission;
-        mat.color = vec3(0.8, 0.4, 0.0);
+        mat.color = vec4(0.8, 0.4, 0.0, 1.0);
 		mat.roughness = rougthness;
 		mat.refractionIndex = 1.4;
 		mat.metallic = metal;
@@ -227,9 +234,9 @@ bool hitGround(in ray r, float tmax, inout hitRecord hit)
 		else
 		{
 			mat.transmission = 0.0;
-			mat.metallic = 0.0;
+			mat.metallic = .2;
 		}
-        mat.color = vec3(1.0);
+        mat.color = vec4(1.0);
 		mat.roughness = 0.0;
 		mat.refractionIndex = 1.4;
 
@@ -303,10 +310,7 @@ bool hit(in ray r, float tmin, float tmax, inout hitRecord hit)
     bool hitAny = false;
     float closestSoFar = tmax;
 
-	if(bvhRendering == 1)
-	{
-		 closestSoFar = bvhTraversal(r, tmin, closestSoFar, hit, hitAny);
-	}
+    //closestSoFar = bvhTraversal(r, tmin, closestSoFar, hit, hitAny);
 
 	hitRecord tempHit;
 	if(hitGround(r, closestSoFar, tempHit))
@@ -316,7 +320,19 @@ bool hit(in ray r, float tmin, float tmax, inout hitRecord hit)
 		hit = tempHit;
 	}
 
-	rectangle rect = rectangle(vec2(-0.5, 0.5), vec2(0.0, 3.0), -2.0, 4);
+	for(int i = 0; i < nbSphere; i++)
+	{
+		if(hitSphere(r, tmin, closestSoFar, tempHit, sphereBuf[i]))
+		{
+			hitAny = true;
+			closestSoFar = tempHit.t;
+			hit = tempHit;
+			if(hit.mat.color.w > 1.0)
+				noScatter = true;
+		}
+	}
+
+	rectangle rect = rectangle(vec2(-0.5, 0.5), vec2(0.0, 1.0), -0.0, 4);
 
 	if(hitRectangle(r, tmin, closestSoFar, tempHit, rect))
 	{
@@ -325,7 +341,6 @@ bool hit(in ray r, float tmin, float tmax, inout hitRecord hit)
 		hit = tempHit;
 		noScatter = true;
 	}
-
 
     return hitAny;
 }
@@ -337,23 +352,22 @@ float random (vec2 st) {
 }
 
 vec3 randInUnitSphere(vec2 st) {
-    float phi = random(st.yx + sin(iTime) + cos(iDeltaTime)) * 2.0 * 3.14159265;
-    float theta = random(st.xy + cos(iTime) + sin(iDeltaTime)) * 3.14169265;
+    float phi = random(st.yx + sin(iTime) + cos(-iTime)) * 2.0 * 3.14159265;
+    float theta = random(st.xy + cos(iTime) + sin(-iTime)) * 3.14169265;
     
     return vec3(cos(phi) * sin(theta), cos(theta), sin(phi) * sin(theta));
 }
 
 vec3 randInUnitDisk(vec2 st)
 {
-	return vec3(random(st.yx + sin(iTime) + cos(iDeltaTime)) ,random(st.xy + cos(iTime) + sin(iDeltaTime)),0.) * 2.0 - 1.0; 
+	return vec3(random(st.yx + sin(iTime) + cos(-iTime)) ,random(st.xy + cos(iTime) + sin(-iTime)),0.) * 2.0 - 1.0; 
 }
 
-#ifdef DOF
 ray getRay(vec2 uv) 
 {
 	float scale = tan(fov/180.0);
-	vec2 d = (2.0 * iTexCoord - 1.0);
-	d.x *= (iResolution.x / iResolution.y) * scale;
+	vec2 d = (2.0 * gl_FragCoord.xy/iResolution.x - 1.0);
+	d.x *= scale;
 	d.y *= scale;
 
 	vec3 origin = (cameraTransform).xyz;
@@ -366,20 +380,6 @@ ray getRay(vec2 uv)
 	vec3 direction = normalize(d.x * right + d.y * up + ft - origin - offset);
 	return ray(origin + offset,direction); 
 }
-#else
-ray getRay(vec2 uv) 
-{
-	float scale = tan(fov/180.0);
-	vec2 d = (2.0 * iTexCoord - 1.0);
-	d.x *= (iResolution.x / iResolution.y) * scale;
-	d.y *= scale;
-
-	vec3 origin = (cameraTransform * vec4(0.,0.,0.,1.)).xyz;
-
-	vec3 direction = normalize(d.x * right + d.y * up + front);
-	return ray(origin,direction); 
-}
-#endif
 
 // RAY MATERIAL INTERACTION
 
@@ -387,14 +387,14 @@ vec3 lambert(in hitRecord rec, in vec2 st, inout ray r)
 {
 	vec3 target = rec.normal + randInUnitSphere(st + r.direction.xy);
 	r = ray(rec.p, target);
-	return rec.mat.color;
+	return rec.mat.color.xyz * rec.mat.color.w;
 }
 
 vec3 metalic(in hitRecord rec, in vec3 unitDirection, in vec2 st, inout ray r)
 {
 	vec3 reflected = reflect(unitDirection, rec.normal);
 	r = ray(rec.p, reflected + rec.mat.roughness * randInUnitSphere(st + r.direction.xy));
-	return rec.mat.color; 
+	return rec.mat.color.xyz * rec.mat.color.w; 
 }
 
 float checkRefract(vec3 v, vec3 n, float niOverNt)
@@ -510,9 +510,9 @@ vec3 trace(ray r, vec2 st)
 void main()
 {
     // Normalized pixel coordinates (from 0 to 1)
-    vec2 st = gl_FragCoord.xy/iResolution.y;
+    vec2 st = gl_FragCoord.xy/iResolution;
 
-	vec4 cbd = colorBuf[screenWidth * int(gl_FragCoord.y) + int(gl_FragCoord.x)];
+	vec4 cbd = colorBuf[iResolution.x * int(gl_FragCoord.y) + int(gl_FragCoord.x)];
 
     vec3 col = vec3(0.);
     rand = random( st + cbd.w);
@@ -531,6 +531,6 @@ void main()
 	cbd.xyz = cbd.xyz / cbd.w;
 
     // Output to screen and buffer
-	colorBuf[screenWidth * int(gl_FragCoord.y) + int(gl_FragCoord.x)] = cbd;
+	colorBuf[iResolution.x * int(gl_FragCoord.y) + int(gl_FragCoord.x)] = cbd;
     fragColor = vec4(cbd.xyz,0);
 }

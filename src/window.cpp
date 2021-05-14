@@ -22,6 +22,7 @@ GLFWwindow * nerv::createWindow(nerv::config* conf)
 	//set keybind global data
 	sector = nerv::findConfigSubsector(conf, "key");
 	gWindowsKeybind = nerv::readConfigSubsector(conf, sector);
+	gUsingMenu = false;
 
 	if (!glfwInit())
 		exit(EXIT_FAILURE);
@@ -64,6 +65,7 @@ GLFWwindow * nerv::createWindow(nerv::config* conf)
 
 	glViewport(0, 0, width, height);
 
+	glfwSetInputMode(win, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSwapInterval(1);
 
 	return win;
@@ -89,13 +91,25 @@ void nerv::windowKeyCallback(GLFWwindow* window, int key, int scancode, int acti
 	{
 		glfwSetWindowShouldClose(window, GLFW_TRUE);
 	}
+	if (key == gWindowsKeybind[6] && action == GLFW_RELEASE)
+	{
+		if (!gUsingMenu)    
+		{
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			gUsingMenu = true;
+		}
+		else
+		{
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			gUsingMenu = false;
+		}
+	}
 }
 
 void nerv::windowframebufferSizeCallback(GLFWwindow* window, int width, int height)
 {
-	glUniform1iv(31, 1, &width);
-	glUniform1iv(32, 1, &height);
-	glViewport(0, 0, width, height); 
+	glUniform2i(31, width, height);
+	glViewport(0, 0, width, height);
 }
 
 void nerv::windowSizeCallback(GLFWwindow* window, int width, int height)
@@ -103,6 +117,6 @@ void nerv::windowSizeCallback(GLFWwindow* window, int width, int height)
 	glfwSetWindowSize(window, width, height);
 }
 void nerv::windowCloseCallback(GLFWwindow* window)
-{
+{   
 
 }

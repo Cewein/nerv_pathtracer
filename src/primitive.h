@@ -25,7 +25,7 @@ namespace nerv
 	struct sphere
 	{
 		glm::vec4 pos;
-		glm::vec4 data;
+		glm::vec4 mat;
 
 		bool boundingBox(AABB* out);
 

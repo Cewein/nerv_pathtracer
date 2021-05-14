@@ -83,29 +83,35 @@ bool nerv::updateCamera(camera* cam, GLFWwindow* win)
 	bool moving = false;
 	float deltaTime = cam->LastFrameTime - glfwGetTime();
 	cam->LastFrameTime = glfwGetTime();
-
-	glm::vec3 right =	glm::vec3(cam->view[0][0], cam->view[1][0], cam->view[2][0]);
-	glm::vec3 up =		glm::vec3(cam->view[0][1], cam->view[1][1], cam->view[2][1]);
-	glm::vec3 front =	glm::vec3(cam->view[0][2], cam->view[1][2], cam->view[2][2]);
 	
 	if (glfwGetKey(win, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		cam->position += deltaTime * cam->speed * up;
+		cam->position -= deltaTime * cam->speed * cam->up;
 		moving = true;
 	}
 	if (glfwGetKey(win, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		cam->position -= deltaTime * cam->speed * up;
+		cam->position += deltaTime * cam->speed * cam->up;
 		moving = true;
 	}
 	if (glfwGetKey(win, GLFW_KEY_SPACE) == GLFW_PRESS)
 	{
-		cam->position += deltaTime  * cam->speed * front;
+		cam->position -= deltaTime  * cam->speed * cam->front;
 		moving = true;
 	}
 	if (glfwGetKey(win, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
 	{
-		cam->position -= deltaTime * cam->speed * front;
+		cam->position += deltaTime * cam->speed * cam->front;
+		moving = true;
+	}
+	if (glfwGetKey(win, GLFW_KEY_A) == GLFW_PRESS)
+	{
+		cam->position += deltaTime * cam->speed * cam->right;
+		moving = true;
+	}
+	if (glfwGetKey(win, GLFW_KEY_D) == GLFW_PRESS)
+	{
+		cam->position -= deltaTime * cam->speed * cam->right;
 		moving = true;
 	}
 
@@ -130,10 +136,6 @@ bool nerv::updateCamera(camera* cam, GLFWwindow* win)
 			cam->pitch = (89.9f - 90.f);
 		else if (cam->pitch > 89.9f)
 			cam->pitch = 89.9f;
-		if (cam->pitch < (-89.9f - 90.f))
-			cam->pitch = (-89.9f - 90.f);
-		else if (cam->pitch < -89.9f)
-			cam->pitch = -89.9f;
 
 		moving = true;
 	}

@@ -1,11 +1,14 @@
+#pragma once
 #include <iostream>
 #include <glad/glad.h>
 
-#include "src/window.h"
 #include "src/camera.h"
+#include "src/window.h"
 #include "src/shader.h"
 #include "src/data.h"
+#include "src/ui.h"
 
+ 
 int main()
 {
 	std::cout << "loading config\n";
@@ -13,6 +16,8 @@ int main()
 
 	GLFWwindow* win = nerv::createWindow(&conf);
 	nerv::camera cam = nerv::createCamera(&conf);
+	nerv::createUI(win);
+
 
 	nerv::renderData render = {
 		0,
@@ -28,33 +33,53 @@ int main()
 
 	glfwGetFramebufferSize(win, &width, &height);
 
-	size_t colorBuffer = nerv::createBuffer(sizeof(float) * 4 * width * height, nullptr, 1, GL_SHADER_STORAGE_BUFFER);
-	//nerv::texture background = nerv::loadImage("resources/evening_road_01.jpg");
+	nerv::material* arrMat = nerv::genRandomMaterial(51);
+	nerv::sphere * arrSphere = nerv::genRandomSphere(520,50);
 
-	//
+	size_t colorBuffer = nerv::createBuffer(sizeof(float) * 4 * width * height, nullptr, 1, GL_SHADER_STORAGE_BUFFER);
+	size_t materialBuffer = nerv::createBuffer(sizeof(nerv::material) * 51, arrMat, 3, GL_SHADER_STORAGE_BUFFER);
+	size_t sphereBuffer = nerv::createBuffer(sizeof(nerv::sphere) * 520, arrSphere, 4, GL_SHADER_STORAGE_BUFFER);
+
+
+	nerv::texture background = nerv::loadImage("resources/evening_road_01.jpg");
 
 	while (!glfwWindowShouldClose(win))
 	{
+		glfwPollEvents();
+
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-
+		//send camera info
 		nerv::sendCameraInfo(&cam);
-		glUniform1iv(31, 1, &width);
-		glUniform1iv(32, 1, &height);
+
+		glUniform2i(31, width, height);
 		glUniform1iv(33, 1, &(render.isMoving));
+
 		mainShader.setFloat("iTime", glfwGetTime());
 		mainShader.setFloat("iDeltaTime", glfwGetTime());
-		//mainShader.activateImage(&background, "text", 0);
 		mainShader.setVec2("iResolution", width, height);
-		mainShader.setInt("bvhRendering", 0);
+		mainShader.setInt("nbSphere", 520);
 		 
         mainShader.use();
 
-		render.isMoving = nerv::updateCamera(&cam, win);
+		nerv::displayUI(&render, &cam);
 
+		if(!nerv::gUsingMenu)
+			render.isMoving = nerv::updateCamera(&cam, win);
+
+		
 		glfwSwapBuffers(win);
-		glfwPollEvents();
+
+		
 	}
+
+	//nerv::closeUI();
+
+	glfwDestroyWindow(win);
+	glfwTerminate();
+
+	delete arrMat;
+	delete arrSphere;
 
 	return EXIT_SUCCESS;
 }
