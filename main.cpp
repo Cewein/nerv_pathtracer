@@ -45,27 +45,24 @@ int main()
 
 	while (!glfwWindowShouldClose(win))
 	{
+		//pool event the render
 		glfwPollEvents();
-
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		//send camera info
-		nerv::sendCameraInfo(&cam);
+		
+		//update
+		if (!nerv::gUsingMenu)
+			render.isMoving = nerv::updateCamera(&cam, win);
 
-		glUniform2i(31, width, height);
-		glUniform1iv(33, 1, &(render.isMoving));
+		//send info to shader
+		nerv::sendInfo(&cam, &render, win);
 
-		mainShader.setFloat("iTime", glfwGetTime());
-		mainShader.setFloat("iDeltaTime", glfwGetTime());
-		mainShader.setVec2("iResolution", width, height);
 		mainShader.setInt("nbSphere", 520);
-		 
+		
+		//render
         mainShader.use();
-
 		nerv::displayUI(&render, &cam);
 
-		if(!nerv::gUsingMenu)
-			render.isMoving = nerv::updateCamera(&cam, win);
 
 		
 		glfwSwapBuffers(win);

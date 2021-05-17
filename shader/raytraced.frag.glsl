@@ -16,11 +16,11 @@ layout (location = 29) uniform float aperture; //ok
 layout (location = 30) uniform float focusDistance; //ok
 layout (location = 31) uniform ivec2 iResolution;
 layout (location = 33) uniform bool moving; //ok
-layout (location = 34) uniform float metal;
-layout (location = 35) uniform float transmission;
-layout (location = 36) uniform float rougthness;
 
-uniform float iTime; //ok
+layout (location = 34) uniform float iTime; //ok
+
+
+
 uniform sampler2D text; //ok
 uniform int nbSphere;
 
@@ -50,7 +50,7 @@ material matArr[] = material[6]( material(vec4(0.75,0.25,0.25,1.0),0.0,1.0,1.2,0
 	material(vec4(0.25,0.75,0.25,1.0),0.0,0.0,1.2,0.0),
 	material(vec4(0.75,0.25,0.75,1.0),0.05,0.2,1.2,0.95),
 	material(vec4(0.75,0.25,0.25,1.0),0.0,0.0,1.2,1.0),
-	material(vec4(1.0,.1,0.5,50.0),0.0,0.0,1.2,0.0),
+	material(vec4(1.0,.1,0.5,100.0),0.0,0.0,1.2,0.0),
 	material(vec4(5.0,5.0,20.0,1.0),0.0,0.0,1.2,0.0)
 );
 
@@ -200,11 +200,11 @@ bool hitTriangle(ray r, vec3 v0, vec3 v1, vec3 v2, float tmax, inout hitRecord h
 
 		material mat;
 
-		mat.transmission = transmission;
+		mat.transmission = 0.0;
         mat.color = vec4(0.8, 0.4, 0.0, 1.0);
-		mat.roughness = rougthness;
+		mat.roughness = 0.0;
 		mat.refractionIndex = 1.4;
-		mat.metallic = metal;
+		mat.metallic = 0.0;
 
 		hit.mat = mat;
 		return true;
@@ -234,7 +234,7 @@ bool hitGround(in ray r, float tmax, inout hitRecord hit)
 		else
 		{
 			mat.transmission = 0.0;
-			mat.metallic = .2;
+			mat.metallic = .0;
 		}
         mat.color = vec4(1.0);
 		mat.roughness = 0.0;
@@ -332,7 +332,7 @@ bool hit(in ray r, float tmin, float tmax, inout hitRecord hit)
 		}
 	}
 
-	rectangle rect = rectangle(vec2(-0.5, 0.5), vec2(0.0, 1.0), -0.0, 4);
+	rectangle rect = rectangle(vec2(-0.5, 0.5), vec2(0.0, .4), -0.0, 4);
 
 	if(hitRectangle(r, tmin, closestSoFar, tempHit, rect))
 	{

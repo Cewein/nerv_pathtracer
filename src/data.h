@@ -1,7 +1,11 @@
 #pragma once
 #include <glad/glad.h>
 
+#include <GLFW/glfw3.h>
+
 #include "primitive.h"
+#include "window.h"
+#include "camera.h"
 
 namespace nerv
 {
@@ -45,5 +49,8 @@ namespace nerv
 	//scene generation
 	material* genRandomMaterial(int numberOfMat);
 	sphere * genRandomSphere(int numberOfSphere, int numberOfMat);
+
+	//scene info
+	void sendInfo(camera* cam, renderData* render, GLFWwindow* win);
 	
 }

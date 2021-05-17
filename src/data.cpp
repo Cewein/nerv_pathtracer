@@ -190,11 +190,26 @@ nerv::sphere* nerv::genRandomSphere(int numberOfSphere, int numberOfMat)
 	{
 		float angle = i * 3.14159265359 * 2.0 / 20;
 		sphereArr[i].pos.x = glm::cos(angle) * 3;
-		sphereArr[i].pos.y = 0.4;
+		sphereArr[i].pos.y = 0.0;
 		sphereArr[i].pos.z = glm::sin(angle) * 3;
-		sphereArr[i].pos.w = 0.4;
+		sphereArr[i].pos.w = 0.4; 
 		sphereArr[i].mat = glm::vec4(numberOfMat);
 	}
 
-	return sphereArr;
+	return sphereArr; 
+}
+
+void nerv::sendInfo(camera* cam, renderData* render, GLFWwindow* win)
+{
+	sendCameraInfo(cam);
+
+	int width;
+	int height; 
+
+	glfwGetFramebufferSize(win, &width, &height);
+
+	glUniform2i(31, width, height);
+	glUniform1iv(33, 1, &(render->isMoving));
+
+	glUniform1f(34, glfwGetTime()); 
 }
