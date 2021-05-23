@@ -132,10 +132,10 @@ bool nerv::updateCamera(camera* cam, GLFWwindow* win)
 		cam->yaw += xoffset;
 		cam->pitch += yoffset;
 
-		if (cam->pitch > (89.9f - 90.f))
-			cam->pitch = (89.9f - 90.f);
-		else if (cam->pitch > 89.9f)
-			cam->pitch = 89.9f;
+		if (cam->pitch < (-89.9f ) - 90.0)
+			cam->pitch = (-89.9f) - 90.0;
+		else if (cam->pitch > 89.9f - 90.0)
+			cam->pitch = 89.9f - 90.0;
 
 		moving = true;
 	}
