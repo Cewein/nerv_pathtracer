@@ -104,7 +104,7 @@ size_t nerv::shader::createShader(std::string path, int type)
 	//look for shader file and import header
 	logger.info("SHADER", "reading shader file at " + path);
 	std::string file = nerv::read(path);
-	while (importInclude(file));
+	while (importInclude(file,path));
 
 	const char* fileChar = file.c_str();
 	
@@ -129,10 +129,13 @@ size_t nerv::shader::createShader(std::string path, int type)
 	return shdr;
 }
 
-bool nerv::shader::importInclude(std::string& data)
+bool nerv::shader::importInclude(std::string& data, std::string filepath)
 {
 	//look for include into the file
 	size_t start = data.find("#include");
+
+	std::size_t found = filepath.find_last_of("/\\");
+	std::string path = filepath.substr(0, found+1);
 
 	//if there is some open the file attached to it then
 	//replace the include header with the file contente
@@ -144,7 +147,20 @@ bool nerv::shader::importInclude(std::string& data)
 
 		include.erase(0, include.find('"') + 1);
 		include.erase(include.find('"'), include.size() + 1);
-		data.insert(start, nerv::read(include));
+		logger.info("INCLUDE", path + include);
+
+		std::string included = nerv::read(path + include);
+
+		//remove shader comment //? are just for glsl extension
+		size_t tmpPos = included.find("//?");
+		while (tmpPos != std::string::npos)
+		{
+			size_t tmpEnd = included.find('\n', tmpPos);
+			included.erase(tmpPos, tmpEnd - tmpPos);
+			tmpPos = included.find("//?");
+		}
+
+		data.insert(start, included);
 		return true;
 	}
 	return false;

@@ -38,7 +38,7 @@ int main()
 
 	size_t colorBuffer = nerv::createBuffer(sizeof(float) * 4 * width * height, nullptr, 1, GL_SHADER_STORAGE_BUFFER);
 	size_t materialBuffer = nerv::createBuffer(sizeof(nerv::material) * 51, arrMat, 3, GL_SHADER_STORAGE_BUFFER);
-	size_t sphereBuffer = nerv::createBuffer(sizeof(nerv::sphere) * 520, arrSphere, 4, GL_SHADER_STORAGE_BUFFER);
+	size_t sphereBuffer = nerv::createBuffer(sizeof(float) * 8 * 520, arrSphere, 4, GL_SHADER_STORAGE_BUFFER);
 
 
 	nerv::texture background = nerv::loadImage("resources/evening_road_01.jpg");

@@ -1,4 +1,5 @@
 #pragma once
+#define GLM_SWIZZLE
 #include <glm/glm.hpp>
 
 namespace nerv
@@ -10,15 +11,17 @@ namespace nerv
 
 	struct primitive
 	{
-		virtual bool boundingBox(AABB* out) const = 0;
+		virtual bool boundingBox(AABB* out) { return true; };
 	};
 
-	struct triangle : primitive
+	struct triangle
 	{
 		glm::vec4 v1;
 		glm::vec4 v2;
 		glm::vec4 v3;
 		glm::vec4 data;
+
+		bool boundingBox(AABB* out);
 	};
 
 	// for the pos vec4 the w componant is the raduis

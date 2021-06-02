@@ -50,7 +50,7 @@ namespace nerv
 		size_t createMainProgram(size_t vertShader, size_t fragShader);	
 
 		//import include for a shader file
-		bool importInclude(std::string& data);
+		bool importInclude(std::string& data, std::string filepath);
 
 		//ouput shader error when compiling
 		void programInfo(size_t id);

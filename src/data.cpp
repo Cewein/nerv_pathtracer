@@ -60,6 +60,8 @@ nerv::texture nerv::loadImage(const char* path)
 	{
 		logger.info("TEXUTRE", "error while openning the texture located at " + std::string(path));
 	}
+
+	return img;
 }
 
 int* nerv::loadObj(const char* objPath, const char * matPath)

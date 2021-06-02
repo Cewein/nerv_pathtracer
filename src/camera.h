@@ -5,7 +5,7 @@
 #include <GLFW/glfw3.h>
 
 
-namespace nerv
+namespace nerv 
 {
 	struct camera
 	{

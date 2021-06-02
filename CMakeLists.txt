@@ -17,7 +17,7 @@ include_directories("dependencies/logrash" ..)
 
 add_executable(
 	nerv_pathtracer
-	main.cpp "src/config.h" "src/config.cpp" "src/window.h" "src/window.cpp" "src/shader.cpp" "src/shader.h" "src/commun.h" "src/commun.cpp" "src/data.h" "src/primitive.h" "src/primitive.cpp" "src/camera.h" "src/camera.cpp" "src/data.h" "src/data.cpp" "src/ui.h" "src/ui.cpp" ${IMGUI_DIR}/backends/imgui_impl_glfw.cpp ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp ${IMGUI_DIR}/imgui.cpp ${IMGUI_DIR}/imgui_draw.cpp ${IMGUI_DIR}/imgui_demo.cpp ${IMGUI_DIR}/imgui_tables.cpp ${IMGUI_DIR}/imgui_widgets.cpp)
+	main.cpp "src/config.h" "src/config.cpp" "src/window.h" "src/window.cpp" "src/shader.cpp" "src/shader.h" "src/commun.h" "src/commun.cpp" "src/data.h" "src/primitive.h" "src/primitive.cpp" "src/camera.h" "src/camera.cpp" "src/data.h" "src/data.cpp" "src/ui.h" "src/ui.cpp" ${IMGUI_DIR}/backends/imgui_impl_glfw.cpp ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp ${IMGUI_DIR}/imgui.cpp ${IMGUI_DIR}/imgui_draw.cpp ${IMGUI_DIR}/imgui_demo.cpp ${IMGUI_DIR}/imgui_tables.cpp ${IMGUI_DIR}/imgui_widgets.cpp "src/bvh.h" "src/bvh.cpp")
 
 add_subdirectory(dependencies/openGL)
 target_link_libraries(${PROJECT_NAME} PUBLIC glad)
