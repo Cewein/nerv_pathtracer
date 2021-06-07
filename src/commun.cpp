@@ -24,3 +24,20 @@ std::string nerv::read(std::string path)
 	//return file as a string
 	return filestr;
 }
+
+
+//https://stackoverflow.com/questions/686353/random-float-number-generation
+float nerv::randomFloat()
+{
+	return static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+}
+
+float nerv::randomFloat(float max)
+{
+	return static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / max));
+}
+
+float nerv::randomFloat(float min, float max)
+{
+	return min + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (max - min)));
+}

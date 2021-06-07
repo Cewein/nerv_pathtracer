@@ -6,6 +6,7 @@
 #include "primitive.h"
 #include "window.h"
 #include "camera.h"
+#include "commun.h"
 
 namespace nerv
 {
@@ -40,11 +41,6 @@ namespace nerv
 
 	//load .ob file
 	int * loadObj(const char* objPath, const char* matPath = "./");
-
-	//random number gen
-	float randomFloat();
-	float randomFloat(float max);
-	float randomFloat(float min, float max);
 
 	//scene generation
 	material* genRandomMaterial(int numberOfMat);

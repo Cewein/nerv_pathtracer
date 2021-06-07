@@ -25,7 +25,7 @@ namespace nerv
 	};
 
 	// for the pos vec4 the w componant is the raduis
-	struct sphere
+	struct sphere 
 	{
 		glm::vec4 pos;
 		glm::vec4 mat;

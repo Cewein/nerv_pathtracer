@@ -127,22 +127,6 @@ int* nerv::loadObj(const char* objPath, const char * matPath)
 	}
 }
 
-//https://stackoverflow.com/questions/686353/random-float-number-generation
-float nerv::randomFloat()
-{
-	return static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
-}
-
-float nerv::randomFloat(float max)
-{
-	return static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / max));
-}
-
-float nerv::randomFloat(float min, float max)
-{
-	return min + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (max - min)));
-}
-
 nerv::material* nerv::genRandomMaterial(int numberOfMat)
 {
 	srand(static_cast <unsigned> (time(0)));
