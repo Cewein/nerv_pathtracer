@@ -14,7 +14,7 @@ bool hit(in ray r, float tmin, float tmax, inout hitRecord hit)
     bool hitAny = false;
     float closestSoFar = tmax;
 
-    //closestSoFar = bvhTraversal(r, tmin, closestSoFar, hit, hitAny);
+    closestSoFar = bvhTraversal(r, tmin, closestSoFar, hit, hitAny);
 
 	hitRecord tempHit;
 	if(hitGround(r, closestSoFar, tempHit))

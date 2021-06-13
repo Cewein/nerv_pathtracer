@@ -24,7 +24,7 @@ float bvhTraversal(in ray r, float tmin, float tmax, inout hitRecord hit, inout 
 
 	vec3 invDir = 1.0/r.direction;
 
-	while(stackAdrr >= 0) 
+	while(stackAdrr >= 0 && stackAdrr < 32) 
 	{
 		linearBVHNode node = bvh[stack[stackAdrr]];
 		stackAdrr -= 1;

@@ -10,32 +10,32 @@ nerv::AABB nerv::surrondingBox(nerv::AABB box0, nerv::AABB box1)
 	return  surrond;
 }
 
-bool nerv::box_compare(nerv::triangle * a, nerv::triangle * b, int axis)
+bool nerv::box_compare(nerv::triangle a, nerv::triangle b, int axis)
 {
 	nerv::AABB box0;
 	nerv::AABB box1;
 
-	a->boundingBox(&box0);
-	b->boundingBox(&box1);
+	a.boundingBox(&box0);
+	b.boundingBox(&box1);
 
 	return box0.min[axis] < box1.min[axis];
 }
 
-bool nerv::box_x_compare(nerv::triangle* a, nerv::triangle* b) {
+bool nerv::box_x_compare(nerv::triangle a, nerv::triangle b) {
 	return box_compare(a, b, 0);
 }
 
-bool nerv::box_y_compare(nerv::triangle* a, nerv::triangle* b) {
+bool nerv::box_y_compare(nerv::triangle a, nerv::triangle b) {
 	return box_compare(a, b, 1);
 }
 
-bool nerv::box_z_compare(nerv::triangle* a, nerv::triangle* b) {
+bool nerv::box_z_compare(nerv::triangle a, nerv::triangle b) {
 	return box_compare(a, b, 2);
 }
 
 nerv::bvhNode* nerv::createNode(std::vector<nerv::triangle>& tris, size_t start, size_t end)
 {
-	nerv::bvhNode* node;
+	nerv::bvhNode* node = new nerv::bvhNode();
 
 	int axis = (int)randomFloat(2);
 
@@ -71,4 +71,51 @@ nerv::bvhNode* nerv::createNode(std::vector<nerv::triangle>& tris, size_t start,
 	}
 
 	return node;
+}
+
+void nerv::deleteBVHTree(bvhNode* bvh)
+{
+	if (bvh == nullptr)
+		return;
+
+	deleteBVHTree(bvh->left);
+	deleteBVHTree(bvh->right);
+
+	delete bvh;
+}
+
+int nerv::countNode(bvhNode* node)
+{
+	int c = 1;
+	if (node == nullptr)
+		return 0;
+
+	c += countNode(node->left);
+	c += countNode(node->right);
+
+	return c;
+}
+
+int nerv::flattenBVH(std::vector<linearBvhNode> &nodes, bvhNode* node, int* offset, int depth)
+{
+	linearBvhNode linear = nodes[*offset];
+	linear.pMin = glm::vec4(node->box.min, -1);
+	linear.pMax = glm::vec4(node->box.max, -1);
+	int myOffset = (*offset)++;
+	if (node->type != nerv::NODE_TYPE::AABB_BOX)
+	{
+		linear.primitiveOffset = node->primitiveOffset;
+		linear.nPrimitives = 1;
+	}
+	else
+	{
+		linear.axis = 0;
+		linear.nPrimitives = 0;
+		int ost = flattenBVH(nodes,node->left, offset, depth + 1);
+		linear.pMin.w = ost;
+		linear.secondChildOffset = flattenBVH(nodes,node->right, offset, depth + 1);
+		linear.pMax.w = linear.secondChildOffset;
+
+	}
+	return myOffset;
 }

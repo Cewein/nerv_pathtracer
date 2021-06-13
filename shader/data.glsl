@@ -55,6 +55,7 @@ struct triangle {
 	 vec4 v1;
 	 vec4 v2;
 	 vec4 v3;
+	 vec4 data;
  };
 
 
@@ -99,13 +100,14 @@ layout (std430,binding=2) buffer bvhBuffer {
 	linearBVHNode bvh[];
 };
 
+layout (std430,binding=3) buffer materialBuffer {
+	material matBuf[];
+};
+
 layout (std430,binding=4) buffer sphereBuffer {
 	sphere sphereBuf[];
 };
 
-layout (std430,binding=3) buffer materialBuffer {
-	material matBuf[];
-};
 
 #define FLT_MAX 3.402823466e+38
 const float PI  = 3.14159265359;

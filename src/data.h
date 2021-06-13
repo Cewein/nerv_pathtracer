@@ -8,6 +8,8 @@
 #include "camera.h"
 #include "commun.h"
 
+#include <vector>
+
 namespace nerv
 {
 	struct renderData {
@@ -40,7 +42,7 @@ namespace nerv
 	texture loadImage(const char* path);
 
 	//load .ob file
-	int * loadObj(const char* objPath, const char* matPath = "./");
+	std::vector<nerv::triangle> loadObj(const char* objPath, const char* matPath = "./");
 
 	//scene generation
 	material* genRandomMaterial(int numberOfMat);

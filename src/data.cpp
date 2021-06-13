@@ -1,5 +1,6 @@
 #pragma once
 #include "data.h"
+#include "primitive.h"
 
 #define TINYOBJLOADER_IMPLEMENTATION // define this in only *one* .cc
 #include <tiny_obj_loader.h>
@@ -64,7 +65,7 @@ nerv::texture nerv::loadImage(const char* path)
 	return img;
 }
 
-int* nerv::loadObj(const char* objPath, const char * matPath)
+std::vector<nerv::triangle> nerv::loadObj(const char* objPath, const char * matPath)
 {
 	std::string inputfile = objPath;
 	tinyobj::ObjReaderConfig reader_config;
@@ -87,6 +88,8 @@ int* nerv::loadObj(const char* objPath, const char * matPath)
 	auto& shapes = reader.GetShapes();
 	auto& materials = reader.GetMaterials();
 
+	std::vector<nerv::triangle> triangles;
+
 	// Loop over shapes
 	for (size_t s = 0; s < shapes.size(); s++) 
 	{
@@ -96,6 +99,8 @@ int* nerv::loadObj(const char* objPath, const char * matPath)
 		{
 			size_t fv = size_t(shapes[s].mesh.num_face_vertices[f]);
 
+			nerv::triangle tri;
+
 			// Loop over vertices in the face.
 			for (size_t v = 0; v < fv; v++) 
 			{
@@ -104,6 +109,15 @@ int* nerv::loadObj(const char* objPath, const char * matPath)
 				tinyobj::real_t vx = attrib.vertices[3 * size_t(idx.vertex_index) + 0];
 				tinyobj::real_t vy = attrib.vertices[3 * size_t(idx.vertex_index) + 1];
 				tinyobj::real_t vz = attrib.vertices[3 * size_t(idx.vertex_index) + 2];
+
+				if (v == 0)
+					tri.v1 = glm::vec4(vx, vy, vz, 0.0);
+				else if(v == 1)
+					tri.v2 = glm::vec4(vx, vy, vz, 0.0);
+				else
+					tri.v3 = glm::vec4(vx, vy, vz, 0.0);
+
+				tri.data = glm::vec4(0);
 
 				// Check if `normal_index` is zero or positive. negative = no normal data
 				if (idx.normal_index >= 0) {
@@ -123,8 +137,12 @@ int* nerv::loadObj(const char* objPath, const char * matPath)
 
 			// per-face material
 			shapes[s].mesh.material_ids[f];
+
+			triangles.push_back(tri);
 		}
 	}
+
+	return triangles;
 }
 
 nerv::material* nerv::genRandomMaterial(int numberOfMat)
