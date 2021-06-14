@@ -1,77 +1,94 @@
+#pragma once
+#include <iostream>
 #include <glad/glad.h>
-#include "dependencies.h"
-#include "src/engine.h"
 
+#include "src/camera.h"
+#include "src/window.h"
+#include "src/shader.h"
+#include "src/data.h"
+#include "src/ui.h"
+#include "src/bvh.h"
+
+ 
 int main()
 {
+	std::cout << "loading config\n";
+	nerv::config conf = nerv::loadConfig("E:\\nerv_engine\\nerv_pathtracer\\config.ini");
 
-	nerv::init::launch();
+	GLFWwindow* win = nerv::createWindow(&conf);
+	nerv::camera cam = nerv::createCamera(&conf);
+	nerv::createUI(win);
 
-	std::vector<float> vertices = {
-		 1.0f,  1.0f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
-		 1.0f, -1.0f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
-		-1.0f, -1.0f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
-		-1.0f,  1.0f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left
+
+	nerv::renderData render = {
+		0,
+		5,
+		false,
+		0.0
 	};
 
-	std::vector<size_t> indices = {  // note that we start from 0!
-		0, 1, 3,   // first triangle
-		1, 2, 3    // second triangle
-	};
+	nerv::shader mainShader("shader/raytraced.frag.glsl", "shader/static.vert.glsl");
 
-	nerv::object scene(vertices,indices, new nerv::material(new nerv::texture("resources/moonless_golf.jpg"), new nerv::shader("shader/raytraced.frag.glsl", "shader/static.vert.glsl")));
-	nerv::camera * cam = new nerv::camera(nerv::camera::projectionType::PERSPECTIVE_PROJECTION, 90.0f);
-	cam->transform->translate(glm::vec3(0., 1., 3.));
+	int width;
+	int height;
 
-	//test code for obj loading
-	std::vector<nerv::primitive::triangle> triangles = nerv::object::loadObj("model/bunny-heavy.obj");
-	//std::vector<nerv::primitive::triangle> triangles = nerv::object::loadObj("model/cube.obj");
+	glfwGetFramebufferSize(win, &width, &height);
+
+	nerv::material* arrMat = nerv::genRandomMaterial(51); 
+
+	std::vector<nerv::triangle> triangles = nerv::loadObj("E:\\nerv_engine\\nerv_pathtracer\\model\\rab3.obj");
+
+	nerv::bvhNode* bvh = nerv::createNode(triangles, 0, triangles.size());
+	int size = nerv::countNode(bvh);
+	nerv::linearBvhNode * flatten = new nerv::linearBvhNode[size];
+	 
+	int offset = 0;
 	
+	nerv::flattenBVH(flatten, bvh, &offset, 0);
 
-	nerv::BVHAccel accelStruct(triangles, 1, nerv::BVHAccel::splitMethod::SAH);
-	logger.info("BVH", "size of the flatten BVH : " + std::to_string(accelStruct.nodes.size() * sizeof(nerv::linearBVHNode)));
+	size_t triangleBuffer = nerv::createBuffer(sizeof(nerv::triangle) * triangles.size(), triangles.data(), 0, GL_SHADER_STORAGE_BUFFER);
+	size_t colorBuffer = nerv::createBuffer(sizeof(float) * 4 * width * height, nullptr, 1, GL_SHADER_STORAGE_BUFFER);
+	size_t bvhBuffer = nerv::createBuffer(sizeof(nerv::linearBvhNode) * size, flatten, 2, GL_SHADER_STORAGE_BUFFER);
 
-	size_t ssbo = nerv::shader::createBuffer(sizeof(nerv::primitive::triangle) * triangles.size(), triangles.data());
-	size_t colorBuffer = nerv::shader::createBuffer(sizeof(float) * 4 * nerv::window::get().width * nerv::window::get().height, nullptr, 1);
-	size_t bvh = nerv::shader::createBuffer(sizeof(nerv::linearBVHNode) * accelStruct.nodes.size(), accelStruct.nodes.data(), 2);
+	size_t materialBuffer = nerv::createBuffer(sizeof(nerv::material) * 51, arrMat, 3, GL_SHADER_STORAGE_BUFFER);
 
-	int depth = 0;
-	bool toogleDebug = true;
+	nerv::texture background = nerv::loadImage("resources/evening_road_01.jpg");
 
-	while (nerv::window::get().isOpen()) {
+	while (!glfwWindowShouldClose(win))
+	{
+		//pool event the render
+		glfwPollEvents();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+		
+		//update
+		if (!nerv::gUsingMenu)
+			render.isMoving = nerv::updateCamera(&cam, win);
 
-		//RENDERING 
-		cam->sendInfo();
-		scene.material->shaderprog->setInt("size", triangles.size());
-		if(nerv::camera::raytraced) scene.show();
+		//send info to shader
+		nerv::sendInfo(&cam, &render, win);
 
-		//UPDATE I/O
-		cam->isMoving = false;
-		nerv::keyboard::updateCameraKeyboard(cam);
-		nerv::mouse::updateCameraMouse(cam);
+		mainShader.activateImage(&background, "background", 0);
+		
+		//render
+        mainShader.use();
+		nerv::displayUI(&render, &cam);
 
-		//UI
-		nerv::ui::draw(cam);
-		if (ImGui::Begin("Optimisation"))
-		{
-			bool pressed = false;
-			bool debug = ImGui::Checkbox("Use BVH",&toogleDebug);
-			pressed += debug;
 
-			scene.material->shaderprog->setInt("bvhRendering", 1);
+		
+		glfwSwapBuffers(win);
 
-			if (pressed) cam->isMoving = true;
-		}
-		ImGui::End();
-
-		//SWAP BUFFER
-		nerv::window::get().update();
+		
 	}
 
-	nerv::ui::clean();
-	delete cam;
+	//nerv::closeUI();
 
-	nerv::window::get().close();
+	glfwDestroyWindow(win);
+	glfwTerminate();
+
+	delete arrMat; 
+	//delete arrSphere;
+	delete flatten;
+
 	return EXIT_SUCCESS;
 }
-
