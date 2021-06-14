@@ -14,7 +14,7 @@ bool hit(in ray r, float tmin, float tmax, inout hitRecord hit)
     bool hitAny = false;
     float closestSoFar = tmax;
 
-    closestSoFar = bvhTraversal(r, tmin, closestSoFar, hit, hitAny);
+	closestSoFar = bvhTraversal(r, tmin, closestSoFar, hit, hitAny);
 
 	hitRecord tempHit;
 	if(hitGround(r, closestSoFar, tempHit))
@@ -24,19 +24,19 @@ bool hit(in ray r, float tmin, float tmax, inout hitRecord hit)
 		hit = tempHit;
 	}
 
-	for(int i = 0; i < nbSphere; i++)
+	/*
+	}*/
+	rectangle rect = rectangle(vec2(-0.5, 0.5), vec2(0.0, .4), -1.5, 4);
+
+	if(hitRectangle(r, tmin, closestSoFar, tempHit, rect))
 	{
-		if(hitSphere(r, tmin, closestSoFar, tempHit, sphereBuf[i]))
-		{
-			hitAny = true;
-			closestSoFar = tempHit.t;
-			hit = tempHit;
-			if(hit.mat.color.w > 1.0)
-				noScatter = true;
-		}
+		hitAny = true;
+		closestSoFar = tempHit.t;
+		hit = tempHit;
+		noScatter = true;
 	}
 
-	rectangle rect = rectangle(vec2(-0.5, 0.5), vec2(0.0, .4), -0.0, 4);
+	rect = rectangle(vec2(-0.5, 0.5), vec2(0.0, .4), 1.1, 4);
 
 	if(hitRectangle(r, tmin, closestSoFar, tempHit, rect))
 	{
@@ -170,7 +170,8 @@ vec3 trace(ray r, vec2 st)
 			bounce++;
 		else
 		{
-			vec3 col = vec3(0.0);
+			vec3 col = texture(background, vec2((atan(r.direction.z, r.direction.x) / 6.283185307179586476925286766559) + 0.5, acos(r.direction.y) / 3.1415926535897932384626433832795)).xyz;
+			col = vec3(0.0);
 			att *= col;
 			break;
 		}

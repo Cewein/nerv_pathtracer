@@ -25,11 +25,11 @@ size_t nerv::createBuffer(int size, void* data, int id, int bufferType)
 	return buffer;
 }
 
-nerv::texture nerv::loadImage(const char* path) 
+nerv::texture nerv::loadImage(const char* path)
 {
 
 	texture img;
-	stbi_set_flip_vertically_on_load(true);
+	stbi_set_flip_vertically_on_load(false);
 	unsigned char* data = stbi_load(path, &(img.width), &(img.height), &(img.nbChannel), 0);
 
 	if (data)

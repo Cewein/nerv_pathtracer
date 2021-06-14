@@ -18,7 +18,7 @@ layout (location = 33) uniform bool moving;
 
 layout (location = 34) uniform float iTime;
 
-uniform sampler2D text;
+uniform sampler2D background;
 uniform int nbSphere;
 
 in vec2 iTexCoord;
@@ -40,7 +40,7 @@ material matArr[] = material[6]( material(vec4(0.75,0.25,0.25,1.0),0.0,1.0,1.2,0
 	material(vec4(0.25,0.75,0.25,1.0),0.0,0.0,1.2,0.0),
 	material(vec4(0.75,0.25,0.75,1.0),0.05,0.2,1.2,0.95),
 	material(vec4(0.75,0.25,0.25,1.0),0.0,0.0,1.2,1.0),
-	material(vec4(1.0,.1,0.5,100.0),0.0,0.0,1.2,0.0),
+	material(vec4(1.0,.5,0.5,100.0),0.0,0.0,1.2,0.0),
 	material(vec4(5.0,5.0,20.0,1.0),0.0,0.0,1.2,0.0)
 );
 

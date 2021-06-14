@@ -96,26 +96,27 @@ int nerv::countNode(bvhNode* node)
 	return c;
 }
 
-int nerv::flattenBVH(std::vector<linearBvhNode> &nodes, bvhNode* node, int* offset, int depth)
+int nerv::flattenBVH(nerv::linearBvhNode * flatten, bvhNode* node, int* offset, int depth)
 {
-	linearBvhNode linear = nodes[*offset];
-	linear.pMin = glm::vec4(node->box.min, -1);
-	linear.pMax = glm::vec4(node->box.max, -1);
+	linearBvhNode * linear = &flatten[*offset];
+	linear->pMin = glm::vec4(node->box.min, -1);
+	linear->pMax = glm::vec4(node->box.max, -1);
+	linear->axis = depth;
 	int myOffset = (*offset)++;
 	if (node->type != nerv::NODE_TYPE::AABB_BOX)
 	{
-		linear.primitiveOffset = node->primitiveOffset;
-		linear.nPrimitives = 1;
+		linear->primitiveOffset = node->primitiveOffset; 
+		linear->nPrimitives = 1;
 	}
 	else
-	{
-		linear.axis = 0;
-		linear.nPrimitives = 0;
-		int ost = flattenBVH(nodes,node->left, offset, depth + 1);
-		linear.pMin.w = ost;
-		linear.secondChildOffset = flattenBVH(nodes,node->right, offset, depth + 1);
-		linear.pMax.w = linear.secondChildOffset;
+	{  
+		
+		linear->nPrimitives = 0;
+		int ost = flattenBVH(flatten,node->left, offset, depth + 1);
+		linear->pMin.w = ost;
+		linear->secondChildOffset = flattenBVH(flatten,node->right, offset, depth + 1);
+		linear->pMax.w = linear->secondChildOffset;
 
 	}
 	return myOffset;
-}
+} 

@@ -116,7 +116,7 @@ bool hitGround(in ray r, float tmax, inout hitRecord hit)
 		else
 		{
 			mat.transmission = 0.0;
-			mat.metallic = .0;
+			mat.metallic = .95;
 		}
         mat.color = vec4(1.0);
 		mat.roughness = 0.0;

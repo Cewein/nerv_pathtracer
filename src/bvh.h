@@ -32,7 +32,7 @@ namespace nerv
 
 	void deleteBVHTree(bvhNode* bvh);
 	int countNode(bvhNode* node);
-	int flattenBVH(std::vector<linearBvhNode>& nodes, bvhNode* node, int* offset, int depth);
+	int flattenBVH(nerv::linearBvhNode * flatten, bvhNode* node, int* offset, int depth); 
 
 	bool box_compare(nerv::triangle  a, nerv::triangle  b, int axis);
 	bool box_x_compare(nerv::triangle a, nerv::triangle b);
