@@ -15,6 +15,8 @@ layout (location = 29) uniform float aperture;
 layout (location = 30) uniform float focusDistance;
 layout (location = 31) uniform ivec2 iResolution;
 layout (location = 33) uniform bool moving;
+layout (location = 35) uniform bool darkmode;
+layout (location = 36) uniform int maxBounce;
 
 layout (location = 34) uniform float iTime;
 

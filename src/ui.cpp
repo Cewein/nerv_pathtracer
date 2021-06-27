@@ -22,26 +22,45 @@ void nerv::createUI(GLFWwindow* win)
 
 void nerv::displayUI(renderData* info, camera * cam)
 {
+    info->isMoving = false;
     // Start the Dear ImGui frame
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
 
-	if (ImGui::Begin("menu"))
+	if (ImGui::Begin("info"))
 	{
 		ImGui::Text("Camera info");
         ImGui::Separator();
         ImGui::Text(("Samples : " + std::to_string(info->spp)).c_str());
         info->spp += 1;
-        if(info->isMoving)
-            info->spp = 1;
-		ImGui::Separator();
-		ImGui::Text("Material");
 	}
+
+    if (ImGui::Begin("config"))
+    {
+        ImGui::Text("Camera");
+        ImGui::Separator();
+        info->isMoving += ImGui::SliderFloat("FOV", &(cam->fov), 0.0001, 180);
+        info->isMoving += ImGui::SliderFloat("Aperture", &(cam->aperture), 0.0001, 1.0);
+        info->isMoving += ImGui::SliderFloat("focus Distance", &(cam->focusDistance), 0.0001, 20);
+        ImGui::Separator();
+        ImGui::Text("Rendering");
+        ImGui::Separator();
+        info->isMoving += ImGui::SliderInt("Number of bounces", &(info->maxBounce), 0, 10);
+        ImGui::Separator();
+        ImGui::Text("Scene");
+        ImGui::Separator();
+
+        info->isMoving += ImGui::Checkbox("dark room mode", &(info->darkmode));
+        
+    }
     ImGui::End();
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+    if (info->isMoving)
+        info->spp = 1;
 }
 
 void nerv::closeUI()

@@ -214,6 +214,9 @@ void nerv::sendInfo(camera* cam, renderData* render, GLFWwindow* win)
 
 	glUniform2i(31, width, height);
 	glUniform1iv(33, 1, &(render->isMoving));
+	int bm = render->darkmode;
+	glUniform1iv(35, 1, &bm);
+	glUniform1iv(36, 1, &(render->maxBounce));
 
 	glUniform1f(34, glfwGetTime()); 
 }

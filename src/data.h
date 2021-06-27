@@ -17,6 +17,7 @@ namespace nerv
 		int maxBounce;
 		int isMoving;
 		float renderTime;
+		bool darkmode;
 	};
 
 	struct texture {

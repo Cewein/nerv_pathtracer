@@ -24,8 +24,6 @@ bool hit(in ray r, float tmin, float tmax, inout hitRecord hit)
 		hit = tempHit;
 	}
 
-	/*
-	}*/
 	rectangle rect = rectangle(vec2(-0.5, 0.5), vec2(0.0, .4), -1.5, 4);
 
 	if(hitRectangle(r, tmin, closestSoFar, tempHit, rect))
@@ -155,14 +153,13 @@ vec3 trace(ray r, vec2 st)
 
 	vec3 att = vec3(1.);
 
-	int bounceSize = 5;
 	int bounce = 0;
 
 	//extrat space for ray
 	ray tmp;
 	ray glass;
 
-	while (bounce < bounceSize && !noScatter)
+	while (bounce < maxBounce && !noScatter)
 	{
 		unitDirection = normalize(r.direction);
 
@@ -170,8 +167,10 @@ vec3 trace(ray r, vec2 st)
 			bounce++;
 		else
 		{
-			vec3 col = texture(background, vec2((atan(r.direction.z, r.direction.x) / 6.283185307179586476925286766559) + 0.5, acos(r.direction.y) / 3.1415926535897932384626433832795)).xyz;
-			col = vec3(0.0);
+			vec3 col = vec3(0.0);
+			if(!darkmode)
+				col = texture(background, vec2((atan(r.direction.z, r.direction.x) / 6.283185307179586476925286766559) + 0.5, acos(r.direction.y) / 3.1415926535897932384626433832795)).xyz;
+
 			att *= col;
 			break;
 		}
