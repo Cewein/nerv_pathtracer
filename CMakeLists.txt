@@ -29,10 +29,6 @@ target_link_libraries(${PROJECT_NAME} PUBLIC opengl32)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ${CMAKE_DL_LIBS})
 
-add_custom_command(TARGET nerv_pathtracer
-  POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:nerv_pathtracer> ${CMAKE_CURRENT_SOURCE_DIR})
-
 add_custom_command(
          TARGET nerv_pathtracer POST_BUILD
          COMMAND ${CMAKE_COMMAND} -E copy_directory              

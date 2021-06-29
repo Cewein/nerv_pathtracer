@@ -60,7 +60,6 @@ struct triangle {
 	 vec4 data;
  };
 
-
  struct rectangle
  {
 	vec2 x;
@@ -74,12 +73,6 @@ struct triangle {
     vec4 pos;
 	vec4 mat;
 };
-
-sphere sphereArr[] = sphere[4](sphere(vec4(3.0,1.5,0.0,1.5),vec4(0)),
-	sphere(vec4(-3.0,1.5,0.0,1.5),vec4(1)),
-	sphere(vec4(0.0,1.5,3.0,1.5), vec4(2)),
-	sphere(vec4(0.0,1.5,-3.0,1.5),vec4(3))
-);
 
  struct linearBVHNode {
 	vec4 pMin;
