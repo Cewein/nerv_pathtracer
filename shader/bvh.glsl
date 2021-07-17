@@ -35,7 +35,7 @@ float bvhTraversal(in ray r, float tmin, float tmax, inout hitRecord hit, inout 
 			{
 				int i = node.primitiveOffset;
 				hitRecord tempHit;
-				if(hitTriangle(r, tris[i].v1.xyz, tris[i].v2.xyz, tris[i].v3.xyz, closestSoFar, tempHit))
+				if(hitTriangle(r, tris[i], closestSoFar, tempHit))
 				{
 					hitAny = true;
 					closestSoFar = tempHit.t;

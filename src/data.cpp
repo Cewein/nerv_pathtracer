@@ -117,8 +117,6 @@ std::vector<nerv::triangle> nerv::loadObj(const char* objPath, const char * matP
 				else
 					tri.v3 = glm::vec4(vx, vy, vz, 0.0);
 
-				tri.data = glm::vec4(0);
-
 				// Check if `normal_index` is zero or positive. negative = no normal data
 				if (idx.normal_index >= 0) {
 					tinyobj::real_t nx = attrib.normals[3 * size_t(idx.normal_index) + 0];
@@ -130,7 +128,16 @@ std::vector<nerv::triangle> nerv::loadObj(const char* objPath, const char * matP
 				if (idx.texcoord_index >= 0) {
 					tinyobj::real_t tx = attrib.texcoords[2 * size_t(idx.texcoord_index) + 0];
 					tinyobj::real_t ty = attrib.texcoords[2 * size_t(idx.texcoord_index) + 1];
+
+					if (v == 0)
+						tri.uv1 = glm::vec2(tx, ty);
+					else if (v == 1)
+						tri.uv2 = glm::vec2(tx, ty);
+					else
+						tri.uv3 = glm::vec2(tx, ty); 
 				}
+				 
+				tri.data = glm::vec2(0);
 
 			}
 			index_offset += fv;

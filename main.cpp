@@ -17,15 +17,15 @@ int main()
 
 	GLFWwindow* win = nerv::createWindow(&conf);
 	nerv::camera cam = nerv::createCamera(&conf);
-	nerv::createUI(win);
+	nerv::createUI(win); 
 
-
+	  
 	nerv::renderData render = {
 		0,
 		5,
-		false,
+		false, 
 		0.0
-	};
+	}; 
 
 	nerv::shader mainShader("shader/raytraced.frag.glsl", "shader/static.vert.glsl");
 
@@ -66,7 +66,7 @@ int main()
 			render.isMoving = nerv::updateCamera(&cam, win);
 
 		//send info to shader
-		nerv::sendInfo(&cam, &render, win);
+		nerv::sendInfo(&cam, &render, win); 
 
 		mainShader.activateImage(&background, "background", 0);
 		

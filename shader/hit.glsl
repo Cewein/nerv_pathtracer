@@ -15,7 +15,7 @@ bool hitSphere(in ray r, float tmin, float tmax, inout hitRecord hit, sphere s)
     float d = b*b - a*c;
     if (d > 0.) 
     {
-        float temp = (-b - sqrt(b*b-a*c))/a;
+        float temp = (-b - sqrt(b*b-a*c))/a; 
         if(temp < tmax && temp > tmin)
         {
             hit.t = temp;
@@ -44,8 +44,12 @@ bool hitRectangle(ray r, float tmin, float tmax, inout hitRecord hit, rectangle 
 	return true;
 }
 
-bool hitTriangle(ray r, vec3 v0, vec3 v1, vec3 v2, float tmax, inout hitRecord hit)
+bool hitTriangle(ray r, triangle tris, float tmax, inout hitRecord hit)
 {
+
+	vec3 v0 = tris.v1.xyz;
+	vec3 v1 = tris.v2.xyz;
+	vec3 v2 = tris.v3.xyz;
 	//find vectors for two edges sharing vert0
     vec3 edge1 = v1 - v0;
     vec3 edge2 = v2 - v0;

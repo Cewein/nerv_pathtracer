@@ -53,7 +53,7 @@ void nerv::displayUI(renderData* info, camera * cam)
 
         info->isMoving += ImGui::Checkbox("dark room mode", &(info->darkmode));
         
-    }
+    } 
     ImGui::End();
 
     ImGui::Render();

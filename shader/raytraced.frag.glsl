@@ -119,7 +119,7 @@ ray dieletric(in hitRecord rec, in vec3 unitDirection, in vec2 st, in ray r)
 	r = ray(rec.p, 
 			mix(reflected,
 			refract(unitDirection, outwardNormal, niOverNt),
-			step(refProb, rand)
+			step(refProb, random(st.xy + cos(iTime * st.yx)))
 		)
 	);
 
@@ -132,7 +132,6 @@ vec3 trace(ray r, vec2 st)
 {
 	hitRecord hitRec;
 	vec3 unitDirection;
-	float t;
 
 	vec3 att = vec3(1.);
 
@@ -188,8 +187,6 @@ vec3 trace(ray r, vec2 st)
 		
 	}
 
-    t =  (unitDirection.y + 1.);
-
 	//skybox
     return att;
 }
@@ -202,7 +199,6 @@ void main()
 	vec4 cbd = colorBuf[iResolution.x * int(gl_FragCoord.y) + int(gl_FragCoord.x)];
 
     vec3 col = vec3(0.);
-    rand = random( st + cbd.w);
 
 	ray r = getRay(st + sin(cbd.w));
     col = trace(r,st + cbd.w);

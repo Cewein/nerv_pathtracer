@@ -3,14 +3,13 @@
 
 //PSEUDO RANDOM FUNCTION
 
-float random (vec2 st) {
-	return fract(sin(dot(st, vec2(12.9898, 78.233))) * 43758.5453);
+float random (vec2 p) {
+	return fract(43757.5453*sin(dot(p, vec2(12.9898,78.233))));
 }
 
 vec3 randInUnitSphere(vec2 st) {
-    float phi = random(st.yx + sin(iTime) + cos(-iTime)) * 2.0 * 3.14159265;
-    float theta = random(st.xy + cos(iTime) + sin(-iTime)) * 3.14169265;
-    
+    float phi = random(st.yx + sin(iTime) + cos(-iTime/tan(iTime))) * 2.0 * 3.14159265;
+    float theta = random(st.xy + cos(iTime/tan(-iTime)) + sin(-iTime)) * 3.14169265;
     return vec3(cos(phi) * sin(theta), cos(theta), sin(phi) * sin(theta));
 }
 

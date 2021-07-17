@@ -19,7 +19,10 @@ namespace nerv
 		glm::vec4 v1;
 		glm::vec4 v2;
 		glm::vec4 v3;
-		glm::vec4 data;
+		glm::vec2 uv1;
+		glm::vec2 uv2;
+		glm::vec2 uv3;
+		glm::vec2 data;
 
 		bool boundingBox(AABB* out);
 	};

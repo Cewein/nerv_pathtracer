@@ -50,6 +50,7 @@ struct hitRecord {
     float t;
     vec3 p;
     vec3 normal;
+	vec2 tex;
     material mat;
 };
 
@@ -57,7 +58,10 @@ struct triangle {
 	 vec4 v1;
 	 vec4 v2;
 	 vec4 v3;
-	 vec4 data;
+	 vec2 uv1;
+	 vec2 uv2;
+	 vec2 uv3;
+	 vec2 data;
  };
 
  struct rectangle
@@ -105,8 +109,5 @@ layout (std430,binding=4) buffer sphereBuffer {
 
 
 #define FLT_MAX 3.402823466e+38
-const float PI  = 3.14159265359;
-const float PHI = 1.61803398875; 
-
-//global variable used everywhere
-float rand = 0.0;
+#define PI  3.14159265359
+#define PHI 1.61803398875
