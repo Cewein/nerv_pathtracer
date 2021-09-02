@@ -50,6 +50,11 @@ bool hit(in ray r, float tmin, float tmax, inout hitRecord hit)
 
 ray getRay(vec2 uv) 
 {
+
+	vec3 up = viewMatrix[1].xyz;
+	vec3 right = viewMatrix[0].xyz;
+	vec3 front = viewMatrix[2].xyz;
+
 	float scale = tan(fov/180.0);
 	vec2 d = (2.0 * gl_FragCoord.xy/iResolution.x - 1.0);
 	d.x *= scale;

@@ -31,11 +31,8 @@ nerv::camera nerv::createCamera(nerv::config* conf)
 		//position value
 		glm::vec3(0.0),
 		glm::mat4(1.0f),
-		glm::vec3(0.0),
-		glm::vec3(0.0),
-		glm::vec3(0.0),
 		0.0,
-		-90.0,
+		0.0,
 
 		//controle value
 		camConf[0] / 10.0,
@@ -66,14 +63,14 @@ void nerv::updateFPSView(camera* cam)
 	glm::vec3 up = { sinYaw * sinPitch, cosPitch, cosYaw * sinPitch };
 	glm::vec3 front = { sinYaw * cosPitch, -sinPitch, cosPitch * cosYaw };
 
-	cam->right = glm::normalize(right);
-	cam->up = glm::normalize(up);
-	cam->front = glm::normalize(front);
+	right = glm::normalize(right);
+	up = glm::normalize(up);
+	front = glm::normalize(front);
 
 	cam->view = {
-		glm::vec4(right.x,            up.x,            front.x,      0),
-		glm::vec4(right.y,            up.y,            front.y,      0),
-		glm::vec4(right.z,            up.z,            front.z,      0),
+		glm::vec4(right.x,            right.y,            right.z,      0),
+		glm::vec4(up.x,               up.y,               up.z,      0),
+		glm::vec4(front.x,            front.y,            front.z,      0),
 		glm::vec4(-glm::dot(right, eye), -glm::dot(up, eye), -glm::dot(front, eye), 1)
 	};
 }
@@ -86,32 +83,32 @@ bool nerv::updateCamera(camera* cam, GLFWwindow* win)
 	
 	if (glfwGetKey(win, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		cam->position -= deltaTime * cam->speed * cam->up;
-		moving = true;
+		cam->position -= deltaTime * cam->speed * glm::vec3(cam->view[2]);
+		moving = true; 
 	}
 	if (glfwGetKey(win, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		cam->position += deltaTime * cam->speed * cam->up;
+		cam->position += deltaTime * cam->speed * glm::vec3(cam->view[2]);
 		moving = true;
 	}
 	if (glfwGetKey(win, GLFW_KEY_SPACE) == GLFW_PRESS)
 	{
-		cam->position -= deltaTime  * cam->speed * cam->front;
+		cam->position -= deltaTime  * cam->speed * glm::vec3(cam->view[1]);
 		moving = true;
 	}
 	if (glfwGetKey(win, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
 	{
-		cam->position += deltaTime * cam->speed * cam->front;
+		cam->position += deltaTime * cam->speed * glm::vec3(cam->view[1]);
 		moving = true;
 	}
 	if (glfwGetKey(win, GLFW_KEY_A) == GLFW_PRESS)
 	{
-		cam->position += deltaTime * cam->speed * cam->right;
+		cam->position -= deltaTime * cam->speed * glm::normalize(glm::cross(glm::vec3(cam->view[2]), glm::vec3(cam->view[1])));
 		moving = true;
 	}
 	if (glfwGetKey(win, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		cam->position -= deltaTime * cam->speed * cam->right;
+		cam->position += deltaTime * cam->speed * glm::normalize(glm::cross(glm::vec3(cam->view[2]), glm::vec3(cam->view[1])));
 		moving = true;
 	}
 
@@ -120,8 +117,8 @@ bool nerv::updateCamera(camera* cam, GLFWwindow* win)
 
 	if (xpos != cam->lastX || ypos != cam->lastY)
 	{
-		float xoffset = xpos - cam->lastX;
-		float yoffset = cam->lastY - ypos;
+		float xoffset = -xpos + cam->lastX;
+		float yoffset = ypos - cam->lastY;
 
 		cam->lastX = xpos;
 		cam->lastY = ypos;
@@ -132,10 +129,10 @@ bool nerv::updateCamera(camera* cam, GLFWwindow* win)
 		cam->yaw += xoffset;
 		cam->pitch += yoffset;
 
-		if (cam->pitch < (-89.9f ) - 90.0)
-			cam->pitch = (-89.9f) - 90.0;
-		else if (cam->pitch > 89.9f - 90.0)
-			cam->pitch = 89.9f - 90.0;
+		if (cam->pitch < (-89.9f ))
+			cam->pitch = (-89.9f);
+		else if (cam->pitch > 89.9f)
+			cam->pitch = 89.9f;
 
 		moving = true;
 	}
@@ -149,9 +146,6 @@ void nerv::sendCameraInfo(camera* cam)
 {
 		glUniformMatrix4fv(15, 1, GL_FALSE, &cam->view[0][0]);
 		glUniform3fv(20, 1, &cam->position[0]);
-		glUniform3fv(25, 1, &cam->front[0]);
-		glUniform3fv(26, 1, &cam->up[0]);
-		glUniform3fv(27, 1, &cam->right[0]);
 		glUniform1fv(28, 1, &cam->fov);
 		glUniform1fv(29, 1, &cam->aperture);
 		glUniform1fv(30, 1, &cam->focusDistance);

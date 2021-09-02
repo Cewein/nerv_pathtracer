@@ -5,11 +5,6 @@ layout (location = 0) out vec4 fragColor;
 layout (location = 15) uniform mat4 viewMatrix;
 layout (location = 20) uniform vec3 cameraTransform;
 
-//can be remove if we properly use the viewMatrix
-layout (location = 25) uniform vec3 up;
-layout (location = 26) uniform vec3 front;
-layout (location = 27) uniform vec3 right;
-
 layout (location = 28) uniform float fov;
 layout (location = 29) uniform float aperture;
 layout (location = 30) uniform float focusDistance;

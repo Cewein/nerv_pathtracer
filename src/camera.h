@@ -12,9 +12,6 @@ namespace nerv
 		//position value
 		glm::vec3 position;
 		glm::mat4 view;
-		glm::vec3 up;
-		glm::vec3 front;
-		glm::vec3 right;
 		float yaw;
 		float pitch;
 
