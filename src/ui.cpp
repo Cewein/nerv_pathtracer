@@ -20,7 +20,7 @@ void nerv::createUI(GLFWwindow* win)
     ImGui_ImplOpenGL3_Init("#version 450 core");
 }
 
-void nerv::displayUI(renderData* info, camera * cam)
+void nerv::displayUI(GLFWwindow* win, renderData* info, camera * cam)
 {
     if (nerv::gUsingMenu)
         info->isMoving = false;
@@ -36,6 +36,9 @@ void nerv::displayUI(renderData* info, camera * cam)
         ImGui::Separator();
         ImGui::Text(("Samples : " + std::to_string(info->spp)).c_str());
         info->spp += 1;
+        ImGui::Text(("Time between frame: \n" + std::to_string(glfwGetTime() - cam->LastFrameTime)).c_str());
+        ImGui::Text(("FPS: \n" + std::to_string(1/(glfwGetTime() -cam->LastFrameTime))).c_str());
+
 	}
 
     if (ImGui::Begin("config"))

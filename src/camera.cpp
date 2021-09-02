@@ -78,37 +78,37 @@ void nerv::updateFPSView(camera* cam)
 bool nerv::updateCamera(camera* cam, GLFWwindow* win)
 {
 	bool moving = false;
-	float deltaTime = cam->LastFrameTime - glfwGetTime();
+	float deltaTime = glfwGetTime() - cam->LastFrameTime;
 	cam->LastFrameTime = glfwGetTime();
 	
 	if (glfwGetKey(win, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		cam->position -= deltaTime * cam->speed * glm::vec3(cam->view[2]);
+		cam->position += deltaTime * cam->speed * glm::vec3(cam->view[2]);
 		moving = true; 
 	}
 	if (glfwGetKey(win, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		cam->position += deltaTime * cam->speed * glm::vec3(cam->view[2]);
+		cam->position -= deltaTime * cam->speed * glm::vec3(cam->view[2]);
 		moving = true;
 	}
 	if (glfwGetKey(win, GLFW_KEY_SPACE) == GLFW_PRESS)
 	{
-		cam->position -= deltaTime  * cam->speed * glm::vec3(cam->view[1]);
+		cam->position += deltaTime  * cam->speed * glm::vec3(cam->view[1]);
 		moving = true;
 	}
 	if (glfwGetKey(win, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
 	{
-		cam->position += deltaTime * cam->speed * glm::vec3(cam->view[1]);
+		cam->position -= deltaTime * cam->speed * glm::vec3(cam->view[1]);
 		moving = true;
 	}
 	if (glfwGetKey(win, GLFW_KEY_A) == GLFW_PRESS)
 	{
-		cam->position -= deltaTime * cam->speed * glm::normalize(glm::cross(glm::vec3(cam->view[2]), glm::vec3(cam->view[1])));
+		cam->position += deltaTime * cam->speed * glm::normalize(glm::cross(glm::vec3(cam->view[2]), glm::vec3(cam->view[1])));
 		moving = true;
 	}
 	if (glfwGetKey(win, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		cam->position += deltaTime * cam->speed * glm::normalize(glm::cross(glm::vec3(cam->view[2]), glm::vec3(cam->view[1])));
+		cam->position -= deltaTime * cam->speed * glm::normalize(glm::cross(glm::vec3(cam->view[2]), glm::vec3(cam->view[1])));
 		moving = true;
 	}
 
@@ -129,10 +129,7 @@ bool nerv::updateCamera(camera* cam, GLFWwindow* win)
 		cam->yaw += xoffset;
 		cam->pitch += yoffset;
 
-		if (cam->pitch < (-89.9f ))
-			cam->pitch = (-89.9f);
-		else if (cam->pitch > 89.9f)
-			cam->pitch = 89.9f;
+		cam->pitch = fminf(fmaxf(cam->pitch, -89.9f), 89.9f);
 
 		moving = true;
 	}

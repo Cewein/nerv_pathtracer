@@ -13,6 +13,6 @@
 namespace nerv
 {
 	void createUI(GLFWwindow * win);
-	void displayUI(renderData * info, camera * cam);
+	void displayUI(GLFWwindow* win, renderData* info, camera* cam);
 	void closeUI();
 }
