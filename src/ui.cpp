@@ -22,7 +22,8 @@ void nerv::createUI(GLFWwindow* win)
 
 void nerv::displayUI(renderData* info, camera * cam)
 {
-    info->isMoving = false;
+    if (nerv::gUsingMenu)
+        info->isMoving = false;
     // Start the Dear ImGui frame
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();

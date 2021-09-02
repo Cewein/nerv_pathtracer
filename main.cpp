@@ -31,7 +31,7 @@ int main()
 
 	int width;
 	int height;
-
+	  
 	glfwGetFramebufferSize(win, &width, &height);
 
 	nerv::material* arrMat = nerv::genRandomMaterial(51); 
@@ -40,7 +40,7 @@ int main()
 
 	nerv::bvhNode* bvh = nerv::createNode(triangles, 0, triangles.size());
 	int size = nerv::countNode(bvh);
-	nerv::linearBvhNode * flatten = new nerv::linearBvhNode[size];
+	nerv::linearBvhNode * flatten = new nerv::linearBvhNode[size]; 
 	 
 	int offset = 0;
 	
