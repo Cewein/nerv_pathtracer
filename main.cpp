@@ -36,15 +36,15 @@ int main()
 
 	nerv::material* arrMat = nerv::genRandomMaterial(51); 
 
-	std::vector<nerv::triangle> triangles = nerv::loadObj("E:\\nerv_engine\\nerv_pathtracer\\model\\bunny-heavy.obj");
+	std::vector<nerv::triangle> triangles = nerv::loadObj("E:\\nerv_engine\\nerv_pathtracer\\model\\rabbit.obj");
 
 	nerv::bvhNode* bvh = nerv::createNode(triangles, 0, triangles.size());
 	int size = nerv::countNode(bvh);
 	nerv::linearBvhNode * flatten = new nerv::linearBvhNode[size]; 
-	 
-	int offset = 0;
+	  
+	int offset = 0; 
 	
-	nerv::flattenBVH(flatten, bvh, &offset, 0);
+	nerv::flattenBVH(flatten, bvh, &offset, 0); 
 
 	size_t triangleBuffer = nerv::createBuffer(sizeof(nerv::triangle) * triangles.size(), triangles.data(), 0, GL_SHADER_STORAGE_BUFFER);
 	size_t colorBuffer = nerv::createBuffer(sizeof(float) * 4 * width * height, nullptr, 1, GL_SHADER_STORAGE_BUFFER);
@@ -56,18 +56,18 @@ int main()
 
 	while (!glfwWindowShouldClose(win))
 	{
-		//pool event the render
+		//pool event the render  
 		glfwPollEvents();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		
 		//update
-		if (!nerv::gUsingMenu)
+		if (!nerv::gUsingMenu) 
 			render.isMoving = nerv::updateCamera(&cam, win);
 
 		//send info to shader
 		nerv::sendInfo(&cam, &render, win); 
-
+		 
 		mainShader.activateImage(&background, "background", 0);
 		
 		//render
@@ -78,17 +78,17 @@ int main()
 		
 		glfwSwapBuffers(win);
 
-		
-	}
+		  
+	} 
 
 	//nerv::closeUI();
 
-	glfwDestroyWindow(win);
+	glfwDestroyWindow(win); 
 	glfwTerminate();
 
 	delete arrMat; 
 	//delete arrSphere;
-	delete flatten;
+	delete flatten; 
 
-	return EXIT_SUCCESS;
-}
+	return EXIT_SUCCESS;  
+}   

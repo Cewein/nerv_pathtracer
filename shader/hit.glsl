@@ -21,7 +21,7 @@ bool hitSphere(in ray r, float tmin, float tmax, inout hitRecord hit, sphere s)
             hit.t = temp;
             hit.p = pointAtParameter(r,hit.t);
             hit.normal = (hit.p - s.pos.xyz) / s.pos.w;
-            hit.mat = matBuf[int(s.mat.x)];
+            hit.mat = matArr[int(s.mat.x)];
             return true;
         }
     }
@@ -112,6 +112,7 @@ bool hitGround(in ray r, float tmax, inout hitRecord hit)
 
 		material mat;
 
+		//make the ground a checkboard
 		if(mod(floor(hit.p.xz), 2.0) == vec2(0.) || mod(floor(hit.p.xz), 2.0) == vec2(1.))
 		{
 			mat.transmission = 0.0;

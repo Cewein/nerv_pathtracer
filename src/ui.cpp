@@ -1,5 +1,6 @@
 #pragma once
 #include "ui.h"
+#include "glm/gtx/string_cast.hpp"
 
 #include <cstdlib>
 
@@ -34,18 +35,23 @@ void nerv::displayUI(GLFWwindow* win, renderData* info, camera * cam)
 	{
 		ImGui::Text("Camera info");
         ImGui::Separator();
-        ImGui::Text(("Samples : " + std::to_string(info->spp)).c_str());
+        ImGui::Text(("Samples: " + std::to_string(info->spp)).c_str());
+        ImGui::Text(("Position: " + glm::to_string(cam->position)).c_str());
+        ImGui::Text(("Pitch: " + std::to_string(cam->pitch) + "\nYaw: " + std::to_string(cam->yaw)+"\n\n").c_str());
+
+        ImGui::Text("Rendering info");
+        ImGui::Separator();
         info->spp += 1;
         ImGui::Text(("Time between frame: \n" + std::to_string(glfwGetTime() - cam->LastFrameTime)).c_str());
         ImGui::Text(("FPS: \n" + std::to_string(1/(glfwGetTime() -cam->LastFrameTime))).c_str());
 
 	}
-
+      
     if (ImGui::Begin("config"))
     {
         ImGui::Text("Camera");
         ImGui::Separator();
-        info->isMoving += ImGui::SliderFloat("FOV", &(cam->fov), 0.0001, 180);
+        info->isMoving += ImGui::SliderFloat("FOV", &(cam->fov), 0.0001, 180); 
         info->isMoving += ImGui::SliderFloat("Aperture", &(cam->aperture), 0.0001, 1.0);
         info->isMoving += ImGui::SliderFloat("focus Distance", &(cam->focusDistance), 0.0001, 20);
         ImGui::Separator();

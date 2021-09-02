@@ -29,10 +29,10 @@ nerv::camera nerv::createCamera(nerv::config* conf)
 	camera cam =
 	{
 		//position value
-		glm::vec3(0.0),
+		glm::vec3(-17.7,1.1,0.2),
 		glm::mat4(1.0f),
-		0.0,
-		0.0,
+		-88.0,
+		-15.0,
 
 		//controle value
 		camConf[0] / 10.0,
@@ -105,8 +105,8 @@ bool nerv::updateCamera(camera* cam, GLFWwindow* win)
 	{
 		cam->position += deltaTime * cam->speed * glm::normalize(glm::cross(glm::vec3(cam->view[2]), glm::vec3(cam->view[1])));
 		moving = true;
-	}
-	if (glfwGetKey(win, GLFW_KEY_D) == GLFW_PRESS)
+	}  
+	if (glfwGetKey(win, GLFW_KEY_D) == GLFW_PRESS)   
 	{
 		cam->position -= deltaTime * cam->speed * glm::normalize(glm::cross(glm::vec3(cam->view[2]), glm::vec3(cam->view[1])));
 		moving = true;

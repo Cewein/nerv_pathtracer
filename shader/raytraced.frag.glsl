@@ -25,29 +25,45 @@ bool hit(in ray r, float tmin, float tmax, inout hitRecord hit)
 		hit = tempHit;
 	}
 
-	rectangle rect = rectangle(vec2(-0.5, 0.5), vec2(0.0, .4), -1.5, 4);
 
-	if(hitRectangle(r, tmin, closestSoFar, tempHit, rect))
+
+	for(int i = 0; i < 30; i++)
 	{
-		hitAny = true;
-		closestSoFar = tempHit.t;
-		hit = tempHit;
-		noScatter = true;
+		rectangle rect = rectangle(vec2(-0.25, 0.25) + vec2(0.25,0.25) * i, vec2(0.0, 1.0), -1.5  - 0.15* i, 4);
+
+		if(hitRectangle(r, tmin, closestSoFar, tempHit, rect))
+		{
+			hitAny = true;
+			closestSoFar = tempHit.t;
+			hit = tempHit;
+			noScatter = true;
+		}
+
+		rect = rectangle(vec2(-0.25, 0.25) + vec2(0.25,0.25) * i, vec2(0.0, 1.0), 1.7  + 0.15 * i, 5);
+
+		if(hitRectangle(r, tmin, closestSoFar, tempHit, rect))
+		{
+			hitAny = true;
+			closestSoFar = tempHit.t;
+			hit = tempHit;
+			noScatter = true;
+		}
 	}
 
-	rect = rectangle(vec2(-0.5, 0.5), vec2(0.0, .4), 1.1, 4);
+	sphere s = sphere(vec4(-7.0,0.0,0.0,4.0),vec4(3.0));
 
-	if(hitRectangle(r, tmin, closestSoFar, tempHit, rect))
+	if(hitSphere(r,tmin,closestSoFar,tempHit,s))
 	{
 		hitAny = true;
 		closestSoFar = tempHit.t;
 		hit = tempHit;
-		noScatter = true;
+		noScatter = false;
 	}
 
     return hitAny;
 }
 
+//todo a better getRay function since the focus blur/bokey seem wrongly done
 ray getRay(vec2 uv) 
 {
 
@@ -72,7 +88,6 @@ ray getRay(vec2 uv)
 }
 
 // RAY MATERIAL INTERACTION
-
 vec3 lambert(in hitRecord rec, in vec2 st, inout ray r)
 {
 	vec3 target = rec.normal + randInUnitSphere(st + r.direction.xy);
@@ -110,7 +125,8 @@ ray dieletric(in hitRecord rec, in vec3 unitDirection, in vec2 st, in ray r)
 	vec3 reflected = reflect(unitDirection, rec.normal);
 	float niOverNt = 1.0 / refractiveIndex;
 	float cosine = -dot(r.direction, rec.normal) / length(r.direction);
-
+	
+	//we should look into the glsl step function to remove this if
 	if (dot(unitDirection, rec.normal) > 0.)
 	{
 		outwardNormal = -rec.normal;
@@ -132,7 +148,8 @@ ray dieletric(in hitRecord rec, in vec3 unitDirection, in vec2 st, in ray r)
 }
 
 //TRACER FUNCTION
-
+//todo redo this function
+//it work but is poorly done and can be way much better
 vec3 trace(ray r, vec2 st)
 {
 	hitRecord hitRec;
