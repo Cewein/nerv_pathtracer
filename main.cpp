@@ -53,9 +53,10 @@ int main()
 	size_t materialBuffer = nerv::createBuffer(sizeof(nerv::material) * 51, arrMat, 3, GL_SHADER_STORAGE_BUFFER);
 
 	nerv::texture background = nerv::loadImage("resources/evening_road_01.jpg");
+	nerv::texture checkboard = nerv::loadImage("resources/checker-map.png");
 
 	while (!glfwWindowShouldClose(win))
-	{
+	{  
 		//pool event the render  
 		glfwPollEvents();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -64,11 +65,12 @@ int main()
 		//update
 		if (!nerv::gUsingMenu) 
 			render.isMoving = nerv::updateCamera(&cam, win);
-
+		 
 		//send info to shader
 		nerv::sendInfo(&cam, &render, win); 
 		 
 		mainShader.activateImage(&background, "background", 0);
+		mainShader.activateImage(&checkboard, "checkboard", 1); 
 		
 		//render
         mainShader.use();

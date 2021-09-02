@@ -16,6 +16,7 @@ layout (location = 36) uniform int maxBounce;
 layout (location = 34) uniform float iTime;
 
 uniform sampler2D background;
+uniform sampler2D checkboard;
 uniform int nbSphere;
 
 in vec2 iTexCoord;

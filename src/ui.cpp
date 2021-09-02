@@ -37,7 +37,7 @@ void nerv::displayUI(GLFWwindow* win, renderData* info, camera * cam)
         ImGui::Separator();
         ImGui::Text(("Samples: " + std::to_string(info->spp)).c_str());
         ImGui::Text(("Position: " + glm::to_string(cam->position)).c_str());
-        ImGui::Text(("Pitch: " + std::to_string(cam->pitch) + "\nYaw: " + std::to_string(cam->yaw)+"\n\n").c_str());
+        ImGui::Text(("Pitch: " + std::to_string(cam->pitch) + "\nYaw: " + std::to_string(cam->yaw)+"\n\n").c_str()); 
 
         ImGui::Text("Rendering info");
         ImGui::Separator();

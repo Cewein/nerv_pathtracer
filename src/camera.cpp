@@ -29,7 +29,7 @@ nerv::camera nerv::createCamera(nerv::config* conf)
 	camera cam =
 	{
 		//position value
-		glm::vec3(-17.7,1.1,0.2),
+		glm::vec3(-17.7,5.1,0.2), 
 		glm::mat4(1.0f),
 		-88.0,
 		-15.0,

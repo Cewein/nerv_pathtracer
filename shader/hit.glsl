@@ -84,10 +84,21 @@ bool hitTriangle(ray r, triangle tris, float tmax, inout hitRecord hit)
         hit.p = pointAtParameter(r,hit.t);
         hit.normal = normalize(cross(v1 - v0, v2 - v0));
 
+		//using barycentric coordinates we can get good weight for each vertex
+        float bottom =((v1.y-v2.y)*(v0.x-v2.x)+(v2.x-v1.x)*(v0.y-v2.y));
+        float w1 = ((v1.y-v2.y)*(hit.p.x-v2.x)+(v2.x-v1.x)*(hit.p.y-v2.y))
+                    /bottom;
+        float w2 = ((v2.y-v0.y)*(hit.p.x-v2.x)+(v0.x-v2.x)*(hit.p.y-v2.y))
+                    /bottom;
+        float w3 = 1.0 - w1 - w2;
+        
+        //mix all the color from the computed weigth
+        vec2 uv = (w1*tris.uv1+w2*tris.uv2+w3*tris.uv3)/(w1+w2+w3);
+
 		material mat;
 
 		mat.transmission = 0.0;
-        mat.color = vec4(0.8, 0.4, 0.0, 1.0);
+        mat.color = texture2D(checkboard,uv);
 		mat.roughness = 0.0;
 		mat.refractionIndex = 1.4;
 		mat.metallic = 0.0;
