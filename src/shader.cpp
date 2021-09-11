@@ -242,5 +242,7 @@ void nerv::shader::reload()
 		size_t frag = createShader(filePath[0], GL_FRAGMENT_SHADER);
 		size_t vert = createShader(filePath[1], GL_VERTEX_SHADER);
 		id = createMainProgram(frag,vert);
+
+		bindFullquad();
 	}
 }

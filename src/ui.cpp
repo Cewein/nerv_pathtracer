@@ -1,6 +1,7 @@
 #pragma once
 #include "ui.h"
 #include "glm/gtx/string_cast.hpp"
+#include "logarsh.h"
 
 #include <cstdlib>
 
@@ -25,6 +26,9 @@ void nerv::displayUI(GLFWwindow* win, renderData* info, camera * cam)
 {
     if (nerv::gUsingMenu)
         info->isMoving = false;
+
+    if(info->reload)
+        info->isMoving = true;
 
     // Start the Dear ImGui frame
     ImGui_ImplOpenGL3_NewFrame();
@@ -66,6 +70,17 @@ void nerv::displayUI(GLFWwindow* win, renderData* info, camera * cam)
         
     } 
     ImGui::End();
+
+    logger.info("MOVING DEBUG BEFORE RELOAD", std::to_string(info->isMoving));
+    if (ImGui::Begin("Shader"))
+    {
+        ImGui::Text("Shader files");
+        ImGui::Separator();
+        info->reload = ImGui::Button("Reaload Shader");
+        info->isMoving += info->reload;
+    }
+    ImGui::End();
+    logger.info("MOVING DEBUG AFTER RELOAD", std::to_string(info->isMoving));
 
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

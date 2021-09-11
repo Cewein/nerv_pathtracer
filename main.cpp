@@ -62,25 +62,29 @@ int main()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		
-		//update
-		if (!nerv::gUsingMenu) 
+		//update camera if not in menu
+		if(!nerv::gUsingMenu)
 			render.isMoving = nerv::updateCamera(&cam, win);
-		 
+
 		//send info to shader
 		nerv::sendInfo(&cam, &render, win); 
-		 
+
 		mainShader.activateImage(&background, "background", 0);
-		mainShader.activateImage(&checkboard, "checkboard", 1); 
+		mainShader.activateImage(&checkboard, "checkboard", 1);
 		
 		//render
-        mainShader.use();
+		mainShader.use();
 		nerv::displayUI(win, &render, &cam);
 
+		//reload shader if needed
+		if (render.reload)
+			mainShader.reload();
 
-		
+		//update camera time
+		nerv::updateTime(&cam);
+
 		glfwSwapBuffers(win);
 
-		  
 	} 
 
 	//nerv::closeUI();

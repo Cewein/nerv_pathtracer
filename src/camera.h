@@ -38,6 +38,8 @@ namespace nerv
 	//update the position and the lastX, lastY
 	bool updateCamera(camera * cam , GLFWwindow * win);
 
+	void updateTime(camera* cam);
+
 	//send the information of the ginven camera to a shade
 	void sendCameraInfo(camera * cam);
 }

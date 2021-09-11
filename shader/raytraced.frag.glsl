@@ -27,7 +27,7 @@ bool hit(in ray r, float tmin, float tmax, inout hitRecord hit)
 
 
 
-	for(int i = 0; i < 30; i++)
+	for(int i = 0; i < 10; i++)
 	{
 		rectangle rect = rectangle(vec2(-0.25, 0.25) + vec2(0.25,0.25) * i, vec2(0.0, 1.0), -1.5  - 0.15* i, 4);
 

@@ -77,9 +77,8 @@ void nerv::updateFPSView(camera* cam)
 
 bool nerv::updateCamera(camera* cam, GLFWwindow* win)
 {
-	bool moving = false;
+	bool moving = false;	
 	float deltaTime = glfwGetTime() - cam->LastFrameTime;
-	cam->LastFrameTime = glfwGetTime();
 	
 	if (glfwGetKey(win, GLFW_KEY_W) == GLFW_PRESS)
 	{
@@ -137,6 +136,11 @@ bool nerv::updateCamera(camera* cam, GLFWwindow* win)
 	updateFPSView(cam);
 
 	return moving;
+}
+
+void nerv::updateTime(camera* cam)
+{
+	cam->LastFrameTime = glfwGetTime();
 }
 
 void nerv::sendCameraInfo(camera* cam)

@@ -18,6 +18,7 @@ namespace nerv
 		int isMoving;
 		float renderTime;
 		bool darkmode;
+		bool reload = false;
 	};
 
 	struct texture {
