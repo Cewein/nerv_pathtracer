@@ -26,20 +26,21 @@ namespace nerv
 		float fov;
 		float aperture;
 		float focusDistance;
+
+		//create a camera
+		camera(nerv::config * conf);
+
+		//get the fps view from a camera
+		//update the up, front and right vector
+		void updateFPSView(camera * cam);
+
+		//update the position and the lastX, lastY
+		bool updateCamera(camera * cam , GLFWwindow * win);
+
+		void updateTime(camera* cam);
+
+		//send the information of the ginven camera to a shade
+		void sendCameraInfo(camera * cam);
 	};
 
-	//create a camera
-	camera createCamera(nerv::config * conf);
-
-	//get the fps view from a camera
-	//update the up, front and right vector
-	void updateFPSView(camera * cam);
-
-	//update the position and the lastX, lastY
-	bool updateCamera(camera * cam , GLFWwindow * win);
-
-	void updateTime(camera* cam);
-
-	//send the information of the ginven camera to a shade
-	void sendCameraInfo(camera * cam);
 }

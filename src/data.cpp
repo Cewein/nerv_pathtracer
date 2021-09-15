@@ -212,7 +212,7 @@ nerv::sphere* nerv::genRandomSphere(int numberOfSphere, int numberOfMat)
 
 void nerv::sendInfo(camera* cam, renderData* render, GLFWwindow* win)
 {
-	sendCameraInfo(cam);
+	cam->sendCameraInfo(cam);
 
 	int width;
 	int height; 

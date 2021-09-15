@@ -16,7 +16,7 @@
 	4: focus distance
 
 */
-nerv::camera nerv::createCamera(nerv::config* conf)
+nerv::camera::camera(nerv::config* conf)
 {
 	//read config file
 	int sector = nerv::findConfigSubsector(conf, "camera");
@@ -26,31 +26,26 @@ nerv::camera nerv::createCamera(nerv::config* conf)
 	sector = nerv::findConfigSubsector(conf, "window");
 	std::vector<int> winConf = nerv::readConfigSubsector(conf, sector);
 
-	camera cam =
-	{
-		//position value
-		glm::vec3(-17.7,5.1,0.2), 
-		glm::mat4(1.0f),
-		-88.0,
-		-15.0,
+	//position value
+	this->position = glm::vec3(-17.7, 5.1, 0.2);
+	this->view = glm::mat4(1.0f);
+	this->yaw = -88.0;
+	this->pitch = -15.0;
 
-		//controle value
-		camConf[0] / 10.0,
-		camConf[1] / 100.0,
-		winConf[0] / 2,
-		winConf[1] / 2,
-		0.0,
+	//controle value
+	this->speed = camConf[0] / 10.0;
+	this->sensivity = camConf[1] / 100.0;
+	this->lastX = winConf[0] / 2;
+	this->lastY = winConf[1] / 2;
+	this->LastFrameTime = 0.0;
 
-		//lens value
-		camConf[2],
-		camConf[3],
-		camConf[4]
-	};
-	
-	return cam;
+	//lens value
+	this->fov = camConf[2];
+	this->aperture = camConf[3];
+	this->focusDistance = camConf[4];
 }
 
-void nerv::updateFPSView(camera* cam)
+void nerv::camera::updateFPSView(camera* cam)
 {
 	glm::vec3 eye = cam->position;
 
@@ -75,7 +70,7 @@ void nerv::updateFPSView(camera* cam)
 	};
 }
 
-bool nerv::updateCamera(camera* cam, GLFWwindow* win)
+bool nerv::camera::updateCamera(camera* cam, GLFWwindow* win)
 {
 	bool moving = false;	
 	float deltaTime = glfwGetTime() - cam->LastFrameTime;
@@ -138,12 +133,12 @@ bool nerv::updateCamera(camera* cam, GLFWwindow* win)
 	return moving;
 }
 
-void nerv::updateTime(camera* cam)
+void nerv::camera::updateTime(camera* cam)
 {
 	cam->LastFrameTime = glfwGetTime();
 }
 
-void nerv::sendCameraInfo(camera* cam)
+void nerv::camera::sendCameraInfo(camera* cam)
 {
 		glUniformMatrix4fv(15, 1, GL_FALSE, &cam->view[0][0]);
 		glUniform3fv(20, 1, &cam->position[0]);

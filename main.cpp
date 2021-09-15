@@ -16,7 +16,7 @@ int main()
 	nerv::config conf = nerv::loadConfig("E:\\nerv_engine\\nerv_pathtracer\\config.ini");
 
 	GLFWwindow* win = nerv::createWindow(&conf);
-	nerv::camera cam = nerv::createCamera(&conf);
+	nerv::camera cam(&conf);
 	nerv::createUI(win); 
 
 	  
@@ -64,7 +64,7 @@ int main()
 		
 		//update camera if not in menu
 		if(!nerv::gUsingMenu)
-			render.isMoving = nerv::updateCamera(&cam, win);
+			render.isMoving = cam.updateCamera(&cam, win);
 
 		//send info to shader
 		nerv::sendInfo(&cam, &render, win); 
@@ -81,7 +81,7 @@ int main()
 			mainShader.reload();
 
 		//update camera time
-		nerv::updateTime(&cam);
+		cam.updateTime(&cam);
 
 		glfwSwapBuffers(win);
 
