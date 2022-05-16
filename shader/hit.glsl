@@ -21,7 +21,7 @@ bool hitSphere(in ray r, float tmin, float tmax, inout hitRecord hit, sphere s)
             hit.t = temp;
             hit.p = pointAtParameter(r,hit.t);
             hit.normal = (hit.p - s.pos.xyz) / s.pos.w;
-            hit.mat = matArr[int(s.mat.x)];
+            hit.mat = matArr[s.mat];
             return true;
         }
     }
@@ -98,10 +98,11 @@ bool hitTriangle(ray r, triangle tris, float tmax, inout hitRecord hit)
 		material mat;
 
 		mat.transmission = 0.0;
-        mat.color = texture2D(checkboard,uv);
+        mat.color = texture2D(checkboard,uv).xyz;
 		mat.roughness = 0.0;
 		mat.refractionIndex = 1.4;
 		mat.metallic = 0.0;
+		mat.emission = 0.0;
 
 		hit.mat = mat;
 		return true;
@@ -134,7 +135,7 @@ bool hitGround(in ray r, float tmax, inout hitRecord hit)
 			mat.transmission = 0.0;
 			mat.metallic = .95;
 		}
-        mat.color = vec4(1.0);
+        mat.color = vec3(1.0);
 		mat.roughness = 0.0;
 		mat.refractionIndex = 1.4;
 
@@ -143,3 +144,11 @@ bool hitGround(in ray r, float tmax, inout hitRecord hit)
 	}
 	return false;
 } 
+
+vec3 hitSky(in ray r)
+{
+	if(!darkmode)
+		return texture(background, vec2((atan(r.direction.z, r.direction.x) / 6.283185307179586476925286766559) + 0.5, acos(r.direction.y) / 3.1415926535897932384626433832795)).xyz;
+	else
+		return vec3(0.0);
+}

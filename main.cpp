@@ -36,7 +36,7 @@ int main()
 
 	nerv::material* arrMat = nerv::genRandomMaterial(51); 
 
-	std::vector<nerv::triangle> triangles = nerv::loadObj("E:\\nerv_engine\\nerv_pathtracer\\model\\rabbit.obj");
+	std::vector<nerv::triangle> triangles = nerv::loadObj("E:\\nerv_engine\\nerv_pathtracer\\model\\bunny-heavy.obj");
 
 	nerv::bvhNode* bvh = nerv::createNode(triangles, 0, triangles.size());
 	int size = nerv::countNode(bvh);

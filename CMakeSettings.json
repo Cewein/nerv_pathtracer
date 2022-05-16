@@ -4,24 +4,30 @@
       "buildCommandArgs": "",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "cmakeCommandArgs": "/std:c++17",
-      "configurationType": "Debug",
+      "configurationType": "RelWithDebInfo",
       "ctestCommandArgs": "",
       "generator": "Ninja",
       "inheritEnvironments": [ "msvc_x64_x64" ],
       "installRoot": "${projectDir}\\out\\install\\${name}",
-      "name": "x64_debug"
+      "name": "x64_debug",
+      "variables": [
+        {
+          "name": "GLFW_BUILD_DOCS",
+          "value": "True",
+          "type": "BOOL"
+        }
+      ]
     },
     {
       "name": "x64-Release",
       "generator": "Ninja",
-      "configurationType": "RelWithDebInfo",
+      "configurationType": "Release",
       "buildRoot": "${projectDir}\\out\\build\\${name}",
       "installRoot": "${projectDir}\\out\\install\\${name}",
       "cmakeCommandArgs": "/std:c++17",
       "buildCommandArgs": "",
       "ctestCommandArgs": "",
-      "inheritEnvironments": [ "msvc_x64_x64" ],
-      "variables": []
+      "inheritEnvironments": [ "msvc_x64_x64" ]
     }
   ]
 }

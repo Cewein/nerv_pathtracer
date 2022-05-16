@@ -27,19 +27,21 @@ struct ray {
 };
     
 struct material {
-	vec4 color;
+	vec3 color;
+	float emission;
 	float roughness;
 	float metallic;
 	float refractionIndex;
 	float transmission;
 };
 
-material matArr[] = material[6]( material(vec4(0.75,0.25,0.25,1.0),0.0,1.0,1.2,0.0),
-	material(vec4(0.25,0.75,0.25,1.0),0.0,0.0,1.2,0.0),
-	material(vec4(0.75,0.25,0.75,1.0),0.05,0.2,1.2,0.95),
-	material(vec4(0.75,0.25,0.25,0.0),0.0,0.0,1.4,1.0),
-	material(vec4(1.0,.1,0.1,100.0),0.0,0.0,1.2,0.0),
-	material(vec4(.1,0.1,1.0,100.0),0.0,0.0,1.2,0.0)
+material matArr[] = material[6](
+	material(vec3(0.75,0.25,0.25),0.0,0.0,1.0,1.2,0.0),
+	material(vec3(0.25,0.75,0.25),0.0,0.0,0.0,1.2,0.0),
+	material(vec3(0.75,0.25,0.75),0.0,0.05,0.2,1.2,0.95),
+	material(vec3(0.75,0.25,0.25),0.0,0.0,0.0,1.4,1.0),
+	material(vec3(1.0,.1,0.1),2.0,0.0,0.0,1.2,0.0),
+	material(vec3(.1,0.1,1.0),2.0,0.0,0.0,1.2,0.0)
 );
 
 struct hitRecord {
@@ -71,7 +73,7 @@ struct triangle {
  struct sphere 
 {
     vec4 pos;
-	vec4 mat;
+	int mat;
 };
 
  struct linearBVHNode {

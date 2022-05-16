@@ -10,7 +10,7 @@ bool slabs(in vec3 p0,in  vec3 p1,in ray r,in float tmini,in float tmaxi) {
 	vec3 tmin = min(t0,t1), tmax = max(t0,t1);
 	tmini = max(tmin.x,max(tmin.y,max(tmin.z,tmini)));
 	tmaxi = min(tmax.x,min(tmax.y,min(tmax.z,tmaxi)));
-	return tmini <= tmaxi;
+	return tmini <= tmaxi; 
 }
 
 float bvhTraversal(in ray r, float tmin, float tmax, inout hitRecord hit, inout bool hitAny)

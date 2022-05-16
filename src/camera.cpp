@@ -19,7 +19,7 @@
 nerv::camera::camera(nerv::config* conf)
 {
 	//read config file
-	int sector = nerv::findConfigSubsector(conf, "camera");
+	int sector = nerv::findConfigSubsector(conf, "camera"); 
 	std::vector<int> camConf = nerv::readConfigSubsector(conf, sector);
 
 	//see window.cpp
@@ -61,7 +61,7 @@ void nerv::camera::updateFPSView(camera* cam)
 	right = glm::normalize(right);
 	up = glm::normalize(up);
 	front = glm::normalize(front);
-
+	 
 	cam->view = {
 		glm::vec4(right.x,            right.y,            right.z,      0),
 		glm::vec4(up.x,               up.y,               up.z,      0),
@@ -72,7 +72,7 @@ void nerv::camera::updateFPSView(camera* cam)
 
 bool nerv::camera::updateCamera(camera* cam, GLFWwindow* win)
 {
-	bool moving = false;	
+	bool moving = false;
 	float deltaTime = glfwGetTime() - cam->LastFrameTime;
 	
 	if (glfwGetKey(win, GLFW_KEY_W) == GLFW_PRESS)

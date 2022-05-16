@@ -12,7 +12,7 @@ size_t nerv::shader::createComputeProgram(size_t computeShader)
 	glAttachShader(id, computeShader);
 	glLinkProgram(id);
 
-	programInfo(id);
+	programInfo(id); 
 
 	glDeleteShader(computeShader);
 

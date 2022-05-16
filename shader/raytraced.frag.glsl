@@ -25,40 +25,36 @@ bool hit(in ray r, float tmin, float tmax, inout hitRecord hit)
 		hit = tempHit;
 	}
 
+	rectangle rect = rectangle(vec2(-100.25, 100.25), vec2(0.0, 1.0), -1.5  - 0.15, 4);
 
-
-	for(int i = 0; i < 10; i++)
-	{
-		rectangle rect = rectangle(vec2(-0.25, 0.25) + vec2(0.25,0.25) * i, vec2(0.0, 1.0), -1.5  - 0.15* i, 4);
-
-		if(hitRectangle(r, tmin, closestSoFar, tempHit, rect))
-		{
-			hitAny = true;
-			closestSoFar = tempHit.t;
-			hit = tempHit;
-			noScatter = true;
-		}
-
-		rect = rectangle(vec2(-0.25, 0.25) + vec2(0.25,0.25) * i, vec2(0.0, 1.0), 1.7  + 0.15 * i, 5);
-
-		if(hitRectangle(r, tmin, closestSoFar, tempHit, rect))
-		{
-			hitAny = true;
-			closestSoFar = tempHit.t;
-			hit = tempHit;
-			noScatter = true;
-		}
-	}
-
-	sphere s = sphere(vec4(-7.0,0.0,0.0,4.0),vec4(3.0));
-
-	if(hitSphere(r,tmin,closestSoFar,tempHit,s))
+	if(hitRectangle(r, tmin, closestSoFar, tempHit, rect))
 	{
 		hitAny = true;
 		closestSoFar = tempHit.t;
 		hit = tempHit;
-		noScatter = false;
+		noScatter = true;
 	}
+
+	rect = rectangle(vec2(-100.25, 100.25), vec2(0.0, 1.0), 1.7  + 0.15, 5);
+
+	if(hitRectangle(r, tmin, closestSoFar, tempHit, rect))
+	{
+		hitAny = true;
+		closestSoFar = tempHit.t;
+		hit = tempHit;
+		noScatter = true;
+	}
+	
+
+//	sphere s = sphere(vec4(-7.0,0.0,0.0,4.0),3);
+//
+//	if(hitSphere(r,tmin,closestSoFar,tempHit,s))
+//	{
+//		hitAny = true;
+//		closestSoFar = tempHit.t;
+//		hit = tempHit;
+//		noScatter = false;
+//	}
 
     return hitAny;
 }
@@ -92,14 +88,14 @@ vec3 lambert(in hitRecord rec, in vec2 st, inout ray r)
 {
 	vec3 target = rec.normal + randInUnitSphere(st + r.direction.xy);
 	r = ray(rec.p, target);
-	return rec.mat.color.xyz * rec.mat.color.w;
+	return rec.mat.color.xyz;
 }
 
 vec3 metalic(in hitRecord rec, in vec3 unitDirection, in vec2 st, inout ray r)
 {
 	vec3 reflected = reflect(unitDirection, rec.normal);
 	r = ray(rec.p, reflected + rec.mat.roughness * randInUnitSphere(st + r.direction.xy));
-	return rec.mat.color.xyz * rec.mat.color.w; 
+	return rec.mat.color.xyz; 
 }
 
 float checkRefract(vec3 v, vec3 n, float niOverNt)
@@ -107,7 +103,6 @@ float checkRefract(vec3 v, vec3 n, float niOverNt)
 	vec3 uv = v;
 	float dt = dot(uv, n);
 	float discriminant = 1.0 - niOverNt * niOverNt * (1. - dt * dt);
-
 	return mix(0.0,1.0, discriminant);
 }
               
@@ -153,31 +148,29 @@ ray dieletric(in hitRecord rec, in vec3 unitDirection, in vec2 st, in ray r)
 vec3 trace(ray r, vec2 st)
 {
 	hitRecord hitRec;
-	vec3 unitDirection;
 
 	vec3 att = vec3(1.);
-
-	int bounce = 0;
+	vec3 col = vec3(0.0);
 
 	//extrat space for ray
 	ray tmp;
 	ray glass;
 
-	while (bounce < maxBounce && !noScatter)
+	for(int i = 0; i < maxBounce; i++)
 	{
-		unitDirection = normalize(r.direction);
+		bool asHit = hit(r, 0.00001, FLT_MAX, hitRec);
 
-		if(hit(r, 0.00001, FLT_MAX, hitRec))
-			bounce++;
-		else
+		//check if as hit sky or emission surface
+		if(!asHit || hitRec.mat.emission >= 1.0)
 		{
-			vec3 col = vec3(0.0);
-			if(!darkmode)
-				col = texture(background, vec2((atan(r.direction.z, r.direction.x) / 6.283185307179586476925286766559) + 0.5, acos(r.direction.y) / 3.1415926535897932384626433832795)).xyz;
-
-			att *= col;
+			if(asHit && hitRec.mat.emission >= 1.0)
+				col = att * hitRec.mat.color * hitRec.mat.emission;
+			else 
+				col = att * hitSky(r);
 			break;
 		}
+
+		vec3 unitDirection = normalize(r.direction);
 
 		glass = dieletric(hitRec, unitDirection, st, r);
 		tmp = r;
@@ -206,11 +199,10 @@ vec3 trace(ray r, vec2 st)
 			hitRec.mat.transmission
 		);
 
-		
 	}
 
 	//skybox
-    return att;
+    return col;
 }
 
 void main()

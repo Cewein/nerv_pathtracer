@@ -48,8 +48,8 @@ void nerv::displayUI(GLFWwindow* win, renderData* info, camera * cam)
         info->spp += 1;
         ImGui::Text(("Time between frame: \n" + std::to_string(glfwGetTime() - cam->LastFrameTime)).c_str());
         ImGui::Text(("FPS: \n" + std::to_string(1/(glfwGetTime() -cam->LastFrameTime))).c_str());
-
 	}
+    ImGui::End();
       
     if (ImGui::Begin("config"))
     {

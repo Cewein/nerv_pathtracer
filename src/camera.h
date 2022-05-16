@@ -13,7 +13,7 @@ namespace nerv
 		glm::vec3 position;
 		glm::mat4 view;
 		float yaw;
-		float pitch;
+		float pitch; 
 
 		//controle value
 		float speed;
